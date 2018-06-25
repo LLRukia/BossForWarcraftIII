@@ -104,7 +104,12 @@ public class IceBarrier extends IceMageSkill
             dt.m_tDestroy.startPeriodic(IceBarrier.last_time, function IceBarrier.destr)
         
     static function unit_death()
-        IceBarrier.destr()
+        Data dt = GetTriggeringTrigger().getData() castTo Data
+        if dt != null
+            print("11")
+            if not dt.m_u.remove_buff(buff_id)
+                destroy dt
+                data_manager.remove(dt.m_u)
 
     static function protect_act()
         Data dt = GetTriggeringTrigger().getData() castTo Data
@@ -113,12 +118,16 @@ public class IceBarrier extends IceMageSkill
         if fDmg <= 0
             return
         
-        real fFinalDmg = fDmg > dt.m_fShieldHP ? dt.m_fShieldHP : 0
+
+        real fFinalDmg = fDmg > dt.m_fShieldHP ? fDmg-dt.m_fShieldHP : 0
         BlzSetEventDamage(fFinalDmg)
         dt.m_fShieldHP -= fDmg
 
         if dt.m_fShieldHP <= 0
-            IceBarrier.destr()
+            if dt != null
+                if not dt.m_u.remove_buff(buff_id)
+                    destroy dt
+                    data_manager.remove(dt.m_u)
         else
             dt.m_tx.set_cur_value(dt.m_fShieldHP)
     
@@ -148,7 +157,7 @@ function create_ice_barrier()
         ..setTooltipNormalExtended(1,
             Color_Define.COLOR_NORMAL + "给目标施加寒冰屏障，可以为目标吸收最大750点伤害。|n" +
             Color_Define.COLOR_LAST_TIME + "持续45秒。|n" +
-            Color_Define. COLOR_CAST_RANGE + "施法距离：1100" +
+            Color_Define. COLOR_CAST_RANGE + "施法距离：1100|n" +
             Color_Define.COLOR_COOL_DOWN + "CD:5s")
         ..setIconNormal("Ice Barrier.blp")
         ..setBuffs(1, IceBarrier.buff_id.toRawCode())

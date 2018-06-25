@@ -3,14 +3,13 @@ package IceSpirit
 import EditorHelper
 import IceMage
 import ExternalDefines
-import LinkedList
 import BossHelper
 import TriggerHelper
 import BuffObjEditing
+import TimerUtils
+import HashMap
 
 public class IceSpirit extends IceMageSkill
-    static let dmg = 240.
-    static let radius = 350.
     static let self_id = 'im0f'
     static let self_ids = ['im0f', 'im1f', 'im2f', 'im3f']
     static let buff_up_id = 'im1b'
@@ -20,7 +19,9 @@ public class IceSpirit extends IceMageSkill
     static let recovery = vec2(200., 30.)
     static let caster_faker = 'imfu'
     static let buff_up_down = vec2(0.37, 0.24)
-    private var m_ls_spirit = new LinkedList<unit>
+    static var map_buff_unit = new HashMap<int, unit>
+    static vec2 pt_cast
+    private var m_map_spirit = new IterableMap<unit, rect>
     private region m_rg_judge = CreateRegion()
     private trigger m_tr_judge = CreateTrigger()
     private trigger m_tr_kill_recovery = CreateTrigger()
@@ -34,64 +35,107 @@ public class IceSpirit extends IceMageSkill
         m_spirit_num = 0
         m_exist_spirit_num = 0
         m_self_unit.addAbility(IceSpirit.self_ids[m_spirit_num])
-        for i in m_ls_spirit
-            m_rg_judge.clearCell(i.getPos())
+        for i in m_map_spirit
+            m_rg_judge.clearRect(m_map_spirit.get(i))
             RemoveUnit(i)
-        m_ls_spirit.clear()
+        m_map_spirit.flush()
+
 
 
 
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
-            ..addCondition(Filter(()->GetSpellAbilityId()==IceSpirit.self_id))
-            ..addAction(function skill_act_forwarding)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceSpirit.self_ids[0] or GetSpellAbilityId()==IceSpirit.self_ids[1]
+            or GetSpellAbilityId()==IceSpirit.self_ids[2] or GetSpellAbilityId()==IceSpirit.self_ids[3]))
+            ..addAction(function IceSpirit.cast_)
+            ..setData(this castTo int)
         m_tr_kill_recovery..registerAnyUnitEvent(EVENT_PLAYER_UNIT_DEATH)
             ..addCondition(Filter(function recovery_judge))
             ..addAction(function recovery)
             ..setData(this castTo int)
-        m_tr_judge..registerEnterRegion(m_rg_judge, Filter(function IceSpirit.enter_judge))
+        m_tr_judge..registerEnterRegion(m_rg_judge, null)
             ..addAction(function IceSpirit.enter)
             ..setData(this castTo int)
-        
+
+    static function cast_()
+        location lc = GetSpellTargetLoc()
+        IceSpirit.pt_cast = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        (GetTriggeringTrigger().getData() castTo IceSpirit).cast()
+
     override function cast()
         if m_spirit_num == 0
             printTimedToPlayer(Color_Define.COLOR_ICEMAGE + "Ice Spirit数量不足。", 2., m_self_unit.getOwner())
             return
         if m_exist_spirit_num == 3
             printTimedToPlayer(Color_Define.COLOR_ICEMAGE + "场上的Ice Spirit数量已经达到最大值。", 2., m_self_unit.getOwner())
-            return
+            for i in m_map_spirit
+                rect _rc = m_map_spirit.get(i)
+                flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", i.getPos())
+                m_map_spirit.remove(i)
+                m_rg_judge.clearRect(_rc)
+                RemoveRect(_rc)
+                RemoveUnit(i)
+                m_exist_spirit_num--
+                break
+
+        var pos = IceSpirit.pt_cast
         m_self_unit.removeAbility(IceSpirit.self_ids[m_spirit_num])
         m_spirit_num--
         m_self_unit.addAbility(IceSpirit.self_ids[m_spirit_num])
         m_exist_spirit_num++
-        vec2 pos = vec2(GetSpellTargetX(), GetSpellTargetY())
-        m_ls_spirit.add(createUnit(m_self_unit.getOwner(), 'im1f', pos, angle(270.)))
-        m_rg_judge.addCell(pos)
 
-    static function enter_judge() returns boolean
-        unit u = GetEnteringUnit()
-        return (PlayerUnitHelper.get_instance(u) != -1
-            or u.isBoss()) and (not u.isInvulnerable())
+        rect rc = Rect(pos.x - 40, pos.y - 40, pos.x + 40, pos.y + 40)
+        unit u = createUnit(m_self_unit.getOwner(), 'im1f', pos, angle(270.))
+        u.setXY(pos)
+        m_map_spirit.put(u, rc)
+        
+        m_rg_judge.addRect(rc)
 
     static function enter()
         var obj = GetTriggeringTrigger().getData() castTo IceSpirit
         unit u = GetEnteringUnit()
-        for i in obj.m_ls_spirit
-            vec2 pos = i.getPos()
-            if pos.inRange(u.getPos(), 17)
-                obj.m_ls_spirit.remove(i)
-                obj.m_rg_judge.clearCell(pos)
-                RemoveUnit(i)
-                obj.m_exist_spirit_num--
-                flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", pos)
-                break
-        unit uFaker = createUnit(obj.m_self_unit.getOwner(), IceSpirit.caster_faker, u.getPos()+vec2(-100,0), angle(0))
-        uFaker.setTimedLife(1)
-        if u.isBoss()
-            uFaker.issueTargetOrder("cripple", u)
-        else
-            uFaker.issueTargetOrder("bloodlust", u)
+
+        if (PlayerUnitHelper.get_instance(u) == -1
+            and not u.isBoss()) or not u.can_add_buff()
+            return
+        real fmin = 10000000
+        unit min_unit = null
+        for i in obj.m_map_spirit
+            vec2 pos = u.getPos()
+            real r = (i.getPos() - pos).lengthSq()
+            if fmin > r
+                min_unit = i
+                fmin = r
         
+        if min_unit != null
+            rect rc = obj.m_map_spirit.get(min_unit)
+        
+            obj.m_map_spirit.remove(min_unit)
+            obj.m_rg_judge.clearRect(rc)
+            RemoveRect(rc)
+            RemoveUnit(min_unit)
+            obj.m_exist_spirit_num--
+            flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", min_unit.getPos())
+            
+            unit uFaker = createUnit(obj.m_self_unit.getOwner(), IceSpirit.caster_faker, u.getPos()+vec2(-100,0), angle(0))
+            uFaker.setTimedLife(1)
+            if u.isBoss()
+                uFaker.issueTargetOrder("cripple", u)
+            else
+                uFaker.issueTargetOrder("bloodlust", u)
+                u.add_buff(IceSpirit.buff_up_id, BuffClearType.additions, BuffType.buffs, obj)
+                timer t = CreateTimer()
+                t..setData(t.getHandleId())
+                    ..startPeriodic(7, function IceSpirit.tmr_removebuff)
+            
+        
+    static function tmr_removebuff()
+        var t = GetExpiredTimer()
+        unit u = map_buff_unit.get(t.getData())
+        u.remove_buff(IceSpirit.buff_up_id)
+        t..pause()..destr()
+
 
     static function recovery_judge() returns boolean
         var obj = GetTriggeringTrigger().getData() castTo IceSpirit
@@ -123,9 +167,8 @@ function create_ice_spirit()
                 Color_Define.COLOR_ICEMAGE + "Ice Spirit[Chill Version]" +
                 Color_Define.COLOR_HOT_KEY + "(F)")
             ..setTooltipNormalExtended(1,
-                Color_Define.COLOR_NORMAL + "被动效果：当你杀死单位时，为你回复200生命和30魔法，并增加一点Spirit，最大3点。|n主动效果：消耗一个储存的Spirit，在指定地点放置一个寒冰之灵，当友方玩家踩到时，为其增加37%移动速度，持续7秒；当Boss踩到时，为其减少24%移动速度，持续5秒。" +
-                Color_Define.COLOR_LAST_TIME + "寒冰之灵在场上最多存在3个，持续60秒。|n" +
-                Color_Define. COLOR_CAST_RANGE + "施法距离：900" +
+                Color_Define.COLOR_NORMAL + "被动效果：当你杀死单位时，为你回复200生命和30魔法，并增加一点Spirit，最大3点。|n主动效果：消耗一个储存的Spirit，在指定地点放置一个寒冰之灵，当友方玩家踩到时，为其增加37%移动速度，持续7秒；当Boss踩到时，为其减少24%移动速度，持续5秒。|n" +
+                Color_Define. COLOR_CAST_RANGE + "施法距离：900|n" +
                 Color_Define.COLOR_COOL_DOWN + "CD:2s")
             ..setIconNormal(icon[i])
 

@@ -5,6 +5,7 @@ import public initlater IceBarrier
 import public initlater IceLance
 import public initlater ForstBolt
 import public initlater ConeofCold
+import public initlater IceSpirit
 import BaseSkills
 
 public enum emSkill

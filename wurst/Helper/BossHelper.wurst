@@ -1,5 +1,6 @@
 package BossHelper
 
+import HashMap
 
 
 public function unit.isBoss() returns boolean
@@ -7,8 +8,9 @@ public function unit.isBoss() returns boolean
     
 
 public class BossHelper
-    static private unit cur_boss = null
+    static private var map_boss = new HashMap<unit, int>
     static function create_boss(int index)
 
     static function isBoss(unit u) returns boolean
-        return cur_boss == u
+        return map_boss.has(u)
+

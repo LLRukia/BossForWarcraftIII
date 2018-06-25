@@ -87,7 +87,7 @@ class EditorHelper
     static function create_effect_faker_unit(int id, real size, string effect_path, color cl) returns UnitOrBuildingOrHeroDefinition
         var u_editor = new UnitOrBuildingOrHeroDefinition(id, 'hpea')
         u_editor..setScalingValue(size)
-            ..setSpeedBase(0)
+            ..setSpeedBase(1)
             ..setHitPointsMaximumBase(9999)
             ..setNormalAbilities("Aloc")
             ..setTintingColorRed(cl.red)
