@@ -3,21 +3,25 @@ import PlayerHelper
 import Buffs
 import UnitObjEditing
 import ExternalDefines
-
+import EffectHelper
 function test()
     print("test")
-    Player(0).get_unit().remove_buff(BuffClearType.additions, BuffType.buffs)
+    EffectHelper.flash_effect('1rbk', Player(0).get_unit().getPos(), 0)
     
 function test1()
     print("test1")
     Player(0).get_unit().remove_buff(BuffClearType.stable, BuffType.buffs)
 
+function test2()
+    print("test2")
+    Player(0).get_unit().issuePointOrder("polymorph", Player(0).get_unit().getPos() + vec2(10, 0))
+    
 @compiletime
 function create_fire_chicken()
     var ed = new UnitDefinition('frck', 'nech')
     ed..setNormalAbilities("")
         ..setCollisionSize(80)
-        ..setScalingValue(5)
+        ..setScalingValue(4)
         ..setSpeedBase(0)
         ..setTurnRate(3)
         ..setArmorType(ArmorType.Hero)
@@ -57,5 +61,11 @@ init
     for i = 0 to 7
         tr1.registerPlayerChatEvent(Player(i), "-test1", true)
     tr1..addAction(function test1)
+        ..enable()
+
+    var tr2 = CreateTrigger()
+    for i = 0 to 7
+        tr2.registerPlayerChatEvent(Player(i), "-test2", true)
+    tr2..addAction(function test2)
         ..enable()
         

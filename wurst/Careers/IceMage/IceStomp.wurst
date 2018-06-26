@@ -3,51 +3,211 @@ package IceStomp
 import IceMage
 import ExternalDefines
 import EditorHelper
+import TriggerHelper
+import TimerUtils
+import SkillHelper
 
 public class IceStomp extends IceMageSkill
     static let self_id = 'im0w'
+    static let effect_id = 'im1w'
+    static let help_id = 'im2w'
+    static let buff_id = 'im3b'
     static let dmg = 240.
     static let radius = 350.
     static let last_time = 3.
+    private unit m_effect = null
+    private unit m_effect2 = null
+    private unit m_follow = null
+    private trigger m_tr_start = CreateTrigger()
+    private trigger m_tr_end = CreateTrigger()
+    private trigger m_tr_cast = CreateTrigger()
+    private trigger m_tr_dmg
+    private timer m_tm_effect = null
+    private real m_scale_size = 0.
 
     construct(unit u)
         super(u)
 
 
     override function listen()
-        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CAST)
+        m_tr_start..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CHANNEL)
             ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
             ..addAction(function IceStomp.prepare)
-
+            ..setData(this castTo int)
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
+            ..addAction(function IceStomp.cast)
+            ..setData(this castTo int)
+        m_tr_end..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_ENDCAST)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
+            ..addAction(function IceStomp.endcast)
+            ..setData(this castTo int)
+        m_tr_cast..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CAST)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
+            ..addAction(function IceStomp.imagecast)
+            ..setData(this castTo int)
+        
     static function prepare()
-        flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", GetSpellAbilityUnit().getPos())
+        print("prepare")
+        var obj = GetTriggeringTrigger().getData() castTo IceStomp
+        vec2 pos = obj.m_self_unit.getPos()
+        obj.m_effect = createUnit(obj.m_self_unit.getOwner(), IceStomp.effect_id, pos, angle(0))
+        obj.m_effect.setXY(pos)
+        obj.m_scale_size = 0.4
+        obj.m_effect.setScale(0.4)
+        obj.m_tm_effect = CreateTimer()
+        obj.m_tm_effect..setData(obj castTo int)
+            .startPeriodic(0.02, function effect_change)
+
+        var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
+        if fat.m_self_image != null
+            vec2 pos2 = fat.m_self_image.getPos()
+            obj.m_effect2 = createUnit(obj.m_self_unit.getOwner(), IceStomp.effect_id, pos2, angle(0))
+            obj.m_effect2.setXY(pos2)
+            obj.m_effect2.setScale(0.4)
+
+    static function imagecast()
+        var obj = GetTriggeringTrigger().getData() castTo IceStomp
+        var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
+        if fat.m_self_image != null and obj.m_effect2 != null
+            obj.m_follow = createUnit(obj.m_self_unit.getOwner(), FAKE_CASTER, fat.m_self_image.getPos(), angle(0))
+            obj.m_follow..addAbility(IceStomp.help_id)..issueImmediateOrder("thunderclap")..setXY(fat.m_self_image.getPos())
+            CreateTimer()..setData(obj castTo int)
+                ..startPeriodic(1, function destroy_follow)
+            obj.m_tr_dmg = CreateTrigger()
+            obj.m_tr_dmg..setData(obj castTo int)
+                ..registerUnitEvent(obj.m_follow, EVENT_UNIT_SPELL_EFFECT)
+                ..addAction(function tr_dmg)
+
+    static function tr_dmg()
+        var obj = GetTriggeringTrigger().getData() castTo IceStomp
+        group g = CreateGroup()
+        g.enumUnitsInRange(GetSpellAbilityUnit().getPos(), IceStomp.radius+AREA_DMG_CORRECTION)
+        for i in g
+            if not IsUnitAlly(i, GetOwningPlayer(obj.m_self_unit))
+                and i.isAlive()
+                obj.m_self_unit.damageTarget(i, IceStomp.dmg, ATTACK_TYPE_MAGIC)
+        g.destr()
+            
+            
+
+    static function destroy_follow()
+        timer t = GetExpiredTimer()
+        var obj = t.getData() castTo IceStomp
+        if obj.m_follow != null
+            RemoveUnit(obj.m_follow)
+        obj.m_tr_dmg..disable()..destr()
+        t..pause()..destr()
+
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo IceStomp
+        RemoveUnit(obj.m_effect)
+        if obj.m_effect2 != null
+            RemoveUnit(obj.m_effect2)
+        if obj.m_follow != null
+            flashEffect("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl", obj.m_follow.getPos())
+
+        group g = CreateGroup()
+        g.enumUnitsInRange(obj.m_self_unit.getPos(), IceStomp.radius+AREA_DMG_CORRECTION)
+        for i in g
+            if not IsUnitAlly(i, GetOwningPlayer(obj.m_self_unit))
+                and i.isAlive()
+                obj.m_self_unit.damageTarget(i, IceStomp.dmg, ATTACK_TYPE_MAGIC)
+        g.destr()
+
+        obj.m_tm_effect..pause()..destr()
+        obj.m_scale_size = 0
+
+    static function endcast()
+        var obj = GetTriggeringTrigger().getData() castTo IceStomp
+        RemoveUnit(obj.m_effect)
+
+        if obj.m_effect2 != null
+            RemoveUnit(obj.m_effect2)
+        if obj.m_follow != null
+            RemoveUnit(obj.m_follow)
+            obj.m_follow = null
+        obj.m_tm_effect..pause()..destr()
+        obj.m_scale_size = 0
+
+
+    static function effect_change()
+        timer tm = GetExpiredTimer()
+        var obj = tm.getData() castTo IceStomp
+        obj.m_scale_size += 0.11
+        
+                
+        if obj.m_effect != null
+            obj.m_effect.setScale(obj.m_scale_size)
+            var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
+            if fat.m_self_image != null and obj.m_effect2 != null
+                obj.m_effect2..setScale(obj.m_scale_size)..setXY(fat.m_self_image.getPos())
+            else
+                RemoveUnit(obj.m_effect2)
+                obj.m_effect2 = null
+        else
+            tm..pause()..destr()
+            obj.m_tm_effect = null
+
 
 @compiletime
 function create_ice_stomp()
     var ed = new AbilityDefinitionMountainKingThunderClap(IceStomp.self_id)
     ed..setAttackSpeedReduction(1, .15)
     ..setSpecificTargetDamage(1, 0.)
-    ..setAOEDamage(1, IceStomp.dmg)
-    ..setMovementSpeedReduction(1, 15)
-    ..setAreaofEffect(1, IceStomp.radius)
+    ..setAOEDamage(1, 0)
+    ..setMovementSpeedReduction(1, .15)
+    ..setAreaofEffect(1, IceStomp.radius-AREA_DMG_CORRECTION)
     ..setDurationHero(1, IceStomp.last_time)
     ..setDurationNormal(1, IceStomp.last_time)
-    ..setManaCost(1, 0)
-    ..setCooldown(1, 6)
+    ..setManaCost(1, 22)
+    ..setCooldown(1, 5)
     ..setCastingTime(1, 0.8)
     ..setHeroAbility(false)
-    ..setArtCaster("icestomp.mdx")
+    ..setArtCaster("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl")
     ..setButtonPositionNormalX(1)
     ..setButtonPositionNormalY(2)
     ..setHotkeyNormal("W")
     ..setName("IceStomp")
     ..setLevels(1)
+    ..setBuffs(1, IceStomp.buff_id.toRawCode())
     ..setTooltipNormal(1,
         Color_Define.COLOR_ICEMAGE + "Ice Stomp" +
         Color_Define.COLOR_HOT_KEY + "(W)")
     ..setTooltipNormalExtended(1,
-        Color_Define.COLOR_NORMAL + "积蓄力量，1秒后对350范围内敌人造成240伤害，并减慢他们15%/15%的速度。|n" +
-        Color_Define.COLOR_LAST_TIME + "减速持续3秒。|n" +
-        Color_Define.COLOR_COOL_DOWN + "CD:6s")
+        Color_Define.COLOR_NORMAL + "↓积蓄力量，1秒后对350范围内敌人造成240伤害，并减慢他们15%/15%的速度。|n" +
+        Color_Define.COLOR_LAST_TIME + "→减速持续3秒。|n" +
+        Color_Define.COLOR_COOL_DOWN + "→CD:6s")
     ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNFreezingBreath.blp")
-    ..setOrderStringUseTurnOn(ORDERS[emSkillKey.W castTo int])
+
+@compiletime
+function create_ice_stomp_image()
+    var ed = new AbilityDefinitionMountainKingThunderClap(IceStomp.help_id)
+    ed..setAttackSpeedReduction(1, .15)
+    ..setSpecificTargetDamage(1, 0.)
+    ..setAOEDamage(1, 0)
+    ..setMovementSpeedReduction(1, .15)
+    ..setAreaofEffect(1, IceStomp.radius-AREA_DMG_CORRECTION)
+    ..setDurationHero(1, IceStomp.last_time)
+    ..setDurationNormal(1, IceStomp.last_time)
+    ..setManaCost(1, 0)
+    ..setCooldown(1, 0)
+    ..setHeroAbility(false)
+    ..setName("IceStomp")
+    ..setLevels(1)
+    ..setBuffs(1, IceStomp.buff_id.toRawCode())
+
+
+@compiletime
+function create_ice_stomp_effect()
+    EditorHelper.create_effect_faker_unit(IceStomp.effect_id, 1.0, "frozenshell.mdx", color(255,255,255))
+
+@compiletime
+function create_ice_stomp_buff()
+    var ed = new BuffDefinition(IceStomp.buff_id, 'BHtc')
+    ed..setArtTarget(1, "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathMissile.mdl")
+    ..setTargetAttachments(1, 1)
+    ..setTargetAttachmentPoint0(1, "head")
+    ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "IceStomp")
+    ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "该单位被IceStomp击中，减速了。")
+    ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\BTNFreezingBreath.blp")

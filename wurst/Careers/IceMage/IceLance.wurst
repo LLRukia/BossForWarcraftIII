@@ -14,7 +14,7 @@ public class IceLance extends IceMageSkill
 	static constant int unit_id = 'im0u'
 	static constant real unit_offset = 95.
 	static constant int unit_count = 7
-	static constant real dmg_radius = 55.
+	static constant real dmg_radius = 170.
 	static constant real dmg = 300.
 	
 	private boolean from_unit
@@ -124,10 +124,10 @@ function create_ice_lance()
             Color_Define.COLOR_ICEMAGE + "Ice Lance" +
             Color_Define.COLOR_HOT_KEY + "(E)")
 		..setTooltipNormalExtended(1,
-            Color_Define.COLOR_NORMAL + "依次选择两个点，从第一个点向第二个点释放IceLance，对命中单位造成300伤害。|n" +
-			Color_Define.COLOR_LAST_TIME + "冰块持续10秒。|n" +
-			Color_Define. COLOR_CAST_RANGE + "施法距离：900, 1100" +
-            Color_Define.COLOR_COOL_DOWN + "CD:6s")
+            Color_Define.COLOR_NORMAL + "→依次选择两个点，从第一个点向第二个点释放IceLance，对命中单位造成300伤害。|n" +
+			Color_Define.COLOR_LAST_TIME + "→冰块持续10秒。|n" +
+			Color_Define. COLOR_CAST_RANGE + "→施法距离：900, 1100|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:6s")
 		..setIconNormal("Ice Lance.blp")
 		..setArtEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl")
 

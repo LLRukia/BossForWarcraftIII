@@ -32,11 +32,14 @@ public class IceShield extends IceMageSkill
         if m_buff_obj != null
             destroy m_buff_obj
             m_buff_obj = null
+            (PlayerUnitHelper.get_instance(m_self_unit) castTo PlayerUnit).set_invulnerable(false)
 
     static function cast()
+        print("cast")
         var obj = GetTriggeringTrigger().getData() castTo IceShield
         obj.m_buff_obj = SkillHelper.protect(obj.m_self_unit)
         obj.m_self_unit.add_buff(IceShield.buff_id, BuffClearType.stable, BuffType.buffs, obj)
+        (PlayerUnitHelper.get_instance(obj.m_self_unit) castTo PlayerUnit).set_invulnerable(true)
         CreateTimer()..setData(obj castTo int)
             ..startPeriodic(IceShield.last_time, function tm_destroy_buff)
     
@@ -58,15 +61,16 @@ function create_ice_shield()
         ..setDurationNormal(1, IceShield.last_time)
         ..setManaCost(1, 5)
         ..setCooldown(1, 12)
-        ..setButtonPositionNormalX(0)
-        ..setButtonPositionNormalY(2)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
         ..setName("IceShield")
         ..setTooltipNormal(1,
 			Color_Define.COLOR_ICEMAGE + "Ice Shield" +
 			Color_Define.COLOR_HOT_KEY + "(D)")
         ..setTooltipNormalExtended(1,
-            Color_Define.COLOR_NORMAL + "◆冰箱无敌◆|n" +
-            Color_Define.COLOR_LAST_TIME + "→持续1.5秒。" +
+            Color_Define.COLOR_NORMAL + "↑冰箱无敌|n" +
+            Color_Define.COLOR_LAST_TIME + "→持续1.5秒。|n" +
+            Color_Define.COLOR_WARNING + "★使用此技能会消除掉大部分魔法效果。|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:12s")
         ..setIconNormal("iceshield.blp")
         ..setBuffs(1, IceShield.buff_id.toRawCode())
@@ -76,7 +80,8 @@ function create_ice_shield_buff()
     var ed = new BuffDefinition(IceShield.buff_id, 'Bbsk')
     ed..setArtTarget(1, "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathTargetArt.mdl")
     ..setTargetAttachments(1, 1)
-    ..setTargetAttachmentPoint0(1, "chest")
+    ..setTargetAttachmentPoint0(1, "origin")
     ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Ice Shield")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位免疫伤害。")
+    ..setIconNormal(1, "iceshield.blp")
     

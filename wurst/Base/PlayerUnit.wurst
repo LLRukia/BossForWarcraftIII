@@ -11,9 +11,12 @@ public class PlayerUnit extends IPlayerUnit
         for s in m_ls_skill
             s.listen()
 
-    override function can_add_buff() returns boolean
-        return m_is_invulnerable
+    override function get_invulnerable() returns boolean
+        return not m_is_invulnerable
     
+    override function set_invulnerable(boolean _b)
+        m_is_invulnerable = _b
+
     override function init_all()
 
     override function init_self()

@@ -5,7 +5,6 @@ import IceMage
 import ExternalDefines
 import BossHelper
 import TriggerHelper
-import BuffObjEditing
 import TimerUtils
 import HashMap
 import SkillHelper
@@ -170,9 +169,14 @@ function create_ice_spirit()
                 Color_Define.COLOR_ICEMAGE + "Ice Spirit[Chill Version]" +
                 Color_Define.COLOR_HOT_KEY + "(F)")
             ..setTooltipNormalExtended(1,
-                Color_Define.COLOR_NORMAL + "被动效果：当你杀死单位时，为你回复200生命和30魔法，并增加一点Spirit，最大3点。|n主动效果：消耗一个储存的Spirit，在指定地点放置一个寒冰之灵，当友方玩家踩到时，为其增加37%移动速度，持续7秒；当Boss踩到时，为其减少24%移动速度，持续5秒。|n" +
-                Color_Define. COLOR_CAST_RANGE + "施法距离：900|n" +
-                Color_Define.COLOR_COOL_DOWN + "CD:0s")
+                Color_Define.COLOR_NORMAL + "被动效果：|n→当你杀死单位时，为你回复" + 
+                Color_Define.COLOR_ICEMAGE + "200生命" + Color_Define.COLOR_NORMAL + "和" + 
+                Color_Define.COLOR_ICEMAGE + "30魔法" + Color_Define.COLOR_NORMAL + "，并增加一点Spirit，最大3点。|n主动效果：|n→消耗一个储存的Spirit，在指定地点放置一个寒冰之灵|n" +
+                Color_Define.COLOR_HOT_KEY + "↑友方玩家踩到增加37%移动速度|n" + 
+                Color_Define.COLOR_WARNING  + "↓Boss踩到减少24%移动速度|n" +
+                Color_Define.COLOR_LAST_TIME + "→Boss持续5秒，友方单位持续7秒。|n"+
+                Color_Define. COLOR_CAST_RANGE + "→施法距离：900|n" +
+                Color_Define.COLOR_COOL_DOWN + "→CD:0s")
             ..setIconNormal(icon[i])
 
         destroy editor
