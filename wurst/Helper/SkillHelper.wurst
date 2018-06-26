@@ -5,9 +5,12 @@ import Unit
 import MathHelper
 import TimerUtils
 import Effect
-import UnitObjEditing
-import ObjectIds
 import Printing
+import EditorHelper
+import TriggerHelper
+
+public let FAKE_CASTER = 'ctfk'
+
 class Rush
     static let default_effect = "Objects\\Spawnmodels\\Undead\\ImpaleTargetDust\\ImpaleTargetDust.mdl"
     static let unit_id = 'rush'
@@ -59,6 +62,17 @@ class Rush
 
 class FanShaped
     
+public class Invulnerability
+    trigger tr
+    construct(unit u)
+        u.setArmor(233.)
+        tr = CreateTrigger()..registerUnitEvent(u, EVENT_UNIT_DAMAGED)
+            ..addAction(()->BlzSetEventDamage(0))
+
+    ondestroy
+        tr..disable()..destr()
+
+
 
 public class SkillHelper
     static function rush(unit u, angle ang, real dis, real speed, bool pauseUnit, string effect_path)
@@ -66,7 +80,8 @@ public class SkillHelper
 
     static function flash()
         
-
+    static function protect(unit u) returns Invulnerability
+        return new Invulnerability(u)
 
     private construct()
 
@@ -91,3 +106,8 @@ function create_rush_explorer()
         ..setSightRadiusNight(0)
         ..setModelFile(".mdl")
     destroy editor
+
+@compiletime
+function create_ice_spirit_faker_caster()
+    var ed = EditorHelper.create_caster_faker_unit(FAKE_CASTER, 1)
+    destroy ed

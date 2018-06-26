@@ -1,11 +1,11 @@
 package IceMageSkill
 
-import ExternalDefines
 import public initlater IceBarrier
 import public initlater IceLance
-import public initlater ForstBolt
-import public initlater ConeofCold
+import public initlater FrostBolt
+import public initlater IceStomp
 import public initlater IceSpirit
+import public initlater IceImage
 import BaseSkills
 
 public enum emSkill
@@ -19,10 +19,7 @@ public class IceMageSkill extends IBaseSkills
 	construct(unit spell_unit)
 		super(spell_unit)
 
-	override function cast()
-		if _DEBUG
-			print("IceMageSkill::error call")
-		
+
 	override function listen()
 
 	override function destroy_buff(unit _u)

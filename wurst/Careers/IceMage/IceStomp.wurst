@@ -1,0 +1,53 @@
+package IceStomp
+
+import IceMage
+import ExternalDefines
+import EditorHelper
+
+public class IceStomp extends IceMageSkill
+    static let self_id = 'im0w'
+    static let dmg = 240.
+    static let radius = 350.
+    static let last_time = 3.
+
+    construct(unit u)
+        super(u)
+
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CAST)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
+            ..addAction(function IceStomp.prepare)
+
+    static function prepare()
+        flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", GetSpellAbilityUnit().getPos())
+
+@compiletime
+function create_ice_stomp()
+    var ed = new AbilityDefinitionMountainKingThunderClap(IceStomp.self_id)
+    ed..setAttackSpeedReduction(1, .15)
+    ..setSpecificTargetDamage(1, 0.)
+    ..setAOEDamage(1, IceStomp.dmg)
+    ..setMovementSpeedReduction(1, 15)
+    ..setAreaofEffect(1, IceStomp.radius)
+    ..setDurationHero(1, IceStomp.last_time)
+    ..setDurationNormal(1, IceStomp.last_time)
+    ..setManaCost(1, 0)
+    ..setCooldown(1, 6)
+    ..setCastingTime(1, 0.8)
+    ..setHeroAbility(false)
+    ..setArtCaster("icestomp.mdx")
+    ..setButtonPositionNormalX(1)
+    ..setButtonPositionNormalY(2)
+    ..setHotkeyNormal("W")
+    ..setName("IceStomp")
+    ..setLevels(1)
+    ..setTooltipNormal(1,
+        Color_Define.COLOR_ICEMAGE + "Ice Stomp" +
+        Color_Define.COLOR_HOT_KEY + "(W)")
+    ..setTooltipNormalExtended(1,
+        Color_Define.COLOR_NORMAL + "积蓄力量，1秒后对350范围内敌人造成240伤害，并减慢他们15%/15%的速度。|n" +
+        Color_Define.COLOR_LAST_TIME + "减速持续3秒。|n" +
+        Color_Define.COLOR_COOL_DOWN + "CD:6s")
+    ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNFreezingBreath.blp")
+    ..setOrderStringUseTurnOn(ORDERS[emSkillKey.W castTo int])

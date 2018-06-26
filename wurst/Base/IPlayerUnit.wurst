@@ -10,8 +10,6 @@ public abstract class IPlayerUnit
     protected career m_self_career
     protected boolean m_is_invulnerable = true
 
-    abstract function spell(int nSkillId)
-
     abstract function listen_all()
 
     abstract function init_all()

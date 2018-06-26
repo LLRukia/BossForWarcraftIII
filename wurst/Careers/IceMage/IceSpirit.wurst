@@ -8,6 +8,7 @@ import TriggerHelper
 import BuffObjEditing
 import TimerUtils
 import HashMap
+import SkillHelper
 
 public class IceSpirit extends IceMageSkill
     static let self_id = 'im0f'
@@ -47,7 +48,7 @@ public class IceSpirit extends IceMageSkill
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
             ..addCondition(Filter(()->GetSpellAbilityId()==IceSpirit.self_ids[0] or GetSpellAbilityId()==IceSpirit.self_ids[1]
             or GetSpellAbilityId()==IceSpirit.self_ids[2] or GetSpellAbilityId()==IceSpirit.self_ids[3]))
-            ..addAction(function IceSpirit.cast_)
+            ..addAction(function IceSpirit.cast)
             ..setData(this castTo int)
         m_tr_kill_recovery..registerAnyUnitEvent(EVENT_PLAYER_UNIT_DEATH)
             ..addCondition(Filter(function recovery_judge))
@@ -57,13 +58,13 @@ public class IceSpirit extends IceMageSkill
             ..addAction(function IceSpirit.enter)
             ..setData(this castTo int)
 
-    static function cast_()
+    static function cast()
         location lc = GetSpellTargetLoc()
         IceSpirit.pt_cast = vec2(GetLocationX(lc), GetLocationY(lc))
         RemoveLocation(lc)
-        (GetTriggeringTrigger().getData() castTo IceSpirit).cast()
+        (GetTriggeringTrigger().getData() castTo IceSpirit).cast_()
 
-    override function cast()
+    function cast_()
         if m_spirit_num == 0
             printTimedToPlayer(Color_Define.COLOR_ICEMAGE + "Ice Spirit数量不足。", 2., m_self_unit.getOwner())
             return
@@ -118,8 +119,10 @@ public class IceSpirit extends IceMageSkill
             obj.m_exist_spirit_num--
             flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", min_unit.getPos())
             
-            unit uFaker = createUnit(obj.m_self_unit.getOwner(), IceSpirit.caster_faker, u.getPos()+vec2(-100,0), angle(0))
-            uFaker.setTimedLife(1)
+            unit uFaker = createUnit(obj.m_self_unit.getOwner(), FAKE_CASTER, u.getPos()+vec2(-100,0), angle(0))
+            uFaker..setTimedLife(1)
+                ..addAbility(IceSpirit.skill_up_id)
+                ..addAbility(IceSpirit.skill_down_id)
             if u.isBoss()
                 uFaker.issueTargetOrder("cripple", u)
             else
@@ -157,7 +160,7 @@ function create_ice_spirit()
         var editor = EditorHelper.create_channel_template(IceSpirit.self_ids[i], emSkillKey.F)
         editor..setCastRange(1, 900)
             ..setManaCost(1, 0)
-            ..setCooldown(1, 2)
+            ..setCooldown(1, 0)
             ..setButtonPositionNormalX(2)
             ..setButtonPositionNormalY(1)
             ..setHotkeyNormal("F")
@@ -169,7 +172,7 @@ function create_ice_spirit()
             ..setTooltipNormalExtended(1,
                 Color_Define.COLOR_NORMAL + "被动效果：当你杀死单位时，为你回复200生命和30魔法，并增加一点Spirit，最大3点。|n主动效果：消耗一个储存的Spirit，在指定地点放置一个寒冰之灵，当友方玩家踩到时，为其增加37%移动速度，持续7秒；当Boss踩到时，为其减少24%移动速度，持续5秒。|n" +
                 Color_Define. COLOR_CAST_RANGE + "施法距离：900|n" +
-                Color_Define.COLOR_COOL_DOWN + "CD:2s")
+                Color_Define.COLOR_COOL_DOWN + "CD:0s")
             ..setIconNormal(icon[i])
 
         destroy editor
@@ -178,11 +181,6 @@ function create_ice_spirit()
 function create_ice_spirit_unit()
     var ed = EditorHelper.create_effect_faker_unit('im1f', 2., "Abilities\\Weapons\\PriestMissile\\PriestMissile.mdl", color(255,255,255))
     destroy ed
-
-@compiletime
-function create_ice_spirit_faker_caster()
-    var ed = EditorHelper.create_caster_faker_unit(IceSpirit.caster_faker, 1)
-    ed..setNormalAbilities("Aloc,"+IceSpirit.skill_up_id.toRawCode() + "," +IceSpirit.skill_down_id.toRawCode())
 
 @compiletime
 function create_faker_skills()

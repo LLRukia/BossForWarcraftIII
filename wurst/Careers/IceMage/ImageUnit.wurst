@@ -1,0 +1,67 @@
+package ImageUnit
+import LinkedList
+import BaseSkills
+import initlater IceLance
+import initlater IceStomp
+import TriggerHelper
+import EditorHelper
+
+public class ImageUnit
+    private var ls_skill = new LinkedList<IBaseSkills>
+    private var ls_tr = new LinkedList<trigger>
+    private unit m_u_listen
+    private unit m_u_caster
+    private unit m_u_image
+    construct(unit u, unit u_listen, unit u_image)
+        m_u_caster = u
+        m_u_image = u_image
+        u..addAbility(IceLance.self_id)..addAbility(IceStomp.self_id)
+        ls_skill.add(new IceStomp(u))
+        ls_skill.add(new IceLance(u))
+        for i in ls_skill
+            i.listen()
+        this.m_u_listen = u_listen
+        listen_to_cast()
+
+    ondestroy
+        ls_skill.clear()
+
+    function listen_to_cast()
+        trigger t1 = CreateTrigger()..registerUnitEvent(m_u_listen, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceLance.self_id))
+            ..addAction(function icelance_cast1)
+            ..setData(this castTo int)
+       
+        trigger t2 = CreateTrigger()..registerUnitEvent(m_u_listen, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceLance.help_id))
+            ..setData(this castTo int)
+            ..addAction(function icelance_cast2)
+
+        trigger t3 = CreateTrigger()..registerUnitEvent(m_u_listen, EVENT_UNIT_SPELL_CAST)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
+            ..setData(this castTo int)
+            ..addAction(function icestomp_spell)
+        ls_tr..add(t1)..add(t2)..add(t3)
+
+    static function icelance_cast1()
+        var obj = GetTriggeringTrigger().getData() castTo ImageUnit
+        location lc = GetSpellTargetLoc()
+        vec2 pt = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        obj.m_u_caster.setXY(obj.m_u_image.getPos())
+        pt += obj.m_u_listen.getPos() - obj.m_u_image.getPos()
+        obj.m_u_caster.issuePointOrder(ORDERS[emSkillKey.E castTo int], pt)
+
+    static function icelance_cast2()
+        var obj = GetTriggeringTrigger().getData() castTo ImageUnit
+        location lc = GetSpellTargetLoc()
+        vec2 pt = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        obj.m_u_caster.setXY(obj.m_u_image.getPos())
+        pt += obj.m_u_listen.getPos() - obj.m_u_image.getPos()
+        obj.m_u_caster.issuePointOrder(ORDERS[emSkillKey.E castTo int], pt)
+
+    static function icestomp_spell()
+        var obj = GetTriggeringTrigger().getData() castTo ImageUnit
+        obj.m_u_caster.setXY(obj.m_u_image.getPos())
+        obj.m_u_caster.issueImmediateOrder(ORDERS[emSkillKey.W castTo int])

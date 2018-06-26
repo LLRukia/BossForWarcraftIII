@@ -2,22 +2,19 @@ package PlayerUnit
 import ExternalDefines
 import public initlater IPlayerUnit
 import PlayerHelper
-import HashMap
+import LinkedList
 
 public class PlayerUnit extends IPlayerUnit
-    protected var m_mapSkill = new IterableMap<int, IBaseSkills>
+    protected var m_ls_skill = new LinkedList<IBaseSkills>
     protected Buffs m_buffs
     override function listen_all()
-        for s in m_mapSkill
-            m_mapSkill.get(s).listen()
+        for s in m_ls_skill
+            s.listen()
 
     override function can_add_buff() returns boolean
         return m_is_invulnerable
     
     override function init_all()
-
-    override function spell(int nSkillId)
-        m_mapSkill.get(nSkillId).cast()
 
     override function init_self()
         skip
@@ -47,7 +44,7 @@ public class PlayerUnit extends IPlayerUnit
         if not PlayerHelper.unregister_controlling_unit(m_control_player, m_self_unit)
             if _DEBUG
              print("repeat choose")
-        for s in m_mapSkill
-            destroy m_mapSkill.get(s)
+
+        m_ls_skill.clear()
 
     

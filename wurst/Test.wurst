@@ -1,16 +1,16 @@
 package Test
 import PlayerHelper
 import Buffs
-import EffectHelper
 import UnitObjEditing
 import ExternalDefines
 
 function test()
     print("test")
-    //Player(0).get_unit().remove_buff(BuffClearType.stable, BuffType.buffs)
-    EffectHelper.flash_effect('1rbk', vec2(000,0), 0)
-    EffectHelper.flash_effect('2rbk', vec2(400,0), 0)
-    //EffectHelper.flash_effect('3rbk', vec2(-200,0), 0)
+    Player(0).get_unit().remove_buff(BuffClearType.additions, BuffType.buffs)
+    
+function test1()
+    print("test1")
+    Player(0).get_unit().remove_buff(BuffClearType.stable, BuffType.buffs)
 
 @compiletime
 function create_fire_chicken()
@@ -51,5 +51,11 @@ init
     for i = 0 to 7
         tr.registerPlayerChatEvent(Player(i), "-test", true)
     tr..addAction(function test)
+        ..enable()
+
+    var tr1 = CreateTrigger()
+    for i = 0 to 7
+        tr1.registerPlayerChatEvent(Player(i), "-test1", true)
+    tr1..addAction(function test1)
         ..enable()
         

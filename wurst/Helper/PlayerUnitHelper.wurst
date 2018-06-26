@@ -2,11 +2,6 @@ package PlayerUnitHelper
 import PlayerUnit
 import Table
 
-//forward skill act
-public function skill_act_forwarding()
-    PlayerUnitHelper.get_instance(GetSpellAbilityUnit()) castTo PlayerUnit
-        .spell(GetSpellAbilityId())
-
 public class PlayerUnitHelper
     static Table mapUnitInstance = new Table
 

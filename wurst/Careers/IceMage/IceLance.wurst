@@ -32,15 +32,15 @@ public class IceLance extends IceMageSkill
 	override function listen()
 		m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
 			..addCondition(Filter(()->GetSpellAbilityId()==IceLance.self_id))
-			..addAction(function skill_act_forwarding)
+			..addAction(function IceLance.cast)
+			..setData(this castTo int)
 		tr_help..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
 			..addCondition(Filter(()->GetSpellAbilityId()==IceLance.help_id))
 			..setData(this castTo int)
 			..addAction(function IceLance.choose_point2)
 		
-	override function cast()
-		print(GetSpellAbilityId().toString())
-		choose_point1()
+	static function cast()
+		(GetTriggeringTrigger().getData() castTo IceLance).choose_point1()
 
 	private function choose_point1()
 		location lc = GetSpellTargetLoc()
@@ -53,9 +53,9 @@ public class IceLance extends IceMageSkill
 
 	static private function choose_point2()
 		location lc = GetSpellTargetLoc()
-		var instance = GetTriggeringTrigger().getData() castTo IceLance
-		instance.from_unit = false
-		instance.pt2 = vec2(GetLocationX(lc), GetLocationY(lc))
+		var obj = GetTriggeringTrigger().getData() castTo IceLance
+		obj.from_unit = false
+		obj.pt2 = vec2(GetLocationX(lc), GetLocationY(lc))
 		RemoveLocation(lc)
 
 	static function start()

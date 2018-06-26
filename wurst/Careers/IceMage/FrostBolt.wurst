@@ -1,9 +1,10 @@
-package ForstBolt
+package FrostBolt
 import IceMage
 import EditorHelper
 import ExternalDefines
+import TriggerHelper
 
-public class ForstBolt extends IceMageSkill
+public class FrostBolt extends IceMageSkill
 	static constant int self_id = 'im0q'
 	static constant real dmg = 220.
 	//static constant int buff_id = 'B001'
@@ -13,16 +14,17 @@ public class ForstBolt extends IceMageSkill
 
 	override function listen()
 		m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
-			..addCondition(Filter(()->GetSpellAbilityId()==ForstBolt.self_id))
-			..addAction(function skill_act_forwarding)
+			..addCondition(Filter(()->GetSpellAbilityId()==FrostBolt.self_id))
+			..addAction(function FrostBolt.cast)
+			..setData(this castTo int)
 	
-	override function cast()
-		m_self_unit.damageTarget(GetSpellTargetUnit(), ForstBolt.dmg, ATTACK_TYPE_NORMAL)
+	static function cast()
+		(GetTriggeringTrigger().getData() castTo FrostBolt).m_self_unit.damageTarget(GetSpellTargetUnit(), FrostBolt.dmg, ATTACK_TYPE_NORMAL)
 
 
 @compiletime
 function create_frost_bolt()
-	var editor = EditorHelper.create_channel_template(ForstBolt.self_id, emSkillKey.Q)
+	var editor = EditorHelper.create_channel_template(FrostBolt.self_id, emSkillKey.Q)
 	editor..setCastRange(1, 1300)
 		..setManaCost(1, 17)
 		..setCooldown(1, 1.8)

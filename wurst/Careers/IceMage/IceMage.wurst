@@ -2,7 +2,6 @@ package IceMage
 import public PlayerUnitHelper
 import public PlayerUnit
 import ExternalDefines
-import HashMap
 import public IceMageSkill
 import EditorHelper
 import BuffObjEditing
@@ -16,19 +15,20 @@ public class IceMage extends PlayerUnit
 		u.hideAbility('imbk', true)
 
 	override function init_self() 
-		m_mapSkill.put(IceBarrier.self_id, new IceBarrier(m_self_unit))
-		m_mapSkill.put(IceLance.self_id, new IceLance(m_self_unit))
-		m_mapSkill.put(ConeofCold.self_id, new ConeofCold(m_self_unit))
-		m_mapSkill.put(ForstBolt.self_id, new ForstBolt(m_self_unit))
-		m_mapSkill.put(IceSpirit.self_id, new IceSpirit(m_self_unit))
+		m_ls_skill.add(new IceBarrier(m_self_unit))
+		m_ls_skill.add(new IceLance(m_self_unit))
+		m_ls_skill.add(new IceStomp(m_self_unit))
+		m_ls_skill.add(new FrostBolt(m_self_unit))
+		m_ls_skill.add(new IceSpirit(m_self_unit))
+		m_ls_skill.add(new IceImage(m_self_unit))
 
 
 @compiletime
 function create_ice_mage()
 	var editor = new HeroDefinition(ICE_MAGE, 'Hjai')
-	string im_skill_list = ForstBolt.self_id.toRawCode() + "," + ConeofCold.self_id.toRawCode() + "," +
+	string im_skill_list = FrostBolt.self_id.toRawCode() + "," + IceStomp.self_id.toRawCode() + "," +
 		IceLance.self_id.toRawCode() + "," + IceBarrier.self_id.toRawCode() + "," +
-		IceSpirit.self_id.toRawCode() +
+		IceSpirit.self_id.toRawCode() + "," + IceImage.self_id.toRawCode() + 
 		",imbk,AInv"
 	editor..setNormalAbilities(im_skill_list)
 		..setHeroAbilities("")

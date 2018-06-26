@@ -1,0 +1,93 @@
+package IceImage
+
+import IceMage
+import EditorHelper
+import ExternalDefines
+import TriggerHelper
+import TimerUtils
+import SkillHelper
+import ImageUnit
+
+public class IceImage extends IceMageSkill
+    static let self_id = 'im0g'
+    static let image_skill_id = 'im1g'
+    private unit m_summoning = null
+    private unit m_summoned = null
+    private ImageUnit m_image_obj = null
+    private unit m_summoned_faker = null
+    construct(unit u)
+        super(u)
+
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==IceImage.self_id))
+            ..addAction(function IceImage.cast)
+
+    static function cast()
+        (GetTriggeringTrigger().getData() castTo IceImage).cast_()
+
+    function cast_()
+        m_summoning = createUnit(m_self_unit.getOwner(), FAKE_CASTER, m_self_unit.getPos() - vec2(100, 0), angle(0))
+        m_summoning.addAbility(IceImage.image_skill_id)
+        CreateTrigger()..setData(this castTo int)
+            ..registerUnitEvent(m_summoning, EVENT_UNIT_SUMMON)
+            ..addAction(function IceImage.tr_summon)
+        m_summoning.issueTargetOrderById(852274, m_self_unit)
+
+    static function tr_summon()
+        trigger tr = GetTriggeringTrigger()
+        var obj = tr.getData() castTo IceImage
+        obj.m_summoned = GetSummonedUnit()
+        obj.m_summoned_faker = createUnit(obj.m_summoned.getOwner(), FAKE_CASTER, obj.m_summoned.getPos(), angle(0))
+        obj.m_image_obj = new ImageUnit(obj.m_summoned_faker, obj.m_self_unit, obj.m_summoned)
+        CreateTimer()..setData(tr.getData())
+            ..startPeriodic(8, function destroy_image)
+        RemoveUnit(obj.m_summoning)
+        obj.m_summoning = null
+        tr..disable()..destr()
+
+    static function destroy_image()
+        timer t = GetExpiredTimer()
+        var obj = t.getData() castTo IceImage
+        flashEffect("Objects\\Spawnmodels\\NightElf\\NECancelDeath\\NECancelDeath.mdl", obj.m_summoned.getPos())
+        RemoveUnit(obj.m_summoned)
+        RemoveUnit(obj.m_summoned_faker)
+        destroy obj.m_image_obj
+        obj.m_summoned = null
+        obj.m_summoned_faker = null
+        obj.m_image_obj = null
+        t..pause()..destr()
+
+
+    
+
+
+@compiletime
+function create_ice_image()
+    var editor = EditorHelper.create_channel_template(IceImage.self_id, emSkillKey.G)
+    editor..setManaCost(1, 44)
+        ..setCooldown(1, 22)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("G")
+        ..setTargetType(1, emTargetType.None castTo int)
+        ..setName("Image")
+        ..setTooltipNormal(1,
+			Color_Define.COLOR_ICEMAGE + "Image" +
+			Color_Define.COLOR_HOT_KEY + "(G)")
+        ..setTooltipNormalExtended(1,
+			Color_Define.COLOR_NORMAL + "↑产生一个自己的幻象，跟随自己一起释放技能。幻象受到100%的伤害，造成100%的伤害。幻象可继承冰法的W与E技能。|n★幻象造成的伤害归冰法本体所有。|n" +
+			Color_Define.COLOR_LAST_TIME + "→持续时间：8s|n" +
+			Color_Define.COLOR_COOL_DOWN + "→CD:22s")
+        ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNInvisibility.blp")
+
+@compiletime
+function create_image_skill()
+    var editor = new AbilityDefinitionItemIllusion(IceImage.image_skill_id)
+    editor..setDamageReceivedMultiplier(1, 1.)
+        ..setDamageDealtofnormal(1, 1.)
+        ..setDurationHero(1, 100)
+        ..setDurationNormal(1, 100)
+        ..setCooldown(1, 0)
+        ..setCastRange(1, 99999)
