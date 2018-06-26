@@ -4,6 +4,7 @@ import NoWurst
 import public AbilityObjEditing
 import public ObjectIds
 import public Colors
+import public BuffObjEditing
 import ExternalDefines
 /*
 附加点: 
@@ -40,7 +41,7 @@ public enum emSkillKey
     F
     G
 
-public let ORDERS = ["doom", "channel", "polymorph", "farsight", "divineshield", "magicleash", "unholyfrenzy"]
+public let ORDERS = ["doom", "channel", "polymorph", "bloodlust", "divineshield", "magicleash", "blizzard"]
 
 
 class EditorHelper
@@ -82,6 +83,7 @@ class EditorHelper
             ..setShadowImageWidth(0.)
             ..setName(id.toRawCode())
             ..setModelFile(".mdl")
+            ..setUnitClassification("")
         return u_editor
 
     static function create_effect_faker_unit(int id, real size, string effect_path, color cl) returns UnitOrBuildingOrHeroDefinition
@@ -105,6 +107,7 @@ class EditorHelper
             ..setAnimationCastBackswing(0.)
             ..setFoodCost(0)
             ..setModelFile(effect_path)
+            ..setUnitClassification("")
         return u_editor
 
     

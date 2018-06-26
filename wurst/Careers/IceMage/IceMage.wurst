@@ -4,9 +4,9 @@ import public PlayerUnit
 import ExternalDefines
 import public IceMageSkill
 import EditorHelper
-import BuffObjEditing
 
 public class IceMage extends PlayerUnit
+	unit m_self_image = null
 	construct(player pl, unit u)
 		super(pl, u)
 		m_self_career = ice_mage
@@ -21,14 +21,15 @@ public class IceMage extends PlayerUnit
 		m_ls_skill.add(new FrostBolt(m_self_unit))
 		m_ls_skill.add(new IceSpirit(m_self_unit))
 		m_ls_skill.add(new IceImage(m_self_unit))
-
+		m_ls_skill.add(new IceShield(m_self_unit))
 
 @compiletime
 function create_ice_mage()
 	var editor = new HeroDefinition(ICE_MAGE, 'Hjai')
 	string im_skill_list = FrostBolt.self_id.toRawCode() + "," + IceStomp.self_id.toRawCode() + "," +
 		IceLance.self_id.toRawCode() + "," + IceBarrier.self_id.toRawCode() + "," +
-		IceSpirit.self_id.toRawCode() + "," + IceImage.self_id.toRawCode() + 
+		IceSpirit.self_id.toRawCode() + "," + IceImage.self_id.toRawCode() + "," + 
+		IceShield.self_id.toRawCode() +
 		",imbk,AInv"
 	editor..setNormalAbilities(im_skill_list)
 		..setHeroAbilities("")

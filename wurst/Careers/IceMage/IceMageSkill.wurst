@@ -6,6 +6,7 @@ import public initlater FrostBolt
 import public initlater IceStomp
 import public initlater IceSpirit
 import public initlater IceImage
+import public initlater IceShield
 import BaseSkills
 
 public enum emSkill

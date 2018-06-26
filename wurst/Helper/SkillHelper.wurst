@@ -64,13 +64,19 @@ class FanShaped
     
 public class Invulnerability
     trigger tr
+    real armor = 0
+    unit u = null
     construct(unit u)
+        print("protect")
+        armor = u.getArmor()
+        this.u = u
         u.setArmor(233.)
         tr = CreateTrigger()..registerUnitEvent(u, EVENT_UNIT_DAMAGED)
             ..addAction(()->BlzSetEventDamage(0))
 
     ondestroy
         tr..disable()..destr()
+        u.setArmor(armor)
 
 
 

@@ -6,6 +6,7 @@ import TriggerHelper
 
 public class FrostBolt extends IceMageSkill
 	static constant int self_id = 'im0q'
+	static let buff_id = 'im4b'
 	static constant real dmg = 220.
 	//static constant int buff_id = 'B001'
 	
@@ -19,34 +20,45 @@ public class FrostBolt extends IceMageSkill
 			..setData(this castTo int)
 	
 	static function cast()
-		(GetTriggeringTrigger().getData() castTo FrostBolt).m_self_unit.damageTarget(GetSpellTargetUnit(), FrostBolt.dmg, ATTACK_TYPE_NORMAL)
+		(GetTriggeringTrigger().getData() castTo FrostBolt).m_self_unit.damageTarget(GetSpellTargetUnit(), FrostBolt.dmg, ATTACK_TYPE_MAGIC)
 
 
 @compiletime
 function create_frost_bolt()
-	var editor = EditorHelper.create_channel_template(FrostBolt.self_id, emSkillKey.Q)
-	editor..setCastRange(1, 1300)
+	var editor = EditorHelper.create_cripple_template(FrostBolt.self_id, 1.5, FrostBolt.buff_id)
+	editor..setAttackSpeedReduction(1, 0.05)
+		..setMovementSpeedReduction(1, 0.05)
+		..setCastRange(1, 1300)
 		..setManaCost(1, 17)
 		..setCooldown(1, 1.8)
 		..setButtonPositionNormalX(0)
 		..setButtonPositionNormalY(2)
 		..setHotkeyNormal("Q")
 		..setTargetsAllowed(1, TYPE_ALLOWED_COMMON)
-		..setTargetType(1, emTargetType.Unit castTo int)
 		..setName("FrostBolt")
 		..setTooltipNormal(1,
 			Color_Define.COLOR_ICEMAGE + "Frost Bolt" +
 			Color_Define.COLOR_HOT_KEY + "(Q)")
 		..setTooltipNormalExtended(1,
-			Color_Define.COLOR_NORMAL + "向目标射出一枚寒冰箭，造成220伤害。|n" +
-			Color_Define.COLOR_MANA_DECREASE + "减少目标4点能量。|n" +
-			Color_Define. COLOR_CAST_RANGE + "施法距离：1300|n" +
-			Color_Define.COLOR_COOL_DOWN + "CD:1.8s")
+			Color_Define.COLOR_NORMAL + "↓向目标射出一枚寒冰箭，造成220伤害。|n↓减少目标10%/10%的速度。|n" +
+			Color_Define.COLOR_MANA_DECREASE + "↓减少目标4点能量。|n" +
+			Color_Define.COLOR_LAST_TIME + "→持续1.5秒|n" +
+			Color_Define.COLOR_CAST_RANGE + "→施法距离：1300|n" +
+			Color_Define.COLOR_COOL_DOWN + "→CD:1.8s")
 		..setIconNormal("frostbolt.blp")
 		..setArtTarget("Abilities\\Spells\\Items\\SpellShieldAmulet\\SpellShieldCaster.mdl")
 		
 	destroy editor
 
-init
-	if compiletime
-		create_frost_bolt()
+@compiletime
+function create_frost_bolt_buff()
+	var editor = new BuffDefinition(FrostBolt.buff_id, 'Bdet')
+	editor..setName(1, "FrostBolt")
+		..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Frost Bolt")
+		..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位被寒冰箭击中，减速了。")
+		..setArtTarget(1, "Abilities\\Spells\\Other\\FrostDamage\\FrostDamage.mdl")
+		..setTargetAttachments(1, 0)
+		..setIconNormal(1, "frostbolt.blp")
+
+
+	destroy editor

@@ -5,7 +5,6 @@ import ExternalDefines
 import HashMap
 import TriggerHelper
 import EditorHelper
-import BuffObjEditing
 import ProgressHelper
 
 class Data
@@ -116,6 +115,8 @@ public class IceBarrier extends IceMageSkill
 
     static function protect_act()
         Data dt = GetTriggeringTrigger().getData() castTo Data
+        if not dt.m_u.can_add_buff()
+            return
         real fDmg = GetEventDamage()
         
         if fDmg <= 0
@@ -158,10 +159,10 @@ function create_ice_barrier()
             Color_Define.COLOR_ICEMAGE + "Ice Barrier" +
             Color_Define.COLOR_HOT_KEY + "(R)")
         ..setTooltipNormalExtended(1,
-            Color_Define.COLOR_NORMAL + "给目标施加寒冰屏障，可以为目标吸收最大750点伤害。|n" +
-            Color_Define.COLOR_LAST_TIME + "持续45秒。|n" +
-            Color_Define. COLOR_CAST_RANGE + "施法距离：1100|n" +
-            Color_Define.COLOR_COOL_DOWN + "CD:5s")
+            Color_Define.COLOR_NORMAL + "↑给目标施加寒冰屏障，可以为目标吸收最大750点伤害。|n" +
+            Color_Define.COLOR_LAST_TIME + "→持续45秒。|n" +
+            Color_Define. COLOR_CAST_RANGE + "→施法距离：1100|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:5s")
         ..setIconNormal("Ice Barrier.blp")
         ..setBuffs(1, IceBarrier.buff_id.toRawCode())
         ..setDurationHero(1, 45)

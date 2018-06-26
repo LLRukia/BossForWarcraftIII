@@ -12,7 +12,11 @@ public let ICE_MAGE = 'H0IM'
 public let TYPE_ALLOWED_COMMON = "alive,enemies,ground,structure,air,ward"
 public let TYPE_ALLOWED_ALLY = "alive,ground,air,friend,self"
 public let TYPE_ALLOWED_ALL = "air,ground"
-
+/** 
+这个值是因为范围技能的半径和选取单位范围的半径有误差（单位本体大小等原因）
+本图选取40作为修正值，请在技能定义里减掉修正，同时在选取单位范围的时候加上修正。
+*/
+public let AREA_DMG_CORRECTION = 40.
 public let PICK_UNITS = [ICE_MAGE]
 public let PICK_CAREERS = [career.ice_mage]
 public let CAREERS_NUM = 1
@@ -26,3 +30,4 @@ public class Color_Define
     static let COLOR_NORMAL        = "|cffFFFFFF"
     static let COLOR_LAST_TIME     = "|cffccffcc"
     static let COLOR_CAST_RANGE    = "|cffDAA520"
+    static let COLOR_WARNING       = "|cffFF5151"

@@ -22,4 +22,6 @@ public abstract class IPlayerUnit
 
     abstract function remove_buff(int id)
 
-    abstract function can_add_buff() returns boolean
+    abstract function get_invulnerable() returns boolean
+
+    abstract function set_invulnerable(boolean _b)
