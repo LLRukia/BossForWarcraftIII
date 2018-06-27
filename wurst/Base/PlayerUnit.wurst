@@ -1,12 +1,16 @@
 package PlayerUnit
 import ExternalDefines
 import public initlater IPlayerUnit
+import public StatisticsHelper
 import PlayerHelper
 import LinkedList
+import TriggerHelper
+import initlater ReviveHelper
 
 public class PlayerUnit extends IPlayerUnit
     protected var m_ls_skill = new LinkedList<IBaseSkills>
     protected Buffs m_buffs
+    protected trigger tr_self_death = CreateTrigger()
     override function listen_all()
         for s in m_ls_skill
             s.listen()
@@ -16,8 +20,6 @@ public class PlayerUnit extends IPlayerUnit
     
     override function set_invulnerable(boolean _b)
         m_is_invulnerable = _b
-
-    override function init_all()
 
     override function init_self()
         skip
@@ -31,10 +33,17 @@ public class PlayerUnit extends IPlayerUnit
     override function remove_buff(int id)
         m_buffs.remove_buff(id)
         
+    static function self_die()
+        var obj = GetTriggeringTrigger().getData() castTo PlayerUnit
+        ReviveHelper.create_death_unit(obj.m_self_unit)
+    
     construct(player pl, unit u)
         m_self_unit = u
         m_control_player = pl
         m_buffs = new Buffs(u)
+        tr_self_death..registerUnitEvent(u, EVENT_UNIT_DEATH)
+        ..addAction(function self_die)
+        ..setData(this castTo int)
         //whenver create a playerunit, register it!
         //actually, in this map, each player only has one unit
         if not PlayerHelper.register_controlling_unit(pl, u)

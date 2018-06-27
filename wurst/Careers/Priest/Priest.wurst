@@ -1,0 +1,57 @@
+package Priest
+
+import public PlayerUnitHelper
+import public PlayerUnit
+
+import ExternalDefines
+import public PriestSkill
+import EditorHelper
+
+public class Priest extends PlayerUnit
+	unit m_self_image = null
+	construct(player pl, unit u)
+		super(pl, u)
+		m_self_career = priest
+		init_self()
+		listen_all()
+		u.hideAbility('prbk', true)
+
+	override function init_self() 
+		m_ls_skill.add(new Heal(m_self_unit))
+
+@compiletime
+function create_priest()
+	var editor = EditorHelper.create_template_hero(PRIEST)
+	string pr_skill_list = Heal.self_id.toRawCode() +
+		",imbk,AInv"
+
+	editor..setNormalAbilities(pr_skill_list)
+		..setUnitSoundSet("Priest")
+		..setProperNames(Color_Define.COLOR_PRIEST + "牧师")
+		..setName("牧师")
+		..setModelFile("units\\human\\Priest\\Priest")
+		..setArtSpecial("units\\human\\Priest\\Priest")
+		..setAttack1ProjectileArt("Abilities\\Weapons\\DruidoftheTalonMissile\\DruidoftheTalonMissile.mdl")
+		..setAttack1AttackType(AttackType.Magic)
+		..setPrimaryAttribute("INT")
+
+@compiletime
+function create_im_au()
+	var editor = EditorHelper.create_aura('prau')
+	editor..setArtTarget("xiwa.mdx")
+		..setName("pr")
+		..setBuffs(1, "prid")
+	destroy editor
+
+@compiletime
+function create_im_id()
+	var editor = new BuffDefinition('prid', 'Bdet')
+	editor..setName(1, "Priest")
+		..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Priest")
+		..setTooltipNormalExtended(1, Color_Define.COLOR_COOL_DOWN + "You are an angel!")
+		..setIconNormal(1, "PR.blp")
+
+@compiletime
+function create_pr_mgcbook()
+	var editor = EditorHelper.create_magic_book('prbk', "prau")
+	editor..setName("prbk")

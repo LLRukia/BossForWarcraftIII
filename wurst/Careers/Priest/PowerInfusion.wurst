@@ -1,0 +1,79 @@
+package PowerInfusion
+
+import Priest
+import TriggerHelper
+import EditorHelper
+import ExternalDefines
+
+public class PowerInfusion extends PriestSkill
+    static let self_id = 'pr0g'
+    static let last_time = 20.
+    static let decrease = 0.3
+    static let speed_up = 0.25
+    static let buff_id = 'pr1g'
+    private trigger tr_mana_rcv = CreateTrigger()
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==PowerInfusion.self_id))
+            ..addAction(function PowerInfusion.cast)
+            ..setData(this castTo int)
+        tr_mana_rcv..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addAction(function PowerInfusion.mana_recovery)
+            ..setData(this castTo int)
+            ..disable()
+
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo PowerInfusion
+        obj.m_self_unit.add_buff(buff_id, BuffClearType.stable, BuffType.buffs, obj)
+        obj.tr_mana_rcv.enable()
+
+    override function destroy_buff(unit u)
+        if u != m_self_unit
+            return
+        tr_mana_rcv.disable()
+
+    static function mana_recovery()
+        int mana_cost = BlzGetAbilityManaCost(GetSpellAbilityId(), 1)
+        var obj = GetTriggeringTrigger().getData() castTo PowerInfusion
+        obj.m_self_unit.setMana(obj.m_self_unit.getMana() + mana_cost*decrease)
+        flashEffect("Abilities\\Spells\\Items\\AIma\\AImaTarget.mdl", obj.m_self_unit.getPos3Real())
+
+    
+@compiletime
+function create_power_infusion()
+    var ed = new AbilityDefinitionBeserk(PowerInfusion.self_id)
+    ed..setDamageTakenIncrease(1, 0)
+        ..setLevels(1)
+        ..setMovementSpeedIncrease(1, PowerInfusion.speed_up)
+        ..setAttackSpeedIncrease(1, PowerInfusion.speed_up)
+        ..setHotkeyNormal("G")
+        ..setDurationHero(1, PowerInfusion.last_time)
+        ..setDurationNormal(1, PowerInfusion.last_time)
+        ..setManaCost(1, 5)
+        ..setCooldown(1, 70)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)
+        ..setName("PowerInfusion")
+        ..setTooltipNormal(1,
+			Color_Define.COLOR_PRIEST + "Power Infusion" +
+			Color_Define.COLOR_HOT_KEY + "(G)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→能量灌注->|n↑使得你速度增加25%|n↑使得你施法后返还30%魔法值|n" +
+            Color_Define.COLOR_LAST_TIME + "→持续20秒。|n" +
+            Color_Define.COLOR_WARNING + "★D不会驱散此技能|n" +
+			Color_Define.COLOR_COOL_DOWN + "→CD:70s")
+        ..setIconNormal("PowerInfusion.blp")
+        ..setBuffs(1, PowerInfusion.buff_id.toRawCode())
+
+@compiletime
+function create_power_infusion_buff()
+    var ed = new BuffDefinition(PowerInfusion.buff_id, 'Bhea')
+    ed..setArtTarget(1, "Abilities\\Spells\\Undead\\ReplenishMana\\ReplenishManaCasterOverhead.mdl")
+    ..setTargetAttachments(1, 1)
+    ..setTargetAttachmentPoint0(1, "overhead")
+    ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Power Infusion")
+    ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位充满了能量。")
+    ..setIconNormal(1, "PowerInfusion.blp")

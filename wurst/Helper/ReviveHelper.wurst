@@ -1,0 +1,53 @@
+package ReviveHelper
+
+import HashMap
+import ExternalDefines
+import IPlayerUnit
+import PlayerUnitHelper
+import EditorHelper
+
+public class ReviveHelper
+    static var map_death_unit = new HashMap<unit, unit>
+    static var map_unit_creator = new HashMap<career, int>
+    static function create_death_unit(unit u_dead)
+        int nobj = PlayerUnitHelper.get_instance(u_dead)
+        if nobj == -1
+            if _DEBUG
+                print("ReviveHelper:not a playerunit")
+            return
+        var obj = nobj castTo IPlayerUnit
+        if obj == null
+            if _DEBUG
+                print("ReviveHelper:bad bind")
+            return
+        if not map_unit_creator.has(obj.get_career())
+            if _DEBUG
+                print("ReviveHelper:bad init")
+            return
+        int u_id = map_unit_creator.get(obj.get_career())
+        unit u = createUnit(u_dead.getOwner(), u_id, u_dead.getPos(), u_dead.getFacingAngle())
+        u.setAnimation("death")
+        map_death_unit.put(u, u_dead)
+
+    static function can_revive(unit u_faker) returns bool
+        return not map_death_unit.has(u_faker)
+
+    static function revive(unit u_faker)
+        if not map_death_unit.has(u_faker)
+            if _DEBUG
+                print("ReviveHelper:bad revive")
+            return
+        map_death_unit.get(u_faker)..revive(u_faker.getPos(), true)..setXY(u_faker.getPos())
+        map_death_unit.remove(u_faker)
+        RemoveUnit(u_faker)
+        
+
+@compiletime
+function create_dead_units()
+    if compiletime
+        EditorHelper.create_effect_faker_unit('ddim', 0.9, "units\\human\\Sorceress\\Sorceress_V1.mdl", color(255, 255, 255))
+        EditorHelper.create_effect_faker_unit('ddpr', 0.9, "units\\human\\Priest\\Priest", color(255, 255, 255))
+        EditorHelper.create_effect_faker_unit('ddfm', 0.9, "", color(255, 255, 255))
+        EditorHelper.create_effect_faker_unit('ddwr', 0.9, "", color(255, 255, 255))
+    else
+        ReviveHelper.map_unit_creator..put(career.ice_mage, 'ddim')..put(career.priest, 'ddpr')

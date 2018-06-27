@@ -9,13 +9,6 @@ import public initlater IceImage
 import public initlater IceShield
 import BaseSkills
 
-public enum emSkill
-	Frost_Bolt
-	Cone_of_Cold
-	Ice_Lance
-	Ice_Barrier
-	Max
-
 public class IceMageSkill extends IBaseSkills
 	construct(unit spell_unit)
 		super(spell_unit)

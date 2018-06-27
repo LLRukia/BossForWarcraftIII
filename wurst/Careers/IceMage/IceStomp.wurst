@@ -15,8 +15,9 @@ public class IceStomp extends IceMageSkill
     static let dmg = 240.
     static let radius = 350.
     static let last_time = 3.
-    private unit m_effect = null
-    private unit m_effect2 = null
+    static let inc = 12.
+    private effect m_effect = null
+    private effect m_effect2 = null
     private unit m_follow = null
     private trigger m_tr_start = CreateTrigger()
     private trigger m_tr_end = CreateTrigger()
@@ -51,8 +52,7 @@ public class IceStomp extends IceMageSkill
         print("prepare")
         var obj = GetTriggeringTrigger().getData() castTo IceStomp
         vec2 pos = obj.m_self_unit.getPos()
-        obj.m_effect = createUnit(obj.m_self_unit.getOwner(), IceStomp.effect_id, pos, angle(0))
-        obj.m_effect.setXY(pos)
+        obj.m_effect = addEffect("frozenshell.mdx", pos)
         obj.m_scale_size = 0.4
         obj.m_effect.setScale(0.4)
         obj.m_tm_effect = CreateTimer()
@@ -62,8 +62,7 @@ public class IceStomp extends IceMageSkill
         var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
         if fat.m_self_image != null
             vec2 pos2 = fat.m_self_image.getPos()
-            obj.m_effect2 = createUnit(obj.m_self_unit.getOwner(), IceStomp.effect_id, pos2, angle(0))
-            obj.m_effect2.setXY(pos2)
+            obj.m_effect2 = addEffect("frozenshell.mdx", pos2)
             obj.m_effect2.setScale(0.4)
 
     static function imagecast()
@@ -86,7 +85,9 @@ public class IceStomp extends IceMageSkill
         for i in g
             if not IsUnitAlly(i, GetOwningPlayer(obj.m_self_unit))
                 and i.isAlive()
-                obj.m_self_unit.damageTarget(i, IceStomp.dmg, ATTACK_TYPE_MAGIC)
+                real final_dmg = GetHeroAgi(obj.m_self_unit, true) * IceStomp.inc + IceStomp.dmg
+                obj.m_self_unit.damageTarget(i, final_dmg, ATTACK_TYPE_MAGIC)
+                StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
         g.destr()
             
             
@@ -101,9 +102,11 @@ public class IceStomp extends IceMageSkill
 
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo IceStomp
-        RemoveUnit(obj.m_effect)
+        obj.m_effect.destr()
+        obj.m_effect = null
         if obj.m_effect2 != null
-            RemoveUnit(obj.m_effect2)
+            obj.m_effect2.destr()
+            obj.m_effect2 = null
         if obj.m_follow != null
             flashEffect("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl", obj.m_follow.getPos())
 
@@ -112,7 +115,9 @@ public class IceStomp extends IceMageSkill
         for i in g
             if not IsUnitAlly(i, GetOwningPlayer(obj.m_self_unit))
                 and i.isAlive()
-                obj.m_self_unit.damageTarget(i, IceStomp.dmg, ATTACK_TYPE_MAGIC)
+                real final_dmg = GetHeroAgi(obj.m_self_unit, true) * IceStomp.inc + IceStomp.dmg
+                obj.m_self_unit.damageTarget(i, final_dmg, ATTACK_TYPE_MAGIC)
+                StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
         g.destr()
 
         obj.m_tm_effect..pause()..destr()
@@ -120,10 +125,12 @@ public class IceStomp extends IceMageSkill
 
     static function endcast()
         var obj = GetTriggeringTrigger().getData() castTo IceStomp
-        RemoveUnit(obj.m_effect)
+        obj.m_effect.destr()
+        obj.m_effect = null
 
         if obj.m_effect2 != null
-            RemoveUnit(obj.m_effect2)
+            obj.m_effect2.destr()
+            obj.m_effect2 = null
         if obj.m_follow != null
             RemoveUnit(obj.m_follow)
             obj.m_follow = null
@@ -141,9 +148,9 @@ public class IceStomp extends IceMageSkill
             obj.m_effect.setScale(obj.m_scale_size)
             var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
             if fat.m_self_image != null and obj.m_effect2 != null
-                obj.m_effect2..setScale(obj.m_scale_size)..setXY(fat.m_self_image.getPos())
+                obj.m_effect2..setScale(obj.m_scale_size)..setPos(fat.m_self_image.getPos())
             else
-                RemoveUnit(obj.m_effect2)
+                obj.m_effect2.destr()
                 obj.m_effect2 = null
         else
             tm..pause()..destr()
@@ -176,8 +183,9 @@ function create_ice_stomp()
         Color_Define.COLOR_HOT_KEY + "(W)")
     ..setTooltipNormalExtended(1,
         Color_Define.COLOR_NORMAL + "↓积蓄力量，1秒后对350范围内敌人造成240伤害，并减慢他们15%/15%的速度。|n" +
+        Color_Define.COLOR_ICEMAGE + "↑ 1200%法术强度额外伤害|n" +
         Color_Define.COLOR_LAST_TIME + "→减速持续3秒。|n" +
-        Color_Define.COLOR_COOL_DOWN + "→CD:6s")
+        Color_Define.COLOR_COOL_DOWN + "→CD:5s")
     ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNFreezingBreath.blp")
 
 @compiletime
@@ -196,11 +204,6 @@ function create_ice_stomp_image()
     ..setName("IceStomp")
     ..setLevels(1)
     ..setBuffs(1, IceStomp.buff_id.toRawCode())
-
-
-@compiletime
-function create_ice_stomp_effect()
-    EditorHelper.create_effect_faker_unit(IceStomp.effect_id, 1.0, "frozenshell.mdx", color(255,255,255))
 
 @compiletime
 function create_ice_stomp_buff()

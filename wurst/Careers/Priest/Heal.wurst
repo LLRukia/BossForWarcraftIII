@@ -1,0 +1,54 @@
+package Heal
+
+import Priest
+import TriggerHelper
+import EditorHelper
+import ExternalDefines
+
+public class Heal extends PriestSkill
+    static let self_id = 'pr0q'
+    static constant real dmg = 488.
+    static let inc = 12.
+    
+
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==Heal.self_id))
+            ..addAction(function Heal.cast)
+            ..setData(this castTo int)
+
+    static function cast()
+        unit u = (GetTriggeringTrigger().getData() castTo Heal).m_self_unit
+        real final_dmg = GetHeroAgi(u, true) * Heal.inc + Heal.dmg
+        unit uT = GetSpellTargetUnit()
+        real hp_prev = uT.getHP()
+        uT.setHP(hp_prev + final_dmg)
+        StatisticsHelper.add_real(u.getOwner(), hp_prev - uT.getHP())
+
+@compiletime
+function create_heal()
+    var editor = EditorHelper.create_channel_template(Heal.self_id, emSkillKey.Q)
+    editor..setCastRange(1, 1300)
+        ..setManaCost(1, 18)
+        ..setCooldown(1, 1)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("Q")
+        ..setTargetsAllowed(1, TYPE_ALLOWED_ALLY)
+        ..setTargetType(1, emTargetType.Unit castTo int)
+        ..setName("Heal")
+        ..setTooltipNormal(1,
+        Color_Define.COLOR_PRIEST + "Heal" +
+        Color_Define.COLOR_HOT_KEY + "(Q)")
+        ..setTooltipNormalExtended(1,
+        Color_Define.COLOR_NORMAL + "→治疗目标488生命|n" +
+        Color_Define.COLOR_PRIEST + "↑ 1200%法术强度额外治疗|n" +
+        Color_Define.COLOR_CAST_RANGE + "→施法距离：1300|n" +
+        Color_Define.COLOR_COOL_DOWN + "→CD:1s")
+        ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNHeal.blp")
+        ..setArtTarget("Abilities\\Spells\\Human\\Heal\\HealTarget.mdl")
+
+    destroy editor

@@ -52,19 +52,19 @@ init
     CreateTrigger()..registerUnitEvent(fire_chicken, EVENT_UNIT_DAMAGED)
         ..addAction(function displaydamage)
     var tr = CreateTrigger()
-    for i = 0 to 7
+    for i = 0 to PLAYER_NUM-1
         tr.registerPlayerChatEvent(Player(i), "-test", true)
     tr..addAction(function test)
         ..enable()
 
     var tr1 = CreateTrigger()
-    for i = 0 to 7
+    for i = 0 to PLAYER_NUM-1
         tr1.registerPlayerChatEvent(Player(i), "-test1", true)
     tr1..addAction(function test1)
         ..enable()
 
     var tr2 = CreateTrigger()
-    for i = 0 to 7
+    for i = 0 to PLAYER_NUM-1
         tr2.registerPlayerChatEvent(Player(i), "-test2", true)
     tr2..addAction(function test2)
         ..enable()

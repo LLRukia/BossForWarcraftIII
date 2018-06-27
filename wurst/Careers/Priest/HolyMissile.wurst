@@ -1,0 +1,123 @@
+package HolyMissile
+
+import Priest
+import TriggerHelper
+import EditorHelper
+import MathHelper
+import ExternalDefines
+import TimerUtils
+import HashMap
+
+public class HolyMissile extends PriestSkill
+    static let self_id = 'pr0r'
+    static let max_dis = 2200.
+    static let radius = 250.
+    static let heal = 4000.
+    static let heal_inc = 50.
+    static let dmg = 250.
+    static let dmg_inc = 25.
+    static let mana_rec = 70.
+    private timer m_tm
+    private vec2 m_cur_pos
+    private angle m_ang
+    private real m_moved_dis = 0
+    private var m_dmgonce = new HashMap<unit, boolean>
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==HolyMissile.self_id))
+            ..addAction(function HolyMissile.cast)
+            ..setData(this castTo int)
+
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo HolyMissile
+        if obj.m_tm != null
+            obj.m_tm..pause()..destr()
+        
+        obj.m_tm = CreateTimer()
+        
+        location lc = GetSpellTargetLoc()
+        vec2 tgt = vec2(GetLocationX(lc),GetLocationY(lc))
+        RemoveLocation(lc)
+        obj.m_cur_pos = obj.m_self_unit.getPos()
+        obj.m_ang = MathHelper.get_angle(obj.m_cur_pos, tgt)
+        obj.m_moved_dis = 0.
+        obj.m_dmgonce.flush()
+
+        obj.m_tm..setData(obj castTo int)
+            ..startPeriodic(0.02, function tm_cb)
+
+    function hit_ally(unit u)
+        flashEffect("Abilities\\Spells\\Human\\Invisibility\\InvisibilityTarget.mdl", u.getPos3Real())
+        real hp_prev = u.getHP()
+        real final_heal = GetHeroAgi(m_self_unit, true) * HolyMissile.heal_inc + HolyMissile.heal
+        u.setHP(hp_prev + final_heal)
+        u.setMana(u.getMana() + HolyMissile.mana_rec)
+        StatisticsHelper.add_real(m_self_unit.getOwner(), hp_prev -u.getHP())
+
+
+    static function tm_cb()
+        var obj = GetExpiredTimer().getData() castTo HolyMissile
+        if obj.m_moved_dis > HolyMissile.max_dis
+            obj.m_tm..pause()..destr()
+            obj.m_tm = null
+
+        obj.m_cur_pos = MathHelper.forward(obj.m_cur_pos, obj.m_ang, 50)
+        obj.m_moved_dis += 50
+        flashEffect("Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl", obj.m_cur_pos)
+        group g = CreateGroup()
+        bool bhit_ally = false
+        g.enumUnitsInRange(obj.m_cur_pos, HolyMissile.radius)
+        for i in g
+            if IsUnitAlly(i, GetOwningPlayer(obj.m_self_unit)) // ally
+                if i == obj.m_self_unit // self
+                    if obj.m_moved_dis < 200 // ignore
+                        skip
+                    else
+                        obj.hit_ally(i)
+                        bhit_ally = true
+                        break
+                else
+                    if PlayerUnitHelper.get_instance(i) != -1 // ally hero
+                        obj.hit_ally(i)
+                        bhit_ally = true
+                        break
+                    else
+                        skip    //ignore
+
+            if not obj.m_dmgonce.has(i) and i.isAlive() // enemy
+                real final_dmg = GetHeroAgi(obj.m_self_unit, true) * HolyMissile.dmg_inc + HolyMissile.dmg
+                obj.m_self_unit.damageTarget(i, final_dmg)
+                StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
+                obj.m_dmgonce.put(i, true)
+
+        g.destr()
+        if bhit_ally
+            obj.m_tm..pause()..destr()
+            obj.m_tm = null
+        
+
+@compiletime
+function create_holy_missile()
+    var editor = EditorHelper.create_channel_template(HolyMissile.self_id, emSkillKey.R)
+    editor..setCastRange(1, 9999)
+        ..setManaCost(1, 66)
+        ..setCooldown(1, 45)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("R")
+        ..setTargetType(1, emTargetType.Ground castTo int)
+        ..setName("HolyMissile")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_PRIEST + "Holy Missile" +
+            Color_Define.COLOR_HOT_KEY + "(R)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→向目标点投掷一枚充满圣光的魔法箭矢，对飞行路径上的敌方单位造成250伤害，为命中的第一名友方英雄回复4000生命值和70魔法值。|n" +
+            Color_Define.COLOR_PRIEST + "↑ 2500%法术强度额外伤害，5000%法术强度额外治疗|n" +
+            Color_Define. COLOR_CAST_RANGE + "→最大飞行距离2200|n|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:45s")
+        ..setIconNormal("HolyMissile.blp")
+
+    destroy editor

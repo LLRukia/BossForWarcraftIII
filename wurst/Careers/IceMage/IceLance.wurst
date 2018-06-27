@@ -16,6 +16,7 @@ public class IceLance extends IceMageSkill
 	static constant int unit_count = 7
 	static constant real dmg_radius = 170.
 	static constant real dmg = 300.
+	static let inc = 24.
 	
 	private boolean from_unit
 	private vec2 pt1
@@ -91,7 +92,9 @@ public class IceLance extends IceMageSkill
 			for uTarget in g
 				if not dmg_once.has(uTarget) and not IsUnitAlly(uTarget, GetOwningPlayer(instance.m_self_unit))
 					and uTarget.isAlive()
-					instance.m_self_unit.damageTarget(uTarget, IceLance.dmg)
+					real final_dmg = GetHeroAgi(instance.m_self_unit, true) * IceLance.inc + IceLance.dmg
+					instance.m_self_unit.damageTarget(uTarget, final_dmg)
+					StatisticsHelper.add_real(instance.m_self_unit.getOwner(), final_dmg)
 					dmg_once.put(uTarget, true)
 			g.destr()
 			flashEffect("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl", cur_loc)
@@ -114,7 +117,7 @@ function create_ice_lance()
 	var editor = EditorHelper.create_channel_template(IceLance.self_id, emSkillKey.E)
 	editor..setCastRange(1, 900)
 		..setManaCost(1, 27)
-		..setCooldown(1, 6)
+		..setCooldown(1, 8)
 		..setButtonPositionNormalX(2)
 		..setButtonPositionNormalY(2)
 		..setHotkeyNormal("E")
@@ -126,8 +129,9 @@ function create_ice_lance()
 		..setTooltipNormalExtended(1,
             Color_Define.COLOR_NORMAL + "→依次选择两个点，从第一个点向第二个点释放IceLance，对命中单位造成300伤害。|n" +
 			Color_Define.COLOR_LAST_TIME + "→冰块持续10秒。|n" +
+			Color_Define.COLOR_ICEMAGE + "↑ 2400%法术强度额外伤害|n" +
 			Color_Define. COLOR_CAST_RANGE + "→施法距离：900, 1100|n" +
-            Color_Define.COLOR_COOL_DOWN + "→CD:6s")
+            Color_Define.COLOR_COOL_DOWN + "→CD:8s")
 		..setIconNormal("Ice Lance.blp")
 		..setArtEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl")
 
@@ -148,10 +152,10 @@ function create_ice_lance_help()
             Color_Define.COLOR_ICEMAGE + "Ice Lance (Direction)" +
             Color_Define.COLOR_HOT_KEY + "(E)")
 		..setTooltipNormalExtended(1,
-            Color_Define.COLOR_NORMAL + "依次选择两个点，从第一个点向第二个点释放IceLance，对命中单位造成300伤害。|n" +
-			Color_Define.COLOR_LAST_TIME + "冰块持续10秒。|n" +
-			Color_Define. COLOR_CAST_RANGE + "施法距离：900, 1100|n" +
-            Color_Define.COLOR_COOL_DOWN + "CD:6s")
+            Color_Define.COLOR_NORMAL + "→依次选择两个点，从第一个点向第二个点释放IceLance，对命中单位造成300伤害。|n" +
+			Color_Define.COLOR_LAST_TIME + "→冰块持续10秒。|n" +
+			Color_Define. COLOR_CAST_RANGE + "→施法距离：900, 1100|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:6s")
 		..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNAttackGround.blp")
 		..setArtEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl")
 

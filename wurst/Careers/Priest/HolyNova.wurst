@@ -1,0 +1,71 @@
+package HolyNova
+
+import Priest
+import TriggerHelper
+import EditorHelper
+import ExternalDefines
+import SkillHelper
+
+public class HolyNova extends PriestSkill
+    static let self_id = 'pr0w'
+    static let help_id = 'pr1w'
+    private trigger m_tr_help = CreateTrigger()
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==HolyNova.self_id))
+            ..addAction(function HolyNova.cast)
+            ..setData(this castTo int)
+        m_tr_help..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==HolyNova.help_id))
+            ..addAction(function HolyNova.cast_shock)
+            ..setData(this castTo int)
+
+    static function cast()
+
+    static function cast_shock()
+
+@compiletime
+function create_holy_nova()
+    var editor = EditorHelper.create_channel_template(HolyNova.self_id, emSkillKey.W)
+    editor..setManaCost(1, 0)
+        ..setCooldown(1, 0)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("W")
+        ..setTargetType(1, emTargetType.None castTo int)
+        ..setName("HolyNova")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_PRIEST + "Holy Nova" +
+            Color_Define.COLOR_HOT_KEY + "(W)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "爆发神圣能量，造成自身为圆心，半径为700的范围600点治疗。当此技能进入CD时，W技能会被替换为HolyShock。" + 
+            Color_Define.COLOR_PRIEST + "↑ 1000%法术强度额外治疗|n" +
+            Color_Define. COLOR_CAST_RANGE + "→施法距离：700|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:9s")
+        ..setIconNormal("HolyNova.blp")
+
+    destroy editor
+
+@compiletime
+function create_holy_shock()
+    var editor = EditorHelper.create_channel_template(HolyNova.help_id, emSkillKey.W)
+    editor..setManaCost(1, 0)
+        ..setCooldown(1, 30)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("W")
+        ..setTargetType(1, emTargetType.None castTo int)
+        ..setName("HolyShock")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_PRIEST + "Holy Shock" +
+            Color_Define.COLOR_HOT_KEY + "(W)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "再次爆发神圣能量，造成自身为圆心，半径为700的范围击退，击退300距离" + 
+            Color_Define. COLOR_CAST_RANGE + "→施法距离：700|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:30s")
+        ..setIconNormal("HolyShock.blp")
+
+    destroy editor

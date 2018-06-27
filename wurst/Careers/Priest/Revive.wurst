@@ -1,0 +1,122 @@
+package Revive
+
+import Priest
+import TriggerHelper
+import EditorHelper
+import ExternalDefines
+import TimerUtils
+import ReviveHelper
+
+public class Revive extends PriestSkill
+    static let self_id = 'pr0f'
+    private trigger m_tr_target_judge = CreateTrigger()
+    private trigger m_tr_end = CreateTrigger()
+    private trigger m_tr_finish = CreateTrigger()
+    private unit u_revive = null
+    private timer m_tm
+    private int m_time
+    private vec2 m_tar
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==Revive.self_id))
+            ..addAction(function Revive.cast)
+            ..setData(this castTo int)
+        m_tr_target_judge..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CHANNEL)
+            ..addCondition(Filter(()->GetSpellAbilityId()==Revive.self_id))
+            ..addAction(function Revive.prepare)
+            ..setData(this castTo int)
+        m_tr_end..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_ENDCAST)
+            ..addCondition(Filter(()->GetSpellAbilityId()==Revive.self_id))
+            ..addAction(function Revive.endcast)
+            ..setData(this castTo int)
+        m_tr_finish..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_FINISH)
+            ..addCondition(Filter(()->GetSpellAbilityId()==Revive.self_id))
+            ..addAction(function Revive.finish)
+            ..setData(this castTo int)
+
+    static function finish()
+        var obj = GetTriggeringTrigger().getData() castTo Revive
+        print(obj.m_time)
+        ReviveHelper.revive(obj.u_revive)
+    
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo Revive
+        obj.m_tm = CreateTimer()
+        obj.m_time = 0
+        location lc = GetSpellTargetLoc()
+        obj.m_tar = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        obj.m_tm..setData(obj castTo int)
+            ..startPeriodic(1, function displaytime)
+    
+    static function prepare()
+        var obj = GetTriggeringTrigger().getData() castTo Revive
+
+        location lc = GetSpellTargetLoc()
+        vec2 target = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+
+        group g = CreateGroup()
+        g.enumUnitsInRange(target, 100)
+        obj.u_revive = null
+        real min_dis = 999
+        for i in g
+            if ReviveHelper.can_revive(i)
+                real dis = (i.getPos() - target).lengthSq()
+                if min_dis > dis
+                    min_dis = dis
+                    obj.u_revive = i
+
+        if obj.u_revive == null
+            printTimedToPlayer("请对准尸体释放。", 2, obj.m_self_unit.getOwner())
+            obj.m_self_unit.issueImmediateOrder("stop")
+            return
+
+    static function displaytime()
+        var obj = GetExpiredTimer().getData() castTo Revive
+        obj.m_time++
+        real speed = 64 * 0.071 / 128
+        real angle = 90
+        createTTEx(obj.m_self_unit.getPos3with(30), obj.m_time.toString(), 9, obj.m_self_unit.getOwner().getColor().toColor().withAlpha(255))
+            ..setPermanent(false)
+            ..setFadepoint(2.)
+            ..setLifespan(3.)
+            ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
+        flashEffect("Abilities\\Spells\\Human\\Resurrect\\ResurrectTarget.mdl", obj.m_tar)
+        
+        if obj.m_time == 5
+            obj.m_tm..pause()..destr()
+    
+    static function endcast()
+        var obj = GetTriggeringTrigger().getData() castTo Revive
+        obj.m_tm..pause()..destr()
+
+@compiletime
+function create_revive()
+    var ed = new AbilityDefinitionSeaWitchTornado(Revive.self_id)
+    ed..setSummonedUnitType(1, "")
+        ..setCastRange(1, 700)
+        ..setManaCost(1, 55)
+        ..setCooldown(1, 20)
+        ..setButtonPositionNormalX(2)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("F")
+        ..setName("Revive")
+        ..setHeroAbility(false)
+        ..setRequiredLevel(1)
+        ..setBuffs(1, "")
+        ..setDurationHero(1, 5)
+        ..setDurationNormal(1, 5)
+        ..setTooltipNormal(1,
+        Color_Define.COLOR_PRIEST + "Revive" +
+        Color_Define.COLOR_HOT_KEY + "(F)")
+        ..setTooltipNormalExtended(1,
+        Color_Define.COLOR_NORMAL + "→吟唱5秒后，复活目标|n" +
+        Color_Define.COLOR_CAST_RANGE + "→施法距离：700|n" +
+        Color_Define.COLOR_WARNING + "▼技能被打断也会进入CD" +
+        Color_Define.COLOR_COOL_DOWN + "→CD:20s")
+        ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNResurrection.blp")
+        ..setArtTarget("Abilities\\Spells\\Human\\Heal\\HealTarget.mdl")

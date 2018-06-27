@@ -1,0 +1,15 @@
+package PriestSkill
+
+import public initlater Heal
+import BaseSkills
+
+public class PriestSkill extends IBaseSkills
+	construct(unit spell_unit)
+		super(spell_unit)
+
+
+	override function listen()
+
+	override function destroy_buff(unit _u)
+
+	override function clear()

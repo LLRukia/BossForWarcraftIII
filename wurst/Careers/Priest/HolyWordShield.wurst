@@ -1,0 +1,75 @@
+package HolyWordShield
+
+import Priest
+import TriggerHelper
+import EditorHelper
+import ExternalDefines
+
+public class HolyWordShield extends PriestSkill
+    static let self_id = 'pr0e'
+    static let buff_id = 'pr1e'
+    static constant real dmg = 25.
+    static let inc = 2.
+    
+
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==HolyWordShield.self_id))
+            ..addAction(function HolyWordShield.cast)
+            ..setData(this castTo int)
+
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo HolyWordShield
+        
+        unit uT = GetSpellTargetUnit()
+
+        uT.add_buff(buff_id, BuffClearType.additions, BuffType.buffs, obj)
+
+
+    function destroy_buff()
+
+@compiletime
+function create_buff_recovery()
+    var ed = new BuffDefinition(HolyWordShield.buff_id, 'Binf')
+    ed..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "HolyWord : Shield")
+    ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位的生命恢复速度加快了。")
+    ..setTargetAttachmentPoint0(1, "origin")
+    ..setIconNormal(1, "HolyWordShield.blp")
+    
+
+@compiletime
+function create_holy_word_shield()
+    var ed = new AbilityDefinitionInnerFire(HolyWordShield.self_id)
+    ed.setLevels(13)
+    for i = 1 to 14
+        ed..setAutocastRange(i, 900)
+        ..setLifeRegenRate(i, HolyWordShield.dmg + (i-1)*HolyWordShield.inc)
+        ..setDefenseIncrease(i, 0)
+        ..setDamageIncrease(i, 0)
+        ..setCastRange(i, 900)
+        ..setCooldown(i, 0)
+        ..setDurationHero(i, 60)
+        ..setDurationNormal(i, 60)
+        ..setManaCost(i, 0)
+        ..setTooltipNormal(i, Color_Define.COLOR_PRIEST + "HolyWord : Shield" +
+        Color_Define.COLOR_HOT_KEY + "(E)")
+        ..setTooltipNormalExtended(i, Color_Define.COLOR_NORMAL + "↑使目标生命恢复速度增加25点每秒。|n" +
+        Color_Define.COLOR_PRIEST + "↑ 200%法术强度额外恢复|n" +
+        Color_Define.COLOR_LAST_TIME + "持续时间：60秒|n" +
+        Color_Define.COLOR_CAST_RANGE + "→施法距离：900|n" +
+        Color_Define.COLOR_COOL_DOWN + "→CD:0s")
+        ..setBuffs(i, HolyWordShield.buff_id.toRawCode())
+    ed..setIconNormal("HolyWordShield.blp")
+    ..setHotkeyNormal("E")
+    ..setName("HolyWordShield")
+    ..setButtonPositionNormalX(2)
+    ..setButtonPositionNormalY(2)
+    
+    
+    
+    
+    
+    

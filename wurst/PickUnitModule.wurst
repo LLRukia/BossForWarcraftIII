@@ -45,7 +45,7 @@ init
     g.destr()
 
     trigger tr = CreateTrigger()
-    for i = 0 to 7
+    for i = 0 to PLAYER_NUM-1
         tr.registerPlayerUnitEvent(Player(i), EVENT_PLAYER_UNIT_SELECTED, null)
     
     tr..addCondition(Filter(function filter_pick))

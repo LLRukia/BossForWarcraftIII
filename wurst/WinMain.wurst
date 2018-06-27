@@ -4,6 +4,6 @@ import Camera
 
 init
     FogMaskEnableOn()
-    for i = 0 to 7
+    for i = 0 to PLAYER_NUM-1
         Player(i)..panCameraToTimed(PICK_RECT.getCenter(),0)
             ..setCameraBoundsToRect(PICK_RECT)

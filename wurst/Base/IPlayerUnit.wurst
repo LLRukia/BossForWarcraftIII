@@ -12,8 +12,6 @@ public abstract class IPlayerUnit
 
     abstract function listen_all()
 
-    abstract function init_all()
-
     abstract function init_self()
 
     abstract function add_buff(int id, BuffClearType cltp, BuffType tp, IBaseSkills obj)
@@ -25,3 +23,6 @@ public abstract class IPlayerUnit
     abstract function get_invulnerable() returns boolean
 
     abstract function set_invulnerable(boolean _b)
+
+    function get_career() returns career
+        return m_self_career
