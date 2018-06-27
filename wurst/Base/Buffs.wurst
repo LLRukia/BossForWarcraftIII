@@ -109,4 +109,4 @@ public function unit.can_add_buff() returns boolean
             if _DEBUG
                 print("unit.remove_buff(multi) error")
             return false
-        return obj.get_invulnerable()
+        return not obj.get_invulnerable()

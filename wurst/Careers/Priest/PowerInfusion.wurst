@@ -4,6 +4,7 @@ import Priest
 import TriggerHelper
 import EditorHelper
 import ExternalDefines
+import TimerUtils
 
 public class PowerInfusion extends PriestSkill
     static let self_id = 'pr0g'
@@ -29,33 +30,39 @@ public class PowerInfusion extends PriestSkill
         var obj = GetTriggeringTrigger().getData() castTo PowerInfusion
         obj.m_self_unit.add_buff(buff_id, BuffClearType.stable, BuffType.buffs, obj)
         obj.tr_mana_rcv.enable()
+        CreateTimer()..setData(obj castTo int)
+            ..startPeriodic(last_time, function tm_cb)
 
     override function destroy_buff(unit u)
         if u != m_self_unit
             return
+        print("disable")
         tr_mana_rcv.disable()
+        
+    static function tm_cb()
+        timer t = GetExpiredTimer()
+        var obj = t.getData() castTo PowerInfusion
+        if obj.m_self_unit.hasAbility(buff_id)
+            obj.m_self_unit.remove_buff(buff_id)
+        t..pause()..destr()
 
     static function mana_recovery()
         int mana_cost = BlzGetAbilityManaCost(GetSpellAbilityId(), 1)
         var obj = GetTriggeringTrigger().getData() castTo PowerInfusion
         obj.m_self_unit.setMana(obj.m_self_unit.getMana() + mana_cost*decrease)
-        flashEffect("Abilities\\Spells\\Items\\AIma\\AImaTarget.mdl", obj.m_self_unit.getPos3Real())
+        if mana_cost*decrease > 1
+            flashEffect("Abilities\\Spells\\Items\\AIma\\AImaTarget.mdl", obj.m_self_unit.getPos3Real())
 
     
 @compiletime
 function create_power_infusion()
-    var ed = new AbilityDefinitionBeserk(PowerInfusion.self_id)
-    ed..setDamageTakenIncrease(1, 0)
-        ..setLevels(1)
-        ..setMovementSpeedIncrease(1, PowerInfusion.speed_up)
-        ..setAttackSpeedIncrease(1, PowerInfusion.speed_up)
-        ..setHotkeyNormal("G")
-        ..setDurationHero(1, PowerInfusion.last_time)
-        ..setDurationNormal(1, PowerInfusion.last_time)
+    var ed = EditorHelper.create_channel_template(PowerInfusion.self_id, emSkillKey.G)
+    ed..setHotkeyNormal("G")
         ..setManaCost(1, 5)
         ..setCooldown(1, 70)
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(1)
+        ..setTargetType(1, emTargetType.None castTo int)
         ..setName("PowerInfusion")
         ..setTooltipNormal(1,
 			Color_Define.COLOR_PRIEST + "Power Infusion" +
@@ -71,9 +78,9 @@ function create_power_infusion()
 @compiletime
 function create_power_infusion_buff()
     var ed = new BuffDefinition(PowerInfusion.buff_id, 'Bhea')
-    ed..setArtTarget(1, "Abilities\\Spells\\Undead\\ReplenishMana\\ReplenishManaCasterOverhead.mdl")
+    ed..setArtTarget(1, "scrollyell.mdx")
     ..setTargetAttachments(1, 1)
-    ..setTargetAttachmentPoint0(1, "overhead")
+    ..setTargetAttachmentPoint0(1, "origin")
     ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Power Infusion")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位充满了能量。")
     ..setIconNormal(1, "PowerInfusion.blp")

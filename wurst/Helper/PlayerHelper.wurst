@@ -3,6 +3,8 @@ import Table
 import ExternalDefines
 import initlater IceMage
 import initlater FireMage
+import initlater Priest
+import initlater PlayerUnit
 
 public function player.get_unit() returns unit
     return PlayerHelper.get_player_unit(this)
@@ -15,6 +17,8 @@ public function player.init_self(unit u, career emCareer)
             obj = new IceMage(this, u)
         case fire_mage
             obj = new FireMage(this, u)
+        case priest
+            obj = new Priest(this, u)
         default
             obj = null
 

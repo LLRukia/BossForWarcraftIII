@@ -1,9 +1,9 @@
 package IceMage
 import public PlayerUnitHelper
-import public PlayerUnit
 import ExternalDefines
 import public IceMageSkill
 import EditorHelper
+import PlayerUnit
 
 public class IceMage extends PlayerUnit
 	unit m_self_image = null

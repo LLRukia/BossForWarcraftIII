@@ -6,6 +6,7 @@ import HashMap
 import TriggerHelper
 import EditorHelper
 import ProgressHelper
+import Buffs
 
 class Data
     construct (unit uTarget)

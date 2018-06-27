@@ -10,8 +10,8 @@ import HashMap
 
 public class HolyMissile extends PriestSkill
     static let self_id = 'pr0r'
-    static let max_dis = 2200.
-    static let radius = 250.
+    static let max_dis = 2000.
+    static let radius = 150.
     static let heal = 4000.
     static let heal_inc = 50.
     static let dmg = 250.
@@ -47,7 +47,7 @@ public class HolyMissile extends PriestSkill
         obj.m_dmgonce.flush()
 
         obj.m_tm..setData(obj castTo int)
-            ..startPeriodic(0.02, function tm_cb)
+            ..startPeriodic(0.04, function tm_cb)
 
     function hit_ally(unit u)
         flashEffect("Abilities\\Spells\\Human\\Invisibility\\InvisibilityTarget.mdl", u.getPos3Real())
@@ -60,7 +60,7 @@ public class HolyMissile extends PriestSkill
 
     static function tm_cb()
         var obj = GetExpiredTimer().getData() castTo HolyMissile
-        if obj.m_moved_dis > HolyMissile.max_dis
+        if obj.m_moved_dis >= HolyMissile.max_dis
             obj.m_tm..pause()..destr()
             obj.m_tm = null
 
@@ -87,7 +87,7 @@ public class HolyMissile extends PriestSkill
                     else
                         skip    //ignore
 
-            if not obj.m_dmgonce.has(i) and i.isAlive() // enemy
+            else if not obj.m_dmgonce.has(i) and i.isAlive() // enemy
                 real final_dmg = GetHeroAgi(obj.m_self_unit, true) * HolyMissile.dmg_inc + HolyMissile.dmg
                 obj.m_self_unit.damageTarget(i, final_dmg)
                 StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
@@ -116,7 +116,7 @@ function create_holy_missile()
         ..setTooltipNormalExtended(1,
             Color_Define.COLOR_NORMAL + "→向目标点投掷一枚充满圣光的魔法箭矢，对飞行路径上的敌方单位造成250伤害，为命中的第一名友方英雄回复4000生命值和70魔法值。|n" +
             Color_Define.COLOR_PRIEST + "↑ 2500%法术强度额外伤害，5000%法术强度额外治疗|n" +
-            Color_Define. COLOR_CAST_RANGE + "→最大飞行距离2200|n|n" +
+            Color_Define. COLOR_CAST_RANGE + "→最大飞行距离2200|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:45s")
         ..setIconNormal("HolyMissile.blp")
 

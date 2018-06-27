@@ -6,6 +6,7 @@ import TriggerHelper
 import HashMap
 import ExternalDefines
 import EditorHelper
+import StatisticsHelper
 
 public class IceLance extends IceMageSkill
 	static constant int self_id = 'im0e'

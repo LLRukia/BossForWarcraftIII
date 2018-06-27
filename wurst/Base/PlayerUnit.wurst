@@ -16,7 +16,7 @@ public class PlayerUnit extends IPlayerUnit
             s.listen()
 
     override function get_invulnerable() returns boolean
-        return not m_is_invulnerable
+        return m_is_invulnerable
     
     override function set_invulnerable(boolean _b)
         m_is_invulnerable = _b
@@ -34,6 +34,7 @@ public class PlayerUnit extends IPlayerUnit
         m_buffs.remove_buff(id)
         
     static function self_die()
+        print("self_die")
         var obj = GetTriggeringTrigger().getData() castTo PlayerUnit
         ReviveHelper.create_death_unit(obj.m_self_unit)
     

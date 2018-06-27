@@ -47,7 +47,6 @@ class Rush
             destroy data
             t..pause()..destr()
             return
-        print("rush")
         data.u.setPos(pos)
         flashEffect(data.effect_path, pos)
         data.moved_dis += data.speed

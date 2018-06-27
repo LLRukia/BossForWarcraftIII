@@ -3,10 +3,11 @@ import PlayerHelper
 import Buffs
 import UnitObjEditing
 import ExternalDefines
-import EffectHelper
+
 function test()
-    print("test")
-    EffectHelper.flash_effect('1rbk', Player(0).get_unit().getPos(), 0)
+    flashEffect(GetEventPlayerChatString(), GetTriggerPlayer().get_unit().getPos())
+    
+    
     
 function test1()
     print("test1")
@@ -46,16 +47,18 @@ function displaydamage()
         ..setLifespan(3.)
         ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
     
+function ms()
+    printTimedToPlayer(GetTriggerPlayer().get_unit().getMoveSpeed().toString(1), 4, GetTriggerPlayer()) 
 
 init
     unit fire_chicken = createUnit(Player(8), 'frck', BORN_RECT.getCenter() + vec2(0, 500), angle(270))
     CreateTrigger()..registerUnitEvent(fire_chicken, EVENT_UNIT_DAMAGED)
         ..addAction(function displaydamage)
-    var tr = CreateTrigger()
-    for i = 0 to PLAYER_NUM-1
-        tr.registerPlayerChatEvent(Player(i), "-test", true)
-    tr..addAction(function test)
-        ..enable()
+    // var tr = CreateTrigger()
+    // for i = 0 to PLAYER_NUM-1
+    //     tr.registerPlayerChatEvent(Player(i), "", true)
+    // tr..addAction(function test)
+    //     ..enable()
 
     var tr1 = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
@@ -67,5 +70,11 @@ init
     for i = 0 to PLAYER_NUM-1
         tr2.registerPlayerChatEvent(Player(i), "-test2", true)
     tr2..addAction(function test2)
+        ..enable()
+
+    trigger spd = CreateTrigger()
+    for i = 0 to PLAYER_NUM-1
+        spd.registerPlayerChatEvent(Player(i), "ms", true)
+    spd..addAction(function ms)
         ..enable()
         

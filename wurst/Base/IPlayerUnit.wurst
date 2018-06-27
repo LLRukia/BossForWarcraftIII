@@ -8,7 +8,7 @@ public abstract class IPlayerUnit
     protected unit m_self_unit
     protected player m_control_player
     protected career m_self_career
-    protected boolean m_is_invulnerable = true
+    protected boolean m_is_invulnerable = false
 
     abstract function listen_all()
 

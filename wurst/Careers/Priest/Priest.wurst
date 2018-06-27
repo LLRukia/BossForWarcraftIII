@@ -1,11 +1,11 @@
 package Priest
 
 import public PlayerUnitHelper
-import public PlayerUnit
 
 import ExternalDefines
 import public PriestSkill
 import EditorHelper
+import PlayerUnit
 
 public class Priest extends PlayerUnit
 	unit m_self_image = null
@@ -18,12 +18,22 @@ public class Priest extends PlayerUnit
 
 	override function init_self() 
 		m_ls_skill.add(new Heal(m_self_unit))
+		m_ls_skill.add(new PowerInfusion(m_self_unit))
+		m_ls_skill.add(new HolyWordShield(m_self_unit))
+		m_ls_skill.add(new HolyNova(m_self_unit))
+		m_ls_skill.add(new HolyMissile(m_self_unit))
+		m_ls_skill.add(new DivineAegis(m_self_unit))
+		m_ls_skill.add(new Revive(m_self_unit))
 
+		
 @compiletime
 function create_priest()
 	var editor = EditorHelper.create_template_hero(PRIEST)
-	string pr_skill_list = Heal.self_id.toRawCode() +
-		",imbk,AInv"
+	string pr_skill_list = Heal.self_id.toRawCode() + "," + PowerInfusion.self_id.toRawCode()
+		+ "," + HolyWordShield.self_id.toRawCode() +"," + HolyNova.self_id.toRawCode()
+		+"," + HolyMissile.self_id.toRawCode()+"," + DivineAegis.self_id.toRawCode()
+		+"," + Revive.self_id.toRawCode() +
+		",prbk,AInv"
 
 	editor..setNormalAbilities(pr_skill_list)
 		..setUnitSoundSet("Priest")

@@ -8,6 +8,7 @@ import TriggerHelper
 import TimerUtils
 import HashMap
 import SkillHelper
+import Buffs
 
 public class IceSpirit extends IceMageSkill
     static let self_id = 'im0f'
@@ -21,7 +22,7 @@ public class IceSpirit extends IceMageSkill
     static let buff_up_down = vec2(0.37, 0.24)
     static var map_buff_unit = new HashMap<int, unit>
     static vec2 pt_cast
-    private var m_map_spirit = new IterableMap<unit, rect>
+    private var m_map_spirit = new IterableMap<effect, rect>
     private region m_rg_judge = CreateRegion()
     private trigger m_tr_judge = CreateTrigger()
     private trigger m_tr_kill_recovery = CreateTrigger()
@@ -37,7 +38,7 @@ public class IceSpirit extends IceMageSkill
         m_self_unit.addAbility(IceSpirit.self_ids[m_spirit_num])
         for i in m_map_spirit
             m_rg_judge.clearRect(m_map_spirit.get(i))
-            RemoveUnit(i)
+            i..setPos(vec2(0,0))..destr()
         m_map_spirit.flush()
 
 
@@ -75,7 +76,7 @@ public class IceSpirit extends IceMageSkill
                 m_map_spirit.remove(i)
                 m_rg_judge.clearRect(_rc)
                 RemoveRect(_rc)
-                RemoveUnit(i)
+                i..setPos(vec2(0,0))..destr()
                 m_exist_spirit_num--
                 break
 
@@ -86,37 +87,37 @@ public class IceSpirit extends IceMageSkill
         m_exist_spirit_num++
 
         rect rc = Rect(pos.x - 40, pos.y - 40, pos.x + 40, pos.y + 40)
-        unit u = createUnit(m_self_unit.getOwner(), 'im1f', pos, angle(270.))
-        u.setXY(pos)
-        m_map_spirit.put(u, rc)
+        effect e = addEffect("frostaura.mdx", pos)
+        m_map_spirit.put(e, rc)
         
         m_rg_judge.addRect(rc)
 
     static function enter()
         var obj = GetTriggeringTrigger().getData() castTo IceSpirit
         unit u = GetEnteringUnit()
-
+        print(u.can_add_buff())
         if (PlayerUnitHelper.get_instance(u) == -1
             and not u.isBoss()) or not u.can_add_buff()
             return
+        print("notreturn")
         real fmin = 10000000
-        unit min_unit = null
+        effect min_e = null
         for i in obj.m_map_spirit
             vec2 pos = u.getPos()
             real r = (i.getPos() - pos).lengthSq()
             if fmin > r
-                min_unit = i
+                min_e = i
                 fmin = r
         
-        if min_unit != null
-            rect rc = obj.m_map_spirit.get(min_unit)
+        if min_e != null
+            rect rc = obj.m_map_spirit.get(min_e)
         
-            obj.m_map_spirit.remove(min_unit)
+            obj.m_map_spirit.remove(min_e)
             obj.m_rg_judge.clearRect(rc)
             RemoveRect(rc)
-            RemoveUnit(min_unit)
             obj.m_exist_spirit_num--
-            flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", min_unit.getPos())
+            flashEffect("Abilities\\Spells\\Items\\AIam\\AIamTarget.mdl", min_e.getPos())
+            min_e..setPos(vec2(0,0))..destr()
             
             unit uFaker = createUnit(obj.m_self_unit.getOwner(), FAKE_CASTER, u.getPos()+vec2(-100,0), angle(0))
             uFaker..setTimedLife(1)
@@ -180,11 +181,6 @@ function create_ice_spirit()
             ..setIconNormal(icon[i])
 
         destroy editor
-
-@compiletime
-function create_ice_spirit_unit()
-    var ed = EditorHelper.create_effect_faker_unit('im1f', 2., "Abilities\\Weapons\\PriestMissile\\PriestMissile.mdl", color(255,255,255))
-    destroy ed
 
 @compiletime
 function create_faker_skills()

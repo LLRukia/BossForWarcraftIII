@@ -7,6 +7,7 @@ import BuffObjEditing
 import TriggerHelper
 import SkillHelper
 import TimerUtils
+import PlayerUnit
 
 public class IceShield extends IceMageSkill
     static let self_id = 'im0d'
@@ -35,10 +36,11 @@ public class IceShield extends IceMageSkill
             (PlayerUnitHelper.get_instance(m_self_unit) castTo PlayerUnit).set_invulnerable(false)
 
     static function cast()
-        print("cast")
         var obj = GetTriggeringTrigger().getData() castTo IceShield
         obj.m_buff_obj = SkillHelper.protect(obj.m_self_unit)
         obj.m_self_unit.add_buff(IceShield.buff_id, BuffClearType.stable, BuffType.buffs, obj)
+        obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.buffs)
+        obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.debuffs)
         (PlayerUnitHelper.get_instance(obj.m_self_unit) castTo PlayerUnit).set_invulnerable(true)
         CreateTimer()..setData(obj castTo int)
             ..startPeriodic(IceShield.last_time, function tm_destroy_buff)

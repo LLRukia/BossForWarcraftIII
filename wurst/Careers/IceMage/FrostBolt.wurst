@@ -3,6 +3,7 @@ import IceMage
 import EditorHelper
 import ExternalDefines
 import TriggerHelper
+import StatisticsHelper
 
 public class FrostBolt extends IceMageSkill
 	static constant int self_id = 'im0q'

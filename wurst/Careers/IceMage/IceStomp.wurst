@@ -6,7 +6,7 @@ import EditorHelper
 import TriggerHelper
 import TimerUtils
 import SkillHelper
-
+import StatisticsHelper
 public class IceStomp extends IceMageSkill
     static let self_id = 'im0w'
     static let effect_id = 'im1w'

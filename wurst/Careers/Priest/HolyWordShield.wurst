@@ -36,7 +36,7 @@ function create_buff_recovery()
     var ed = new BuffDefinition(HolyWordShield.buff_id, 'Binf')
     ed..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "HolyWord : Shield")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位的生命恢复速度加快了。")
-    ..setTargetAttachmentPoint0(1, "origin")
+    ..setTargetAttachmentPoint0(1, "chest")
     ..setIconNormal(1, "HolyWordShield.blp")
     
 
@@ -62,7 +62,11 @@ function create_holy_word_shield()
         Color_Define.COLOR_CAST_RANGE + "→施法距离：900|n" +
         Color_Define.COLOR_COOL_DOWN + "→CD:0s")
         ..setBuffs(i, HolyWordShield.buff_id.toRawCode())
+        
     ed..setIconNormal("HolyWordShield.blp")
+    ..setIconTurnOff("HolyWordShield.blp")
+    ..setRequirements("")
+    ..setRequirementsLevels("")
     ..setHotkeyNormal("E")
     ..setName("HolyWordShield")
     ..setButtonPositionNormalX(2)

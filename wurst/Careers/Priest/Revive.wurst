@@ -39,16 +39,14 @@ public class Revive extends PriestSkill
 
     static function finish()
         var obj = GetTriggeringTrigger().getData() castTo Revive
-        print(obj.m_time)
-        ReviveHelper.revive(obj.u_revive)
+        if obj.m_time == 5
+            ReviveHelper.revive(obj.u_revive)
     
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo Revive
         obj.m_tm = CreateTimer()
         obj.m_time = 0
-        location lc = GetSpellTargetLoc()
-        obj.m_tar = vec2(GetLocationX(lc), GetLocationY(lc))
-        RemoveLocation(lc)
+
         obj.m_tm..setData(obj castTo int)
             ..startPeriodic(1, function displaytime)
     
@@ -59,16 +57,9 @@ public class Revive extends PriestSkill
         vec2 target = vec2(GetLocationX(lc), GetLocationY(lc))
         RemoveLocation(lc)
 
-        group g = CreateGroup()
-        g.enumUnitsInRange(target, 100)
         obj.u_revive = null
-        real min_dis = 999
-        for i in g
-            if ReviveHelper.can_revive(i)
-                real dis = (i.getPos() - target).lengthSq()
-                if min_dis > dis
-                    min_dis = dis
-                    obj.u_revive = i
+        
+        obj.u_revive = ReviveHelper.can_revive(target)
 
         if obj.u_revive == null
             printTimedToPlayer("请对准尸体释放。", 2, obj.m_self_unit.getOwner())
@@ -85,7 +76,7 @@ public class Revive extends PriestSkill
             ..setFadepoint(2.)
             ..setLifespan(3.)
             ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
-        flashEffect("Abilities\\Spells\\Human\\Resurrect\\ResurrectTarget.mdl", obj.m_tar)
+        flashEffect("Abilities\\Spells\\Human\\Resurrect\\ResurrectTarget.mdl", obj.u_revive.getPos())
         
         if obj.m_time == 5
             obj.m_tm..pause()..destr()

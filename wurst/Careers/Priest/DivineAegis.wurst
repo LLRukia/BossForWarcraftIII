@@ -8,6 +8,7 @@ import BuffObjEditing
 import TriggerHelper
 import SkillHelper
 import TimerUtils
+import PlayerUnit
 
 public class DivineAegis extends PriestSkill
     static let self_id = 'pr0d'
@@ -39,6 +40,8 @@ public class DivineAegis extends PriestSkill
         var obj = GetTriggeringTrigger().getData() castTo DivineAegis
         obj.m_buff_obj = SkillHelper.protect(obj.m_self_unit)
         obj.m_self_unit.add_buff(DivineAegis.buff_id, BuffClearType.stable, BuffType.buffs, obj)
+        obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.buffs)
+        obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.debuffs)
         (PlayerUnitHelper.get_instance(obj.m_self_unit) castTo PlayerUnit).set_invulnerable(true)
         CreateTimer()..setData(obj castTo int)
             ..startPeriodic(DivineAegis.last_time, function tm_destroy_buff)
@@ -52,11 +55,11 @@ public class DivineAegis extends PriestSkill
 @compiletime
 function create_divine_aegis()
     var ed = new AbilityDefinitionBeserk(DivineAegis.self_id)
-    ed..setDamageTakenIncrease(1, 0)
-        ..setLevels(1)
+    ed..setLevels(1)
+        ..setHotkeyNormal("D")
+        ..setDamageTakenIncrease(1, 0)
         ..setMovementSpeedIncrease(1, 0)
         ..setAttackSpeedIncrease(1, 0)
-        ..setHotkeyNormal("D")
         ..setDurationHero(1, DivineAegis.last_time)
         ..setDurationNormal(1, DivineAegis.last_time)
         ..setManaCost(1, 5)
@@ -72,7 +75,7 @@ function create_divine_aegis()
             Color_Define.COLOR_LAST_TIME + "→持续1.5秒。|n" +
             Color_Define.COLOR_WARNING + "★使用此技能会消除掉大部分魔法效果。|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:12s")
-        ..setIconNormal("DivineAegis.blp")
+        ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNDivineIntervention.blp")
         ..setBuffs(1, DivineAegis.buff_id.toRawCode())
     
 @compiletime
