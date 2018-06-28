@@ -75,7 +75,7 @@ function create_divine_aegis()
             Color_Define.COLOR_LAST_TIME + "→持续1.5秒。|n" +
             Color_Define.COLOR_WARNING + "★使用此技能会消除掉大部分魔法效果。|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:12s")
-        ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNDivineIntervention.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\prd.blp")
         ..setBuffs(1, DivineAegis.buff_id.toRawCode())
     
 @compiletime
@@ -86,5 +86,5 @@ function create_ice_shield_buff()
     ..setTargetAttachmentPoint0(1, "chest")
     ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Divine Aegis")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位免疫伤害。")
-    ..setIconNormal(1, "DivineAegis.blp")
+    ..setIconNormal(1, "replaceabletextures\\commandbuttons\\prd.blp")
     

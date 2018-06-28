@@ -13,6 +13,7 @@ public class ShadowBolt extends WarlockSkill
     static constant int self_id = 'wl0q'
     static let buff_id = 'wl1q'
     static let help_id = 'wl2q'
+    static let effect_id = 'wl3q'
     static constant real dmg = 300.
     static constant real dmg_last = 100
     static constant int dmg_times = 4
@@ -28,6 +29,7 @@ public class ShadowBolt extends WarlockSkill
     private timer m_tm_dmg
     private unit m_u_dmging
     private int m_times
+    private unit m_effect
 
     construct(unit u)
         super(u)
@@ -47,7 +49,7 @@ public class ShadowBolt extends WarlockSkill
         obj.m_cur_pos = obj.m_self_unit.getPos()
         obj.m_ang = MathHelper.get_angle(obj.m_cur_pos, tgt)
         obj.m_moved_dis = 0.
-
+        obj.m_effect = createUnit(obj.m_self_unit.getOwner(), effect_id, obj.m_cur_pos, obj.m_ang)
         obj.m_tm_move = CreateTimer()
         obj.m_tm_move..setData(obj castTo int)
             ..startPeriodic(0.04, function tm_cb)
@@ -60,7 +62,7 @@ public class ShadowBolt extends WarlockSkill
 
 
         u.setMana(u.getMana() - 30)
-        flashEffect("desecrateflame.mdx", u.getPos3Real())
+        flashEffect("purplevoid.mdx", u.getPos3Real())
 
         unit u_faker = createUnit(m_self_unit.getOwner(), FAKE_CASTER, u.getPos(), angle(0))
         u_faker..addAbility(ShadowBolt.help_id)..issueTargetOrder("cripple", u)..setTimedLife(1)
@@ -79,7 +81,7 @@ public class ShadowBolt extends WarlockSkill
         obj.m_self_unit.damageTarget(obj.m_u_dmging, final_dmg)
         obj.m_u_dmging.setMana(obj.m_u_dmging.getMana() - 9)
 
-        flashEffect("desecrateflamesmall.mdx", obj.m_u_dmging.getPos3Real())
+        flashEffect("death2cursebolt.mdx", obj.m_u_dmging.getPos3Real())
 
         if obj.m_times >= dmg_times
             GetExpiredTimer()..pause()..destr()
@@ -89,10 +91,11 @@ public class ShadowBolt extends WarlockSkill
         if obj.m_moved_dis >= ShadowBolt.max_dis
             obj.m_tm_move..pause()..destr()
             obj.m_tm_move = null
+            RemoveUnit(obj.m_effect)
 
         obj.m_cur_pos = MathHelper.forward(obj.m_cur_pos, obj.m_ang, 50)
         obj.m_moved_dis += 50
-        flashEffect("Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", obj.m_cur_pos)
+        obj.m_effect.setXY(obj.m_cur_pos)
         group g = CreateGroup()
         bool bhit = false
         g.enumUnitsInRange(obj.m_cur_pos, ShadowBolt.radius)
@@ -106,6 +109,7 @@ public class ShadowBolt extends WarlockSkill
         if bhit
             obj.m_tm_move..pause()..destr()
             obj.m_tm_move = null
+            RemoveUnit(obj.m_effect)
 
 @compiletime
 function create_shadow_bolt_buff_adder()
@@ -137,7 +141,7 @@ function create_shadow_bolt_buff()
 		..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位被暗影箭击中，减速了。")
 		..setArtTarget(1, "Abilities\\Spells\\Other\\AcidBomb\\BottleImpact.mdl")
 		..setTargetAttachments(1, 0)
-		..setIconNormal(1, "ShadowBolt.blp")
+		..setIconNormal(1, "replaceabletextures\\commandbuttons\\wlq.blp")
 
 
     destroy editor
@@ -164,6 +168,11 @@ function create_shadow_bolt()
 			Color_Define.COLOR_LAST_TIME + "→持续9秒|n" +
             Color_Define.COLOR_CAST_RANGE + "→最大距离：1300|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:8s")
-        ..setIconNormal("ShadowBolt.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\wlq.blp")
 
     destroy editor
+
+@compiletime
+function create_shadow_bolt_faker()
+    var ed = EditorHelper.create_effect_faker_unit(ShadowBolt.effect_id, 1.5, "Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", color(255,255,255))
+    ed.setMovementHeight(25)

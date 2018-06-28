@@ -133,7 +133,7 @@ function create_ice_lance()
 			Color_Define.COLOR_ICEMAGE + "↑ 2400%法术强度额外伤害|n" +
 			Color_Define. COLOR_CAST_RANGE + "→施法距离：900, 1100|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:8s")
-		..setIconNormal("Ice Lance.blp")
+		..setIconNormal("replaceabletextures\\commandbuttons\\ime.blp")
 		..setArtEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl")
 
 	destroy editor
@@ -157,7 +157,7 @@ function create_ice_lance_help()
 			Color_Define.COLOR_LAST_TIME + "→冰块持续10秒。|n" +
 			Color_Define. COLOR_CAST_RANGE + "→施法距离：900, 1100|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:6s")
-		..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNAttackGround.blp")
+		..setIconNormal("replaceabletextures\\commandbuttons\\ime2.blp")
 		..setArtEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl")
 
 	destroy editor

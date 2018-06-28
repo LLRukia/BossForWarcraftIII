@@ -96,7 +96,7 @@ function create_ice_image()
             Color_Define.COLOR_WARNING + "★幻象造成的伤害归冰法本体所有。|n" + 
 			Color_Define.COLOR_LAST_TIME + "→持续时间：10s|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:22s")
-        ..setIconNormal("iceimage.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\img.blp")
 
 @compiletime
 function create_image_skill()

@@ -85,7 +85,7 @@ function create_power_infusion()
             Color_Define.COLOR_LAST_TIME + "→持续20秒。|n" +
             Color_Define.COLOR_WARNING + "★D不会驱散此技能|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:70s")
-        ..setIconNormal("PowerInfusion.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\prg.blp")
         ..setBuffs(1, PowerInfusion.buff_id.toRawCode())
 
 @compiletime
@@ -96,7 +96,7 @@ function create_power_infusion_buff()
     ..setTargetAttachmentPoint0(1, "origin")
     ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Power Infusion")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位充满了能量。")
-    ..setIconNormal(1, "PowerInfusion.blp")
+    ..setIconNormal(1, "replaceabletextures\\commandbuttons\\prg.blp")
 
 @compiletime
 function create_power_infusion_buff_adder()

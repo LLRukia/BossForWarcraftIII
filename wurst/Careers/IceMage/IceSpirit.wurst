@@ -172,7 +172,7 @@ public class IceSpirit extends IceMageSkill
 
 @compiletime
 function create_ice_spirit()
-    let icon = ["icespirit0.blp", "icespirit1.blp", "icespirit2.blp", "icespirit3.blp"]
+    let icons = ["imf0.blp","imf1.blp","imf2.blp","imf3.blp"]
     for i = 0 to 3
         var editor = EditorHelper.create_channel_template(IceSpirit.self_ids[i], emSkillKey.F)
         editor..setCastRange(1, 500)
@@ -195,7 +195,7 @@ function create_ice_spirit()
                 Color_Define.COLOR_LAST_TIME + "→Boss持续3秒，友方单位持续5秒。|n"+
                 Color_Define. COLOR_CAST_RANGE + "→施法距离：500|n" +
                 Color_Define.COLOR_COOL_DOWN + "→CD:0s")
-            ..setIconNormal(icon[i])
+            ..setIconNormal("replaceabletextures\\commandbuttons\\"+icons[i])
 
         destroy editor
 
@@ -240,7 +240,7 @@ function create_speed_up_buff()
         ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位吸收了寒冰之灵，移动速度加快了。")
         ..setArtTarget(1, "Abilities\\Spells\\Items\\AIsp\\SpeedTarget.mdl")
         ..setTargetAttachmentPoint0(1, "overhead")
-        ..setIconNormal(1, "icespirit0.blp")
+        ..setIconNormal(1, "imf0.blp")
 
 @compiletime
 function create_speed_down_buff()
@@ -249,4 +249,4 @@ function create_speed_down_buff()
         ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Ice Spirit")
         ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位吸收了寒冰之灵，移动速度减慢了。")
         ..setArtTarget(1, "Abilities\\Spells\\Human\\slow\\slowtarget.mdl")
-        ..setIconNormal(1, "icespirit0.blp")
+        ..setIconNormal(1, "imf0.blp")

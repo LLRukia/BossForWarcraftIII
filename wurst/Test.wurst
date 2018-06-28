@@ -1,6 +1,7 @@
 package Test
 import PlayerHelper
 import Buffs
+import BossHelper
 import UnitObjEditing
 import ExternalDefines
 
@@ -54,11 +55,11 @@ init
     unit fire_chicken = createUnit(Player(8), 'frck', BORN_RECT.getCenter() + vec2(0, 500), angle(270))
     CreateTrigger()..registerUnitEvent(fire_chicken, EVENT_UNIT_DAMAGED)
         ..addAction(function displaydamage)
-    // var tr = CreateTrigger()
-    // for i = 0 to PLAYER_NUM-1
-    //     tr.registerPlayerChatEvent(Player(i), "", true)
-    // tr..addAction(function test)
-    //     ..enable()
+    var tr = CreateTrigger()
+    for i = 0 to PLAYER_NUM-1
+        tr.registerPlayerChatEvent(Player(i), "", true)
+    tr..addAction(function test)
+        ..enable()
 
     var tr1 = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
@@ -77,4 +78,5 @@ init
         spd.registerPlayerChatEvent(Player(i), "ms", true)
     spd..addAction(function ms)
         ..enable()
-        
+    BossHelper.create_boss(fire_chicken, 0)
+    BossHelper.register_counter()

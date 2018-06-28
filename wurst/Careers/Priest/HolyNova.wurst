@@ -45,7 +45,8 @@ public class HolyNova extends PriestSkill
     static function cast_pro()
         var obj = GetTriggeringTrigger().getData() castTo HolyNova
         vec2 pos = obj.m_self_unit.getPos()
-        flashEffect("Abilities\\Spells\\Undead\\ReplenishHealth\\ReplenishHealthCasterOverhead.mdl", pos)
+        addEffect("Abilities\\Spells\\Undead\\ReplenishHealth\\ReplenishHealthCasterOverhead.mdl", pos)
+            ..setScale(3.)..destr()
         group g = CreateGroup()
         g.enumUnitsInRange(pos, pro_radius+AREA_DMG_CORRECTION)
         for i in g
@@ -76,7 +77,7 @@ function create_holy_nova()
             Color_Define.COLOR_PRIEST + "↑ 1000%法术强度额外治疗|n" +
             Color_Define. COLOR_CAST_RANGE + "→施法距离：550|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:9s")
-        ..setIconNormal("HolyNova.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\prw.blp")
 
     destroy editor
 
@@ -98,6 +99,6 @@ function create_holy_nova_pro()
             Color_Define.COLOR_PRIEST + "↑ 1000%法术强度额外治疗|n" +
             Color_Define. COLOR_CAST_RANGE + "→施法距离：300|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:3s")
-        ..setIconNormal("HolyShock.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\prw2.blp")
 
     destroy editor

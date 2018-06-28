@@ -49,7 +49,7 @@ function create_buff_recovery()
     ed..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "HolyWord : Shield")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位的生命恢复速度加快了。")
     ..setTargetAttachmentPoint0(1, "chest")
-    ..setIconNormal(1, "HolyWordShield.blp")
+    ..setIconNormal(1, "replaceabletextures\\commandbuttons\\pre.blp")
     
 
 @compiletime
@@ -75,8 +75,8 @@ function create_holy_word_shield()
         Color_Define.COLOR_COOL_DOWN + "→CD:0s")
         ..setBuffs(i, HolyWordShield.buff_id.toRawCode())
         
-    ed..setIconNormal("HolyWordShield.blp")
-    ..setIconTurnOff("HolyWordShield.blp")
+    ed..setIconNormal("replaceabletextures\\commandbuttons\\pre.blp")
+    ..setIconTurnOff("replaceabletextures\\commandbuttons\\pre.blp")
     ..setRequirements("")
     ..setRequirementsLevels("")
     ..setHotkeyNormal("E")

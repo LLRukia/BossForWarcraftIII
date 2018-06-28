@@ -50,7 +50,7 @@ function create_frost_bolt()
 			Color_Define.COLOR_LAST_TIME + "→持续1.5秒|n" +
 			Color_Define.COLOR_CAST_RANGE + "→施法距离：800|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:1.8s")
-		..setIconNormal("frostbolt.blp")
+		..setIconNormal("replaceabletextures\\commandbuttons\\imq.blp")
 		..setArtTarget("Abilities\\Spells\\Items\\SpellShieldAmulet\\SpellShieldCaster.mdl")
 		
 	destroy editor
@@ -63,7 +63,7 @@ function create_frost_bolt_buff()
 		..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位被寒冰箭击中，减速了。")
 		..setArtTarget(1, "Abilities\\Spells\\Other\\FrostDamage\\FrostDamage.mdl")
 		..setTargetAttachments(1, 0)
-		..setIconNormal(1, "frostbolt.blp")
+		..setIconNormal(1, "replaceabletextures\\commandbuttons\\imq.blp")
 
 
 	destroy editor

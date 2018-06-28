@@ -74,7 +74,7 @@ function create_ice_shield()
             Color_Define.COLOR_LAST_TIME + "→持续1.5秒。|n" +
             Color_Define.COLOR_WARNING + "★使用此技能会消除掉大部分魔法效果。|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:12s")
-        ..setIconNormal("iceshield.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\imd.blp")
         ..setBuffs(1, IceShield.buff_id.toRawCode())
     
 @compiletime
@@ -85,5 +85,5 @@ function create_ice_shield_buff()
     ..setTargetAttachmentPoint0(1, "origin")
     ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Ice Shield")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位免疫伤害。")
-    ..setIconNormal(1, "iceshield.blp")
+    ..setIconNormal(1, "replaceabletextures\\commandbuttons\\imd.blp")
     

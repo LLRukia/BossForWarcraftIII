@@ -120,6 +120,6 @@ function create_holy_missile()
             Color_Define.COLOR_PRIEST + "↑ 2500%法术强度额外伤害，5000%法术强度额外治疗|n" +
             Color_Define. COLOR_CAST_RANGE + "→最大飞行距离1500|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:45s")
-        ..setIconNormal("HolyMissile.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\prr.blp")
 
     destroy editor

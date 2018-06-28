@@ -167,7 +167,7 @@ function create_ice_barrier()
             Color_Define.COLOR_LAST_TIME + "→持续45秒。|n" +
             Color_Define. COLOR_CAST_RANGE + "→施法距离：800|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:5s")
-        ..setIconNormal("Ice Barrier.blp")
+        ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNFrostArmor.blp")
         ..setBuffs(1, IceBarrier.buff_id.toRawCode())
         ..setDurationHero(1, 45)
         ..setDurationNormal(1, 45)
@@ -182,7 +182,7 @@ function create_ice_barrier_buff()
         ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位被寒冰护盾庇护着。")
         ..setArtTarget(1, "imr.mdx")
         ..setTargetAttachmentPoint0(1, "origin")
-        ..setIconNormal(1, "Ice Barrier.blp")
+        ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\BTNFrostArmor.blp")
 
 
     destroy editor

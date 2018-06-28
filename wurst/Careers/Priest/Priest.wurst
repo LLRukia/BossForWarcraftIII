@@ -60,7 +60,7 @@ function create_im_id()
 	editor..setName(1, "Priest")
 		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Priest")
 		..setTooltipNormalExtended(1, Color_Define.COLOR_PRIEST + "You are an angel!")
-		..setIconNormal(1, "PR.blp")
+		..setIconNormal(1, "replaceabletextures\\commandbuttons\\PR.blp")
 
 @compiletime
 function create_pr_mgcbook()

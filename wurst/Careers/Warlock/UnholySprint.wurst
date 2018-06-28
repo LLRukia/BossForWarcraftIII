@@ -10,8 +10,8 @@ public class UnholySprint extends WarlockSkill
     static let self_id = 'wl0e'
     static let help_id = 'wl1e'
     static let buff_id = 'wl2e'
-    static let order_id_on = 'immolation'
-    static let order_id_off = 'unimmolation'
+    static let order_id_on = "immolation"
+    static let order_id_off = "unimmolation"
     private trigger m_tr_off = CreateTrigger()
     private timer m_tm
     construct(unit u)
@@ -25,11 +25,11 @@ public class UnholySprint extends WarlockSkill
 
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_ISSUED_ORDER)
-            ..addCondition(Filter(()->GetIssuedOrderId()==UnholySprint.order_id_on))
+            ..addCondition(Filter(()->GetIssuedOrderId()==OrderId(UnholySprint.order_id_on)))
             ..addAction(function UnholySprint.cast)
             ..setData(this castTo int)
         m_tr_off..registerUnitEvent(m_self_unit, EVENT_UNIT_ISSUED_ORDER)
-            ..addCondition(Filter(()->GetIssuedOrderId()==UnholySprint.order_id_off))
+            ..addCondition(Filter(()->GetIssuedOrderId()==OrderId(UnholySprint.order_id_off)))
             ..addAction(function UnholySprint.cast_off)
             ..setData(this castTo int)
 
@@ -46,7 +46,7 @@ public class UnholySprint extends WarlockSkill
 
     static function tm_cb()
         var obj = GetExpiredTimer().getData() castTo UnholySprint
-        real r = obj.m_self_unit.getMaxHP() * 0.05
+        real r = obj.m_self_unit.getMaxHP() * 0.0025
         obj.m_self_unit.setHP(obj.m_self_unit.getHP() - r)
 
 @compiletime
@@ -59,6 +59,7 @@ function create_unholy_sprint()
         ..setButtonPositionNormalY(2)
         ..setHotkeyNormal("E")
         ..setHotkeyTurnOff("E")
+        ..setManaCost(1, 0)
         ..setCooldown(1, 5)
         ..setName("UnholySprint")
         ..setTooltipNormal(1,

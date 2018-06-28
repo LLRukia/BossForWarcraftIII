@@ -57,7 +57,7 @@ function create_im_id()
 	editor..setName(1, "IceMage")
 		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Ice Mage")
 		..setTooltipNormalExtended(1, Color_Define.COLOR_ICEMAGE + "You are master of ice!")
-		..setIconNormal(1, "IM.blp")
+		..setIconNormal(1, "replaceabletextures\\commandbuttons\\IM.blp")
 
 @compiletime
 function create_im_mgcbook()

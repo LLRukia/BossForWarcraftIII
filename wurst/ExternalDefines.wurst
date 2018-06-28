@@ -25,9 +25,9 @@ public let AREA_DMG_CORRECTION = 40.
 public let ICE_MAGE = 'H0IM'
 public let PRIEST   = 'H0PR'
 public let WARLOCK  = 'H0WL'
-public let PICK_UNITS = [ICE_MAGE,PRIEST]
-public let PICK_CAREERS = [career.ice_mage,career.priest]
-public let CAREERS_NUM = 2
+public let PICK_UNITS = [ICE_MAGE,PRIEST,WARLOCK]
+public let PICK_CAREERS = [career.ice_mage,career.priest,career.warlock]
+public let CAREERS_NUM = 3
 
 public class Color_Define
     static let COLOR_ICEMAGE       = "|cffCECEFF"
