@@ -32,7 +32,7 @@ function create_frost_bolt()
 	var editor = EditorHelper.create_cripple_template(FrostBolt.self_id, 1.5, FrostBolt.buff_id)
 	editor..setAttackSpeedReduction(1, 0.05)
 		..setMovementSpeedReduction(1, 0.05)
-		..setCastRange(1, 1300)
+		..setCastRange(1, 800)
 		..setManaCost(1, 17)
 		..setCooldown(1, 1.8)
 		..setButtonPositionNormalX(0)
@@ -48,7 +48,7 @@ function create_frost_bolt()
 			Color_Define.COLOR_MANA_DECREASE + "↓减少目标4点能量。|n" +
 			Color_Define.COLOR_ICEMAGE + "↑ 800%法术强度额外伤害|n" +
 			Color_Define.COLOR_LAST_TIME + "→持续1.5秒|n" +
-			Color_Define.COLOR_CAST_RANGE + "→施法距离：1300|n" +
+			Color_Define.COLOR_CAST_RANGE + "→施法距离：800|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:1.8s")
 		..setIconNormal("frostbolt.blp")
 		..setArtTarget("Abilities\\Spells\\Items\\SpellShieldAmulet\\SpellShieldCaster.mdl")

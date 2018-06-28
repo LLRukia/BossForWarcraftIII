@@ -33,7 +33,7 @@ function create_priest()
 		+ "," + HolyWordShield.self_id.toRawCode() +"," + HolyNova.self_id.toRawCode()
 		+"," + HolyMissile.self_id.toRawCode()+"," + DivineAegis.self_id.toRawCode()
 		+"," + Revive.self_id.toRawCode() +
-		",prbk,AInv"
+		",prbk,AInv,bAnA"
 
 	editor..setNormalAbilities(pr_skill_list)
 		..setUnitSoundSet("Priest")
@@ -44,6 +44,7 @@ function create_priest()
 		..setAttack1ProjectileArt("Abilities\\Weapons\\DruidoftheTalonMissile\\DruidoftheTalonMissile.mdl")
 		..setAttack1AttackType(AttackType.Magic)
 		..setPrimaryAttribute("INT")
+		..setManaMaximum(300)
 
 @compiletime
 function create_im_au()
@@ -57,8 +58,8 @@ function create_im_au()
 function create_im_id()
 	var editor = new BuffDefinition('prid', 'Bdet')
 	editor..setName(1, "Priest")
-		..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Priest")
-		..setTooltipNormalExtended(1, Color_Define.COLOR_COOL_DOWN + "You are an angel!")
+		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Priest")
+		..setTooltipNormalExtended(1, Color_Define.COLOR_PRIEST + "You are an angel!")
 		..setIconNormal(1, "PR.blp")
 
 @compiletime

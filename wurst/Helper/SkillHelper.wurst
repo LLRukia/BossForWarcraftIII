@@ -1,6 +1,5 @@
 package SkillHelper
 
-import NoWurst
 import Unit
 import MathHelper
 import TimerUtils
@@ -8,6 +7,7 @@ import Effect
 import Printing
 import EditorHelper
 import TriggerHelper
+import BossHelper
 
 public let FAKE_CASTER = 'ctfk'
 
@@ -78,7 +78,6 @@ public class Invulnerability
         u.setArmor(armor)
 
 
-
 public class SkillHelper
     static function rush(unit u, angle ang, real dis, real speed, bool pauseUnit, string effect_path)
         new Rush(u, ang, speed, dis, pauseUnit, effect_path)
@@ -88,6 +87,19 @@ public class SkillHelper
     static function protect(unit u) returns Invulnerability
         return new Invulnerability(u)
 
+    static function counter_spell(unit ucaster, unit utarget) returns bool
+        if BossHelper.counter(utarget)
+            real speed = 64 * 0.071 / 128
+            real angle = 90
+            createTTEx(ucaster.getPos3with(50) - vec3(40, 0, 0), "★反制成功★", 9, ucaster.getOwner().getColor().toColor().withAlpha(255))
+                ..setPermanent(false)
+                ..setFadepoint(2.)
+                ..setLifespan(3.)
+                ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
+            flashEffect("Abilities\\Spells\\Human\\Defend\\DefendCaster.mdl", utarget.getPos3Real())
+            return true
+        return false
+        
     private construct()
 
     

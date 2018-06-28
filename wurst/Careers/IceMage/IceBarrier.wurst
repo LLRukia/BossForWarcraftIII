@@ -42,6 +42,10 @@ public class IceBarrier extends IceMageSkill
     construct(unit u)
         super(u)
     
+    ondestroy
+        clear()
+        destroy data_manager
+    
     override function clear()
         for i in data_manager
             var dt = data_manager.get(i)
@@ -109,7 +113,6 @@ public class IceBarrier extends IceMageSkill
     static function unit_death()
         Data dt = GetTriggeringTrigger().getData() castTo Data
         if dt != null
-            print("11")
             if not dt.m_u.remove_buff(buff_id)
                 destroy dt
                 data_manager.remove(dt.m_u)
@@ -148,7 +151,7 @@ function create_ice_barrier()
     var editor = new AbilityDefinitionUnholyFrenzycreep(IceBarrier.self_id)
     editor..setAttackSpeedBonus(1, 0.)
         ..setDamageperSecond(1, 0.)
-        ..setCastRange(1, 1100)
+        ..setCastRange(1, 800)
         ..setManaCost(1, 45)
         ..setCooldown(1, 5)
         ..setButtonPositionNormalX(3)
@@ -162,7 +165,7 @@ function create_ice_barrier()
         ..setTooltipNormalExtended(1,
             Color_Define.COLOR_NORMAL + "↑给目标施加寒冰屏障，可以为目标吸收最大750点伤害。|n" +
             Color_Define.COLOR_LAST_TIME + "→持续45秒。|n" +
-            Color_Define. COLOR_CAST_RANGE + "→施法距离：1100|n" +
+            Color_Define. COLOR_CAST_RANGE + "→施法距离：800|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:5s")
         ..setIconNormal("Ice Barrier.blp")
         ..setBuffs(1, IceBarrier.buff_id.toRawCode())

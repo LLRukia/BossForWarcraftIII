@@ -34,8 +34,8 @@ public class PlayerUnit extends IPlayerUnit
         m_buffs.remove_buff(id)
         
     static function self_die()
-        print("self_die")
         var obj = GetTriggeringTrigger().getData() castTo PlayerUnit
+        //obj.m_self_unit.getMana()
         ReviveHelper.create_death_unit(obj.m_self_unit)
     
     construct(player pl, unit u)

@@ -1,7 +1,8 @@
 package BossHelper
 
 import HashMap
-
+import IBoss
+import ExternalDefines
 
 public function unit.isBoss() returns boolean
     return BossHelper.isBoss(this)
@@ -9,7 +10,28 @@ public function unit.isBoss() returns boolean
 
 public class BossHelper
     static private var map_boss = new HashMap<unit, int>
+    static private bool can_counter = false
+    static private unit cur_boss = null
     static function create_boss(int _index)
 
     static function isBoss(unit u) returns boolean
         return map_boss.has(u)
+
+    static function counter(unit u) returns boolean
+        if map_boss.has(u)
+            if u != cur_boss
+                if _DEBUG
+                    print("counter a Boss which is not current Boss???")
+                return false
+            if can_counter
+                (map_boss.get(u) castTo IBoss).countered()
+    
+            return can_counter
+        else
+            return false
+
+    static function register_counter()
+        can_counter = true
+
+    static function unregister_counter()
+        can_counter = false

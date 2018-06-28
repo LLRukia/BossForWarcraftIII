@@ -1,0 +1,21 @@
+package WarlockSkill
+
+import public Buffs
+import public StatisticsHelper
+
+import public initlater ShadowCounterSpell
+import public initlater UnholySprint
+import public initlater ShadowBolt
+
+import BaseSkills
+
+public class WarlockSkill extends IBaseSkills
+	construct(unit spell_unit)
+		super(spell_unit)
+
+
+	override function listen()
+
+	override function destroy_buff(unit _u)
+
+	override function clear()

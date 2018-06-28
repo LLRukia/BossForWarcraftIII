@@ -41,12 +41,18 @@ public class ReviveHelper
 
         return u
 
-    static function revive(unit u_faker)
+    static function revive(unit u_faker, real hp_percent)
         if not map_death_unit.has(u_faker)
             if _DEBUG
                 print("ReviveHelper:bad revive")
             return
-        map_death_unit.get(u_faker)..revive(u_faker.getPos(), true)..setXY(u_faker.getPos())
+        real final_percent = hp_percent > 0.5 ? 0.5 : hp_percent
+
+        unit u = map_death_unit.get(u_faker)
+        u..revive(u_faker.getPos(), false)
+            ..setXY(u_faker.getPos())
+            ..setHP(u.getMaxHP() * final_percent)
+        flashEffect("Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl", u.getPos())
         map_death_unit.remove(u_faker)
         RemoveUnit(u_faker)
         

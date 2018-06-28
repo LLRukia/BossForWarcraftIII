@@ -18,6 +18,11 @@ public class Revive extends PriestSkill
     private vec2 m_tar
     construct(unit u)
         super(u)
+    ondestroy
+        m_tr_target_judge..disable().destr()
+        m_tr_end..disable().destr()
+        m_tr_finish..disable().destr()
+        m_tm..pause().destr()
 
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
@@ -40,13 +45,13 @@ public class Revive extends PriestSkill
     static function finish()
         var obj = GetTriggeringTrigger().getData() castTo Revive
         if obj.m_time == 5
-            ReviveHelper.revive(obj.u_revive)
+            ReviveHelper.revive(obj.u_revive, obj.m_self_unit.getHP() / obj.m_self_unit.getMaxHP())
     
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo Revive
         obj.m_tm = CreateTimer()
         obj.m_time = 0
-
+        flashEffect("Abilities\\Spells\\Human\\Resurrect\\ResurrectTarget.mdl", obj.u_revive.getPos())
         obj.m_tm..setData(obj castTo int)
             ..startPeriodic(1, function displaytime)
     
@@ -62,7 +67,7 @@ public class Revive extends PriestSkill
         obj.u_revive = ReviveHelper.can_revive(target)
 
         if obj.u_revive == null
-            printTimedToPlayer("请对准尸体释放。", 2, obj.m_self_unit.getOwner())
+            printTimedToPlayer(Color_Define.COLOR_PRIEST + "请对准尸体释放。", 2, obj.m_self_unit.getOwner())
             obj.m_self_unit.issueImmediateOrder("stop")
             return
 
@@ -71,7 +76,7 @@ public class Revive extends PriestSkill
         obj.m_time++
         real speed = 64 * 0.071 / 128
         real angle = 90
-        createTTEx(obj.m_self_unit.getPos3with(30), obj.m_time.toString(), 9, obj.m_self_unit.getOwner().getColor().toColor().withAlpha(255))
+        createTTEx(obj.m_self_unit.getPos3with(50) - vec3(40, 0, 0), obj.m_time.toString(), 9, obj.m_self_unit.getOwner().getColor().toColor().withAlpha(255))
             ..setPermanent(false)
             ..setFadepoint(2.)
             ..setLifespan(3.)
@@ -89,7 +94,7 @@ public class Revive extends PriestSkill
 function create_revive()
     var ed = new AbilityDefinitionSeaWitchTornado(Revive.self_id)
     ed..setSummonedUnitType(1, "")
-        ..setCastRange(1, 700)
+        ..setCastRange(1, 550)
         ..setManaCost(1, 55)
         ..setCooldown(1, 20)
         ..setButtonPositionNormalX(2)
@@ -105,9 +110,9 @@ function create_revive()
         Color_Define.COLOR_PRIEST + "Revive" +
         Color_Define.COLOR_HOT_KEY + "(F)")
         ..setTooltipNormalExtended(1,
-        Color_Define.COLOR_NORMAL + "→吟唱5秒后，复活目标|n" +
-        Color_Define.COLOR_CAST_RANGE + "→施法距离：700|n" +
-        Color_Define.COLOR_WARNING + "▼技能被打断也会进入CD" +
+        Color_Define.COLOR_NORMAL + "→吟唱5秒后，复活目标。|n" +
+        Color_Define.COLOR_CAST_RANGE + "→施法距离：550|n" +
+        Color_Define.COLOR_WARNING + "▼技能被打断也会进入CD|n▲复活后目标的生命值与你的当前生命值百分比一致，且不超过50%|n" +
         Color_Define.COLOR_COOL_DOWN + "→CD:20s")
         ..setIconNormal("ReplaceableTextures\\CommandButtons\\BTNResurrection.blp")
         ..setArtTarget("Abilities\\Spells\\Human\\Heal\\HealTarget.mdl")

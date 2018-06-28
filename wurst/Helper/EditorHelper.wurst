@@ -84,6 +84,8 @@ class EditorHelper
             ..setName(id.toRawCode())
             ..setModelFile(".mdl")
             ..setUnitClassification("")
+            ..setAnimationCastPoint(0)
+            ..setAnimationCastBackswing(0)
         return u_editor
 
     static function create_effect_faker_unit(int id, real size, string effect_path, color cl) returns UnitOrBuildingOrHeroDefinition
@@ -181,12 +183,12 @@ class EditorHelper
             ..setSpeedBase(220)
             ..setTurnRate(3)
             ..setSpeedMinimum(90)
-            ..setAcquisitionRange(1100)
+            ..setAcquisitionRange(700)
             ..setAttack1AreaofEffectTargets(TYPE_ALLOWED_COMMON)
             ..setAttack1AnimationDamagePoint(0.2)
             ..setAttack1AnimationBackswingPoint(0.2)
             ..setAttack1CooldownTime(2.2)
-            ..setAttack1Range(1100)
+            ..setAttack1Range(700)
             ..setAttack1ProjectileSpeed(1300)
             ..setAttack1RangeMotionBuffer(700.)
             ..setAttack1DamageBase(24)
@@ -219,3 +221,10 @@ class EditorHelper
             ..hideHeroMinimapDisplay(true)
 
         return u_editor
+
+    @compiletime
+    static function create_permanent_invisblility()
+        var ed = new AbilityDefinitionPermanentInvisibility('bAnA')
+        ed..setAutoAcquireAttackTargets(1, false)
+        ..setDurationHero(1, -1)
+        ..setDurationNormal(1, -1)

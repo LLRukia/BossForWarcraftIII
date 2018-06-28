@@ -29,6 +29,11 @@ public class IceStomp extends IceMageSkill
     construct(unit u)
         super(u)
 
+    ondestroy
+        m_tr_end..disable().destr()
+        m_tr_cast..disable().destr()
+        m_tr_start..disable().destr()
+
 
     override function listen()
         m_tr_start..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CHANNEL)
@@ -83,13 +88,8 @@ public class IceStomp extends IceMageSkill
         group g = CreateGroup()
         g.enumUnitsInRange(GetSpellAbilityUnit().getPos(), IceStomp.radius+AREA_DMG_CORRECTION)
         for i in g
-            if not IsUnitAlly(i, GetOwningPlayer(obj.m_self_unit))
-                and i.isAlive()
-                real final_dmg = GetHeroAgi(obj.m_self_unit, true) * IceStomp.inc + IceStomp.dmg
-                obj.m_self_unit.damageTarget(i, final_dmg, ATTACK_TYPE_MAGIC)
-                StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
+            obj.make_dmg(i)
         g.destr()
-            
             
 
     static function destroy_follow()
@@ -102,10 +102,10 @@ public class IceStomp extends IceMageSkill
 
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo IceStomp
-        obj.m_effect.destr()
+        obj.m_effect..setPos(vec2(0,0))..destr()
         obj.m_effect = null
         if obj.m_effect2 != null
-            obj.m_effect2.destr()
+            obj.m_effect2..setPos(vec2(0,0))..destr()
             obj.m_effect2 = null
         if obj.m_follow != null
             flashEffect("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl", obj.m_follow.getPos())
@@ -113,11 +113,7 @@ public class IceStomp extends IceMageSkill
         group g = CreateGroup()
         g.enumUnitsInRange(obj.m_self_unit.getPos(), IceStomp.radius+AREA_DMG_CORRECTION)
         for i in g
-            if not IsUnitAlly(i, GetOwningPlayer(obj.m_self_unit))
-                and i.isAlive()
-                real final_dmg = GetHeroAgi(obj.m_self_unit, true) * IceStomp.inc + IceStomp.dmg
-                obj.m_self_unit.damageTarget(i, final_dmg, ATTACK_TYPE_MAGIC)
-                StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
+            obj.make_dmg(i)
         g.destr()
 
         obj.m_tm_effect..pause()..destr()
@@ -125,11 +121,11 @@ public class IceStomp extends IceMageSkill
 
     static function endcast()
         var obj = GetTriggeringTrigger().getData() castTo IceStomp
-        obj.m_effect.destr()
+        obj.m_effect..setPos(vec2(0,0))..destr()
         obj.m_effect = null
 
         if obj.m_effect2 != null
-            obj.m_effect2.destr()
+            obj.m_effect2..setPos(vec2(0,0))..destr()
             obj.m_effect2 = null
         if obj.m_follow != null
             RemoveUnit(obj.m_follow)
@@ -149,13 +145,19 @@ public class IceStomp extends IceMageSkill
             var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
             if fat.m_self_image != null and obj.m_effect2 != null
                 obj.m_effect2..setScale(obj.m_scale_size)..setPos(fat.m_self_image.getPos())
-            else
-                obj.m_effect2.destr()
+            else if obj.m_effect2 != null
+                obj.m_effect2..setPos(vec2(0,0))..destr()
                 obj.m_effect2 = null
         else
             tm..pause()..destr()
             obj.m_tm_effect = null
-
+        
+    function make_dmg(unit u)
+        if not IsUnitAlly(u, GetOwningPlayer(m_self_unit))
+            and u.isAlive()
+            real final_dmg = GetHeroAgi(m_self_unit, true) * IceStomp.inc + IceStomp.dmg
+            m_self_unit.damageTarget(u, final_dmg, ATTACK_TYPE_MAGIC)
+            StatisticsHelper.add_real(m_self_unit.getOwner(), final_dmg)
 
 @compiletime
 function create_ice_stomp()

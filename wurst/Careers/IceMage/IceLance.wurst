@@ -22,21 +22,21 @@ public class IceLance extends IceMageSkill
 	private boolean from_unit
 	private vec2 pt1
 	private vec2 pt2
-	private trigger tr_help = null
+	private trigger m_tr_help = null
 	construct(unit u)
 		super(u)
-		tr_help = CreateTrigger()
+		m_tr_help = CreateTrigger()
 		init_self()
 
 	ondestroy
-		tr_help..disable()..destr()
+		m_tr_help..disable()..destr()
 
 	override function listen()
 		m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
 			..addCondition(Filter(()->GetSpellAbilityId()==IceLance.self_id))
 			..addAction(function IceLance.cast)
 			..setData(this castTo int)
-		tr_help..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+		m_tr_help..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
 			..addCondition(Filter(()->GetSpellAbilityId()==IceLance.help_id))
 			..setData(this castTo int)
 			..addAction(function IceLance.choose_point2)
@@ -94,7 +94,7 @@ public class IceLance extends IceMageSkill
 				if not dmg_once.has(uTarget) and not IsUnitAlly(uTarget, GetOwningPlayer(instance.m_self_unit))
 					and uTarget.isAlive()
 					real final_dmg = GetHeroAgi(instance.m_self_unit, true) * IceLance.inc + IceLance.dmg
-					instance.m_self_unit.damageTarget(uTarget, final_dmg)
+					instance.m_self_unit.damageTarget(uTarget, final_dmg, ATTACK_TYPE_MAGIC)
 					StatisticsHelper.add_real(instance.m_self_unit.getOwner(), final_dmg)
 					dmg_once.put(uTarget, true)
 			g.destr()

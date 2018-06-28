@@ -10,7 +10,7 @@ import HashMap
 
 public class HolyMissile extends PriestSkill
     static let self_id = 'pr0r'
-    static let max_dis = 2000.
+    static let max_dis = 1500.
     static let radius = 150.
     static let heal = 4000.
     static let heal_inc = 50.
@@ -24,6 +24,8 @@ public class HolyMissile extends PriestSkill
     private var m_dmgonce = new HashMap<unit, boolean>
     construct(unit u)
         super(u)
+    ondestroy
+        destroy m_dmgonce
 
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
@@ -50,7 +52,7 @@ public class HolyMissile extends PriestSkill
             ..startPeriodic(0.04, function tm_cb)
 
     function hit_ally(unit u)
-        flashEffect("Abilities\\Spells\\Human\\Invisibility\\InvisibilityTarget.mdl", u.getPos3Real())
+        flashEffect("Abilities\\Spells\\Human\\ReviveHuman\\ReviveHuman.mdl", u.getPos3Real())
         real hp_prev = u.getHP()
         real final_heal = GetHeroAgi(m_self_unit, true) * HolyMissile.heal_inc + HolyMissile.heal
         u.setHP(hp_prev + final_heal)
@@ -89,7 +91,7 @@ public class HolyMissile extends PriestSkill
 
             else if not obj.m_dmgonce.has(i) and i.isAlive() // enemy
                 real final_dmg = GetHeroAgi(obj.m_self_unit, true) * HolyMissile.dmg_inc + HolyMissile.dmg
-                obj.m_self_unit.damageTarget(i, final_dmg)
+                obj.m_self_unit.damageTarget(i, final_dmg, ATTACK_TYPE_MAGIC)
                 StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
                 obj.m_dmgonce.put(i, true)
 
@@ -116,7 +118,7 @@ function create_holy_missile()
         ..setTooltipNormalExtended(1,
             Color_Define.COLOR_NORMAL + "→向目标点投掷一枚充满圣光的魔法箭矢，对飞行路径上的敌方单位造成250伤害，为命中的第一名友方英雄回复4000生命值和70魔法值。|n" +
             Color_Define.COLOR_PRIEST + "↑ 2500%法术强度额外伤害，5000%法术强度额外治疗|n" +
-            Color_Define. COLOR_CAST_RANGE + "→最大飞行距离2200|n" +
+            Color_Define. COLOR_CAST_RANGE + "→最大飞行距离1500|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:45s")
         ..setIconNormal("HolyMissile.blp")
 

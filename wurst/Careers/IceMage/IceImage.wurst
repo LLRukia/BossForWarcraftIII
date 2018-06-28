@@ -17,6 +17,8 @@ public class IceImage extends IceMageSkill
     construct(unit u)
         super(u)
 
+    ondestroy
+        
 
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)

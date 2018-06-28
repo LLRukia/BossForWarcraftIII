@@ -6,6 +6,7 @@ public enum career
     ice_mage
     fire_mage
     priest
+    warlock
 
 public let BORN_RECT = gg_rct_BORN
 public let PICK_RECT = gg_rct_PICK
@@ -23,6 +24,7 @@ public let AREA_DMG_CORRECTION = 40.
 
 public let ICE_MAGE = 'H0IM'
 public let PRIEST   = 'H0PR'
+public let WARLOCK  = 'H0WL'
 public let PICK_UNITS = [ICE_MAGE,PRIEST]
 public let PICK_CAREERS = [career.ice_mage,career.priest]
 public let CAREERS_NUM = 2
@@ -30,6 +32,7 @@ public let CAREERS_NUM = 2
 public class Color_Define
     static let COLOR_ICEMAGE       = "|cffCECEFF"
     static let COLOR_PRIEST        = "|cffFFFF93"
+    static let COLOR_WARLOCK       = "|cff9F35FF"
 
     static let COLOR_MANA_DECREASE = "|cffCECEFF"
     static let COLOR_COOL_DOWN     = "|cffFFFF37"

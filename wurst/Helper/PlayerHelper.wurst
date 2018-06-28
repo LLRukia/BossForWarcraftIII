@@ -3,6 +3,7 @@ import Table
 import ExternalDefines
 import initlater IceMage
 import initlater FireMage
+import initlater Warlock
 import initlater Priest
 import initlater PlayerUnit
 
@@ -19,6 +20,8 @@ public function player.init_self(unit u, career emCareer)
             obj = new FireMage(this, u)
         case priest
             obj = new Priest(this, u)
+        case warlock
+            obj = new Warlock(this, u)
         default
             obj = null
 

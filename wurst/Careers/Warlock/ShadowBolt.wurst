@@ -1,0 +1,169 @@
+package ShadowBolt
+
+import Warlock
+import EditorHelper
+import ExternalDefines
+import TriggerHelper
+import SkillHelper
+import BossHelper
+import MathHelper
+import TimerUtils
+
+public class ShadowBolt extends WarlockSkill
+    static constant int self_id = 'wl0q'
+    static let buff_id = 'wl1q'
+    static let help_id = 'wl2q'
+    static constant real dmg = 300.
+    static constant real dmg_last = 100
+    static constant int dmg_times = 4
+    static let radius = 150.
+    static let inc = vec2(5. ,3.)
+    static let buff_down = 0.10
+    static let max_dis = 1300.
+
+    private timer m_tm_move
+    private real m_moved_dis
+    private vec2 m_cur_pos
+    private angle m_ang
+    private timer m_tm_dmg
+    private unit m_u_dmging
+    private int m_times
+
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==ShadowBolt.self_id))
+            ..addAction(function ShadowBolt.cast)
+            ..setData(this castTo int)
+
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo ShadowBolt
+
+        location lc = GetSpellTargetLoc()
+        vec2 tgt = vec2(GetLocationX(lc),GetLocationY(lc))
+        RemoveLocation(lc)
+        obj.m_cur_pos = obj.m_self_unit.getPos()
+        obj.m_ang = MathHelper.get_angle(obj.m_cur_pos, tgt)
+        obj.m_moved_dis = 0.
+
+        obj.m_tm_move = CreateTimer()
+        obj.m_tm_move..setData(obj castTo int)
+            ..startPeriodic(0.04, function tm_cb)
+
+    function hit(unit u)
+        m_u_dmging = u
+        real final_dmg = dmg + GetHeroAgi(m_self_unit, true) * inc.x
+        StatisticsHelper.add_real(m_self_unit.getOwner(), final_dmg)
+        m_self_unit.damageTarget(u, final_dmg, ATTACK_TYPE_MAGIC)
+
+
+        u.setMana(u.getMana() - 30)
+        flashEffect("desecrateflame.mdx", u.getPos3Real())
+
+        unit u_faker = createUnit(m_self_unit.getOwner(), FAKE_CASTER, u.getPos(), angle(0))
+        u_faker..addAbility(ShadowBolt.help_id)..issueTargetOrder("cripple", u)..setTimedLife(1)
+
+        m_times = 0
+        m_tm_dmg = CreateTimer()
+        m_tm_dmg..setData(this castTo int)
+            ..startPeriodic(2, function tm_dmg)
+
+    static function tm_dmg()
+        var obj = GetExpiredTimer().getData() castTo ShadowBolt
+        obj.m_times++
+
+        real final_dmg = dmg_last + GetHeroAgi(obj.m_self_unit, true) * inc.y
+        StatisticsHelper.add_real(obj.m_self_unit.getOwner(), final_dmg)
+        obj.m_self_unit.damageTarget(obj.m_u_dmging, final_dmg)
+        obj.m_u_dmging.setMana(obj.m_u_dmging.getMana() - 9)
+
+        flashEffect("desecrateflamesmall.mdx", obj.m_u_dmging.getPos3Real())
+
+        if obj.m_times >= dmg_times
+            GetExpiredTimer()..pause()..destr()
+        
+    static function tm_cb()
+        var obj = GetExpiredTimer().getData() castTo ShadowBolt
+        if obj.m_moved_dis >= ShadowBolt.max_dis
+            obj.m_tm_move..pause()..destr()
+            obj.m_tm_move = null
+
+        obj.m_cur_pos = MathHelper.forward(obj.m_cur_pos, obj.m_ang, 50)
+        obj.m_moved_dis += 50
+        flashEffect("Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", obj.m_cur_pos)
+        group g = CreateGroup()
+        bool bhit = false
+        g.enumUnitsInRange(obj.m_cur_pos, ShadowBolt.radius)
+        for i in g
+            if i.isBoss()
+                obj.hit(i)
+                bhit = true
+                break
+
+        g.destr()
+        if bhit
+            obj.m_tm_move..pause()..destr()
+            obj.m_tm_move = null
+
+@compiletime
+function create_shadow_bolt_buff_adder()
+	var editor = EditorHelper.create_cripple_template(ShadowBolt.help_id, 9, ShadowBolt.buff_id)
+	editor..setAttackSpeedReduction(1, ShadowBolt.buff_down)
+		..setMovementSpeedReduction(1, 0.0)
+		..setCastRange(1, 9999)
+		..setManaCost(1, 0)
+		..setCooldown(1, 0)
+		..setDurationHero(1, 3)
+        ..setDurationNormal(1, 3)
+        ..setManaCost(1, 0)
+        ..setCastRange(1, 99999)
+        ..setCooldown(1, 0)
+        ..setLevels(1)
+        ..setRequirements("")
+        ..setRequirementsLevels("")
+        ..setTargetsAllowed(1, "enemies,ground,air,organic")
+        ..setBuffs(1, ShadowBolt.buff_id.toRawCode())
+        ..setName("ShadowBolt Boss")
+		
+	destroy editor
+
+@compiletime
+function create_shadow_bolt_buff()
+	var editor = new BuffDefinition(ShadowBolt.buff_id, 'Bdet')
+	editor..setName(1, "ShadowBolt")
+		..setTooltipNormal(1, Color_Define.COLOR_WARLOCK + "Shadow Bolt")
+		..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位被暗影箭击中，减速了。")
+		..setArtTarget(1, "Abilities\\Spells\\Other\\AcidBomb\\BottleImpact.mdl")
+		..setTargetAttachments(1, 0)
+		..setIconNormal(1, "ShadowBolt.blp")
+
+
+    destroy editor
+    
+@compiletime
+function create_shadow_bolt()
+    var editor = EditorHelper.create_channel_template(ShadowBolt.self_id, emSkillKey.Q)
+    editor..setCastRange(1, 9999)
+        ..setManaCost(1, 70)
+        ..setCooldown(1, 8)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("Q")
+        ..setTargetType(1, emTargetType.Ground castTo int)
+        ..setName("ShadowBolt")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_WARLOCK + "Shadow Bolt" +
+            Color_Define.COLOR_HOT_KEY + "(Q)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→向指定方向射出一枚暗影箭。|n↓击中Boss后造成300伤害，降低其10%攻击速度，并每两秒对其造成100点伤害|n" +
+            "↑击中目标时为你回复150点魔法值。"+
+            Color_Define.COLOR_MANA_DECREASE + "↓减少目标30点能量，后续每次造成伤害时减少目标9点能量。|n" +
+            Color_Define.COLOR_WARLOCK + "↑ 800%法术强度额外伤害，500%法术强度额外持续伤害（每次）|n" +
+			Color_Define.COLOR_LAST_TIME + "→持续9秒|n" +
+            Color_Define.COLOR_CAST_RANGE + "→最大距离：1300|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:8s")
+        ..setIconNormal("ShadowBolt.blp")
+
+    destroy editor

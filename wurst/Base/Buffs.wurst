@@ -41,6 +41,12 @@ public class Buffs
 
     function add_buff(int id, BuffClearType cltp, BuffType tp, IBaseSkills obj)
         var temp = new Buff(id, cltp, tp, obj)
+        if set_buff.has(id)
+            var bf = set_buff.get(id)
+            set_buff.remove(id)
+            m_u.removeAbility(id)
+            bf.m_cb.destroy_buff(m_u)
+        
         set_buff.put(id, temp)
 
     function remove_buff(BuffClearType cltp, BuffType tp)

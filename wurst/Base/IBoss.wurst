@@ -1,0 +1,9 @@
+package IBoss
+
+import NoWurst
+
+public abstract class IBoss
+
+    abstract function countered()
+
+    abstract function destroy_self()

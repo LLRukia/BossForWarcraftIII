@@ -5,7 +5,6 @@ import IceMage
 import ExternalDefines
 import BossHelper
 import TriggerHelper
-import TimerUtils
 import HashMap
 import SkillHelper
 import Buffs
@@ -19,8 +18,8 @@ public class IceSpirit extends IceMageSkill
     static let skill_down_id = 'imf2'
     static let recovery = vec2(200., 30.)
     static let caster_faker = 'imfu'
-    static let buff_up_down = vec2(0.37, 0.24)
-    static var map_buff_unit = new HashMap<int, unit>
+    static let buff_up_down = vec2(0.5, 0.24)
+    static var map_buff_unit = new IterableMap<timer, unit>
     static vec2 pt_cast
     private var m_map_spirit = new IterableMap<effect, rect>
     private region m_rg_judge = CreateRegion()
@@ -31,6 +30,15 @@ public class IceSpirit extends IceMageSkill
     construct(unit u)
         super(u)
     
+    ondestroy
+        clear()
+        
+        m_rg_judge.destr()
+        m_tr_judge..disable()..destr()
+        m_tr_kill_recovery..disable()..destr()
+
+        destroy m_map_spirit
+
     override function clear()
         m_self_unit.removeAbility(IceSpirit.self_ids[m_spirit_num])
         m_spirit_num = 0
@@ -99,7 +107,6 @@ public class IceSpirit extends IceMageSkill
         if (PlayerUnitHelper.get_instance(u) == -1
             and not u.isBoss()) or not u.can_add_buff()
             return
-        print("notreturn")
         real fmin = 10000000
         effect min_e = null
         for i in obj.m_map_spirit
@@ -129,13 +136,23 @@ public class IceSpirit extends IceMageSkill
                 uFaker.issueTargetOrder("bloodlust", u)
                 u.add_buff(IceSpirit.buff_up_id, BuffClearType.additions, BuffType.buffs, obj)
                 timer t = CreateTimer()
-                t..setData(t.getHandleId())
-                    ..startPeriodic(7, function IceSpirit.tmr_removebuff)
-            
+                map_buff_unit.put(t,u)
+                t..startPeriodic(7, function IceSpirit.tmr_removebuff)
+
+    override function destroy_buff(unit u)
+        if u.isBoss()
+        else
+            for i in map_buff_unit
+                if map_buff_unit.get(i) == u
+                    i..pause()..destr()
+                    map_buff_unit.remove(i)
+                    break
+                
         
     static function tmr_removebuff()
         var t = GetExpiredTimer()
-        unit u = map_buff_unit.get(t.getData())
+        unit u = map_buff_unit.get(t)
+        map_buff_unit.remove(t)
         u.remove_buff(IceSpirit.buff_up_id)
         t..pause()..destr()
 
@@ -158,7 +175,7 @@ function create_ice_spirit()
     let icon = ["icespirit0.blp", "icespirit1.blp", "icespirit2.blp", "icespirit3.blp"]
     for i = 0 to 3
         var editor = EditorHelper.create_channel_template(IceSpirit.self_ids[i], emSkillKey.F)
-        editor..setCastRange(1, 900)
+        editor..setCastRange(1, 500)
             ..setManaCost(1, 0)
             ..setCooldown(1, 0)
             ..setButtonPositionNormalX(2)
@@ -173,10 +190,10 @@ function create_ice_spirit()
                 Color_Define.COLOR_NORMAL + "被动效果：|n→当你杀死单位时，为你回复" + 
                 Color_Define.COLOR_ICEMAGE + "200生命" + Color_Define.COLOR_NORMAL + "和" + 
                 Color_Define.COLOR_ICEMAGE + "30魔法" + Color_Define.COLOR_NORMAL + "，并增加一点Spirit，最大3点。|n主动效果：|n→消耗一个储存的Spirit，在指定地点放置一个寒冰之灵|n" +
-                Color_Define.COLOR_HOT_KEY + "↑友方玩家踩到增加37%移动速度|n" + 
+                Color_Define.COLOR_HOT_KEY + "↑友方玩家踩到增加50%移动速度|n" + 
                 Color_Define.COLOR_WARNING  + "↓Boss踩到减少24%移动速度|n" +
-                Color_Define.COLOR_LAST_TIME + "→Boss持续5秒，友方单位持续7秒。|n"+
-                Color_Define. COLOR_CAST_RANGE + "→施法距离：900|n" +
+                Color_Define.COLOR_LAST_TIME + "→Boss持续3秒，友方单位持续5秒。|n"+
+                Color_Define. COLOR_CAST_RANGE + "→施法距离：500|n" +
                 Color_Define.COLOR_COOL_DOWN + "→CD:0s")
             ..setIconNormal(icon[i])
 
@@ -188,8 +205,8 @@ function create_faker_skills()
     ed1..setDamageReduction(1, 0.)
         ..setAttackSpeedReduction(1, 0.)
         ..setMovementSpeedReduction(1, IceSpirit.buff_up_down.y)
-        ..setDurationHero(1, 5)
-        ..setDurationNormal(1, 5)
+        ..setDurationHero(1, 3)
+        ..setDurationNormal(1, 3)
         ..setManaCost(1, 0)
         ..setCastRange(1, 99999)
         ..setCooldown(1, 0)
@@ -204,8 +221,8 @@ function create_faker_skills()
     ed2..setScalingFactor(1, 0.)
         ..setAttackSpeedIncrease(1, 0.)
         ..setMovementSpeedIncrease(1, IceSpirit.buff_up_down.x)
-        ..setDurationHero(1, 7)
-        ..setDurationNormal(1, 7)
+        ..setDurationHero(1, 5)
+        ..setDurationNormal(1, 5)
         ..setManaCost(1, 0)
         ..setCastRange(1, 99999)
         ..setCooldown(1, 0)

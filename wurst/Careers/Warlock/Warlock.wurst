@@ -1,0 +1,65 @@
+package Warlock
+
+import public PlayerUnitHelper
+
+import ExternalDefines
+import public WarlockSkill
+import EditorHelper
+import PlayerUnit
+
+public class Warlock extends PlayerUnit
+	unit m_self_image = null
+	construct(player pl, unit u)
+		super(pl, u)
+		m_self_career = warlock
+		init_self()
+		listen_all()
+		u.hideAbility('wlbk', true)
+
+	override function init_self() 
+		m_ls_skill.add(new ShadowCounterSpell(m_self_unit))
+		m_ls_skill.add(new UnholySprint(m_self_unit))
+		m_ls_skill.add(new ShadowBolt(m_self_unit))
+		// m_ls_skill.add(new HolyNova(m_self_unit))
+		// m_ls_skill.add(new HolyMissile(m_self_unit))
+		// m_ls_skill.add(new DivineAegis(m_self_unit))
+		// m_ls_skill.add(new Revive(m_self_unit))
+
+
+@compiletime
+function create_priest()
+	var editor = EditorHelper.create_template_hero(WARLOCK)
+	string wl_skill_list = ShadowCounterSpell.self_id.toRawCode() + "," + 
+		UnholySprint.self_id.toRawCode() + "," + ShadowBolt.self_id.toRawCode() + 
+		",prbk,AInv,bAnA"
+
+	editor..setNormalAbilities(wl_skill_list)
+		..setUnitSoundSet("Necromancer")
+		..setProperNames(Color_Define.COLOR_WARLOCK + "术士")
+		..setName("术士")
+		..setModelFile("units\\undead\\Necromancer\\Necromancer")
+		..setArtSpecial("units\\undead\\Necromancer\\Necromancer")
+		..setAttack1ProjectileArt("Abilities\\Weapons\\SkeletalMageMissile\\SkeletalMageMissile.mdl")
+		..setAttack1AttackType(AttackType.Magic)
+		..setPrimaryAttribute("INT")
+
+@compiletime
+function create_im_au()
+	var editor = EditorHelper.create_aura('wlau')
+	editor..setArtTarget("xiwa.mdx")
+		..setName("wl")
+		..setBuffs(1, "wlid")
+	destroy editor
+
+@compiletime
+function create_im_id()
+	var editor = new BuffDefinition('wlid', 'Bdet')
+	editor..setName(1, "Warlock")
+		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Warlock")
+		..setTooltipNormalExtended(1, Color_Define.COLOR_WARLOCK + "Anti-mana.")
+		..setIconNormal(1, "WL.blp")
+
+@compiletime
+function create_pr_mgcbook()
+	var editor = EditorHelper.create_magic_book('wlbk', "wlau")
+	editor..setName("wlbk")

@@ -30,7 +30,7 @@ function create_ice_mage()
 		IceLance.self_id.toRawCode() + "," + IceBarrier.self_id.toRawCode() + "," +
 		IceSpirit.self_id.toRawCode() + "," + IceImage.self_id.toRawCode() + "," + 
 		IceShield.self_id.toRawCode() +
-		",imbk,AInv"
+		",imbk,AInv,bAnA"
 
 	editor..setNormalAbilities(im_skill_list)
 		..setUnitSoundSet("Sorceress")
@@ -55,8 +55,8 @@ function create_im_au()
 function create_im_id()
 	var editor = new BuffDefinition('imid', 'Bdet')
 	editor..setName(1, "IceMage")
-		..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Ice Mage")
-		..setTooltipNormalExtended(1, Color_Define.COLOR_COOL_DOWN + "You are master of ice!")
+		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Ice Mage")
+		..setTooltipNormalExtended(1, Color_Define.COLOR_ICEMAGE + "You are master of ice!")
 		..setIconNormal(1, "IM.blp")
 
 @compiletime
