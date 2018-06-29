@@ -60,4 +60,8 @@ public class PlayerUnit extends IPlayerUnit
 
         m_ls_skill.clear()
 
-    
+    override function refresh()
+        m_self_unit.setHP(m_self_unit.getMaxHP())
+        m_self_unit.setMana(m_self_unit.getMaxMana())
+        for i in m_ls_skill
+            i.clear()

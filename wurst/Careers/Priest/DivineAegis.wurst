@@ -14,6 +14,7 @@ public class DivineAegis extends PriestSkill
     static let self_id = 'pr0d'
     static let last_time = 1.5
     static let buff_id = 'prdd'
+    private timer m_tm
     private Invulnerability m_buff_obj = null
     construct(unit u)
         super(u)
@@ -43,14 +44,20 @@ public class DivineAegis extends PriestSkill
         obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.buffs)
         obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.debuffs)
         (PlayerUnitHelper.get_instance(obj.m_self_unit) castTo PlayerUnit).set_invulnerable(true)
-        CreateTimer()..setData(obj castTo int)
+        obj.m_tm = getTimer()
+        obj.m_tm..setData(obj castTo int)
             ..startPeriodic(DivineAegis.last_time, function tm_destroy_buff)
     
     static function tm_destroy_buff()
         timer t = GetExpiredTimer()
         var obj = t.getData() castTo DivineAegis
-        obj.m_self_unit.remove_buff(DivineAegis.buff_id)
-        t..pause()..destr()
+        obj.clear()
+    
+    override function clear()
+        if m_tm != null
+            m_tm.release()
+            m_tm = null
+        m_self_unit.remove_buff(DivineAegis.buff_id)
 
 @compiletime
 function create_divine_aegis()

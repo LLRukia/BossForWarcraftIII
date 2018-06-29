@@ -34,7 +34,7 @@ public class ReviveHelper
         unit u = null
         for i in map_death_unit
             real dis = (i.getPos() - pos).lengthSq()
-            if dis <= 400
+            if dis <= 625
                 if fmin > dis
                     fmin = dis
                     u = i
@@ -55,7 +55,16 @@ public class ReviveHelper
         flashEffect("Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl", u.getPos())
         map_death_unit.remove(u_faker)
         RemoveUnit(u_faker)
-        
+
+    static function can_revive_faker(unit u_faker) returns bool
+        return map_death_unit.has(u_faker)
+    
+    static function can_revive(vec2 pos, unit u) returns unit
+        for i in map_death_unit
+            if map_death_unit.get(i) == u
+                if (u.getPos() - pos).lengthSq() <= 625
+                    return i
+        return null
 
 @compiletime
 function create_dead_units()

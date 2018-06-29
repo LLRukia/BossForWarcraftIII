@@ -24,6 +24,13 @@ public class Priest extends PlayerUnit
 		m_ls_skill.add(new HolyMissile(m_self_unit))
 		m_ls_skill.add(new DivineAegis(m_self_unit))
 		m_ls_skill.add(new Revive(m_self_unit))
+	override function refresh()
+		super.refresh()
+		m_self_unit..removeAbility(PowerInfusion.self_id)..addAbility(PowerInfusion.self_id)
+			..removeAbility(HolyNova.self_id)..removeAbility(HolyNova.help_id)..addAbility(HolyNova.self_id)
+			..removeAbility(DivineAegis.self_id)..addAbility(DivineAegis.self_id)
+			..removeAbility(HolyMissile.self_id)..addAbility(HolyMissile.self_id)
+			..removeAbility(Revive.self_id)..addAbility(Revive.self_id)
 
 		
 @compiletime
@@ -45,6 +52,7 @@ function create_priest()
 		..setAttack1AttackType(AttackType.Magic)
 		..setPrimaryAttribute("INT")
 		..setManaMaximum(300)
+		..setManaInitialAmount(300)
 
 @compiletime
 function create_im_au()

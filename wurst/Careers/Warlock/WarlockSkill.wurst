@@ -6,6 +6,8 @@ import public StatisticsHelper
 import public initlater ShadowCounterSpell
 import public initlater UnholySprint
 import public initlater ShadowBolt
+import public initlater SiphonShadow
+import public initlater EternalDetermination
 
 import BaseSkills
 

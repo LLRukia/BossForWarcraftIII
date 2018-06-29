@@ -1,5 +1,6 @@
-package IceShield
-import IceMage
+package EternalDetermination
+
+import Warlock
 import ExternalDefines
 import AbilityObjEditing
 import ObjectIds
@@ -9,19 +10,19 @@ import SkillHelper
 import TimerUtils
 import PlayerUnit
 
-public class IceShield extends IceMageSkill
-    static let self_id = 'im0d'
+public class EternalDetermination extends WarlockSkill
+    static let self_id = 'wl0d'
     static let last_time = 1.5
-    static let buff_id = 'imdd'
-    private Invulnerability m_buff_obj = null
+    static let buff_id = 'wldd'
     private timer m_tm
+    private Invulnerability m_buff_obj = null
     construct(unit u)
         super(u)
 
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
-            ..addCondition(Filter(()->GetSpellAbilityId()==IceShield.self_id))
-            ..addAction(function IceShield.cast)
+            ..addCondition(Filter(()->GetSpellAbilityId()==EternalDetermination.self_id))
+            ..addAction(function EternalDetermination.cast)
             ..setData(this castTo int)
 
 
@@ -37,62 +38,60 @@ public class IceShield extends IceMageSkill
             (PlayerUnitHelper.get_instance(m_self_unit) castTo PlayerUnit).set_invulnerable(false)
 
     static function cast()
-        var obj = GetTriggeringTrigger().getData() castTo IceShield
-
+        var obj = GetTriggeringTrigger().getData() castTo EternalDetermination
         obj.m_buff_obj = SkillHelper.protect(obj.m_self_unit)
-        obj.m_self_unit.add_buff(IceShield.buff_id, BuffClearType.stable, BuffType.buffs, obj)
+        obj.m_self_unit.add_buff(EternalDetermination.buff_id, BuffClearType.stable, BuffType.buffs, obj)
         obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.buffs)
         obj.m_self_unit.remove_buff(BuffClearType.additions, BuffType.debuffs)
         (PlayerUnitHelper.get_instance(obj.m_self_unit) castTo PlayerUnit).set_invulnerable(true)
         obj.m_tm = getTimer()
         obj.m_tm..setData(obj castTo int)
-            ..startPeriodic(IceShield.last_time, function tm_destroy_buff)
+            ..startPeriodic(EternalDetermination.last_time, function tm_destroy_buff)
     
     static function tm_destroy_buff()
         timer t = GetExpiredTimer()
-        var obj = t.getData() castTo IceShield
+        var obj = t.getData() castTo EternalDetermination
         obj.clear()
-
+    
     override function clear()
         if m_tm != null
             m_tm.release()
             m_tm = null
-        m_self_unit.remove_buff(IceShield.buff_id)
-        
+        m_self_unit.remove_buff(EternalDetermination.buff_id)
 
 @compiletime
-function create_ice_shield()
-    var ed = new AbilityDefinitionBeserk(IceShield.self_id)
-    ed..setDamageTakenIncrease(1, 0)
-        ..setLevels(1)
+function create_divine_aegis()
+    var ed = new AbilityDefinitionBeserk(EternalDetermination.self_id)
+    ed..setLevels(1)
+        ..setHotkeyNormal("D")
+        ..setDamageTakenIncrease(1, 0)
         ..setMovementSpeedIncrease(1, 0)
         ..setAttackSpeedIncrease(1, 0)
-        ..setHotkeyNormal("D")
-        ..setDurationHero(1, IceShield.last_time)
-        ..setDurationNormal(1, IceShield.last_time)
+        ..setDurationHero(1, EternalDetermination.last_time)
+        ..setDurationNormal(1, EternalDetermination.last_time)
         ..setManaCost(1, 5)
         ..setCooldown(1, 12)
         ..setButtonPositionNormalX(1)
         ..setButtonPositionNormalY(1)
-        ..setName("IceShield")
+        ..setName("EternalDetermination")
         ..setTooltipNormal(1,
-			Color_Define.COLOR_ICEMAGE + "Ice Shield" +
+			Color_Define.COLOR_PRIEST + "Eternal Determination" +
 			Color_Define.COLOR_HOT_KEY + "(D)")
         ..setTooltipNormalExtended(1,
-            Color_Define.COLOR_NORMAL + "↑冰箱无敌|n" +
+            Color_Define.COLOR_NORMAL + "↑术士永不灭！|n" +
             Color_Define.COLOR_LAST_TIME + "→持续1.5秒。|n" +
             Color_Define.COLOR_WARNING + "★使用此技能会消除掉大部分魔法效果。|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:12s")
-        ..setIconNormal("replaceabletextures\\commandbuttons\\imd.blp")
-        ..setBuffs(1, IceShield.buff_id.toRawCode())
+        ..setIconNormal("replaceabletextures\\commandbuttons\\wld.blp")
+        ..setBuffs(1, EternalDetermination.buff_id.toRawCode())
     
 @compiletime
 function create_ice_shield_buff()
-    var ed = new BuffDefinition(IceShield.buff_id, 'Bbsk')
-    ed..setArtTarget(1, "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathTargetArt.mdl")
+    var ed = new BuffDefinition(EternalDetermination.buff_id, 'Bbsk')
+    ed..setArtTarget(1, "moltenchanneling.mdx")
     ..setTargetAttachments(1, 1)
-    ..setTargetAttachmentPoint0(1, "origin")
-    ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Ice Shield")
+    ..setTargetAttachmentPoint0(1, "chest")
+    ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Eternal Determination")
     ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位免疫伤害。")
-    ..setIconNormal(1, "replaceabletextures\\commandbuttons\\imd.blp")
+    ..setIconNormal(1, "replaceabletextures\\commandbuttons\\wld.blp")
     

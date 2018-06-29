@@ -37,12 +37,20 @@ public class UnholySprint extends WarlockSkill
         var obj = GetTriggeringTrigger().getData() castTo UnholySprint
         obj.m_tm.startPeriodic(0.05, function tm_cb)
         obj.m_self_unit..addAbility(help_id)..hideAbility(help_id, true)
+            ..add_buff(buff_id, BuffClearType.inherent, BuffType.buffs, obj)
         
 
     static function cast_off()
         var obj = GetTriggeringTrigger().getData() castTo UnholySprint
-        obj.m_self_unit.removeAbility(help_id)
-        obj.m_tm.pause()
+        //obj.m_self_unit.removeAbility(help_id)
+        obj.m_self_unit.remove_buff(buff_id)
+        
+
+    override function destroy_buff(unit u)
+        if u != m_self_unit
+            return
+        u.removeAbility(help_id)
+        m_tm.pause()
 
     static function tm_cb()
         var obj = GetExpiredTimer().getData() castTo UnholySprint
@@ -57,6 +65,8 @@ function create_unholy_sprint()
         ..setDamageperInterval(1, 0)
         ..setButtonPositionNormalX(2)
         ..setButtonPositionNormalY(2)
+        ..setButtonPositionTurnOffX(2)
+        ..setButtonPositionTurnOffY(2)
         ..setHotkeyNormal("E")
         ..setHotkeyTurnOff("E")
         ..setManaCost(1, 0)
@@ -78,12 +88,19 @@ function create_unholy_sprint()
 
 @compiletime
 function create_unholy_sprint_aura_speed()
-    var ed = new AbilityDefinitionAuraEnduranceCreep(UnholySprint.help_id)
+    var ed = new AbilityDefinitionAuraEnduranceCreep('wl3e')
     ed..setMovementSpeedIncrease(1, 0.7)
     ..setAttackSpeedIncrease(1, 0)
     ..setArtTarget("")
     ..setBuffs(1, UnholySprint.buff_id.toRawCode())
     ..setTargetsAllowed(1, "self")
+    ..setName("UnholySprintAura")
+
+@compiletime
+function create_unholy_sprint_mgcbook()
+    var editor = EditorHelper.create_magic_book(UnholySprint.help_id, "wl3e")
+    editor..setName(UnholySprint.help_id.toRawCode())
+    
 
 @compiletime
 function create_unholy_sprint_aura_buff()
@@ -95,7 +112,7 @@ function create_unholy_sprint_aura_buff()
         ..setTargetAttachments(1, 2)
         ..setTargetAttachmentPoint0(1, "foot,left")
         ..setTargetAttachmentPoint1(1, "foot,right")
-        ..setIconNormal(1, "frostbolt.blp")
+        ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\BTNImmolationOn.blp")
 
 
     destroy editor

@@ -4,19 +4,20 @@ import Buffs
 import BossHelper
 import UnitObjEditing
 import ExternalDefines
+import Camera
 
 function test()
     flashEffect(GetEventPlayerChatString(), GetTriggerPlayer().get_unit().getPos())
     
     
     
-function test1()
-    print("test1")
+function clear2()
+    print("clear stable")
     Player(0).get_unit().remove_buff(BuffClearType.stable, BuffType.buffs)
 
-function test2()
-    print("test2")
-    Player(0).get_unit().issuePointOrder("polymorph", Player(0).get_unit().getPos() + vec2(10, 0))
+function clear1()
+    print("clear addition")
+    Player(0).get_unit().remove_buff(BuffClearType.additions, BuffType.buffs)
     
 @compiletime
 function create_fire_chicken()
@@ -51,32 +52,43 @@ function displaydamage()
 function ms()
     printTimedToPlayer(GetTriggerPlayer().get_unit().getMoveSpeed().toString(1), 4, GetTriggerPlayer()) 
 
+function cam()
+    GetTriggerPlayer()..setCameraField(CAMERA_FIELD_FIELD_OF_VIEW, 95., 0)
+        ..setCameraField(CAMERA_FIELD_TARGET_DISTANCE, 2500., 0)
+
 init
     unit fire_chicken = createUnit(Player(8), 'frck', BORN_RECT.getCenter() + vec2(0, 500), angle(270))
     CreateTrigger()..registerUnitEvent(fire_chicken, EVENT_UNIT_DAMAGED)
         ..addAction(function displaydamage)
-    var tr = CreateTrigger()
-    for i = 0 to PLAYER_NUM-1
-        tr.registerPlayerChatEvent(Player(i), "", true)
-    tr..addAction(function test)
-        ..enable()
+    // var tr = CreateTrigger()
+    // for i = 0 to PLAYER_NUM-1
+    //     tr.registerPlayerChatEvent(Player(i), "", true)
+    // tr..addAction(function test)
+    //     ..enable()
 
     var tr1 = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
-        tr1.registerPlayerChatEvent(Player(i), "-test1", true)
-    tr1..addAction(function test1)
+        tr1.registerPlayerChatEvent(Player(i), "-clear2", true)
+    tr1..addAction(function clear2)
         ..enable()
 
     var tr2 = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
-        tr2.registerPlayerChatEvent(Player(i), "-test2", true)
-    tr2..addAction(function test2)
+        tr2.registerPlayerChatEvent(Player(i), "-clear1", true)
+    tr2..addAction(function clear1)
         ..enable()
 
     trigger spd = CreateTrigger()
+    trigger cam = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
         spd.registerPlayerChatEvent(Player(i), "ms", true)
+        cam.registerPlayerChatEvent(Player(i), "cam", true)
     spd..addAction(function ms)
-        ..enable()
+        
+    cam..addAction(function cam)
+
+    
+    
     BossHelper.create_boss(fire_chicken, 0)
     BossHelper.register_counter()
+    BossHelper.cur_boss = fire_chicken

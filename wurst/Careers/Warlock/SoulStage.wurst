@@ -1,0 +1,61 @@
+package SoulStage
+
+import Warlock
+import TriggerHelper
+import TimerUtils
+import EditorHelper
+import ExternalDefines
+import ReviveHelper
+
+public class SoulStage extends WarlockSkill
+    static let self_id = 'wl0g'
+    static let help_id = 'wl1g'
+
+    private trigger m_tr_help
+    private trigger m_tr_target_judge
+    private unit m_revive_unit
+    construct(unit u)
+        super(u)
+
+    ondestroy
+        clear()
+        m_tr_help..disable().destr()
+        m_tr_target_judge..disable().destr()
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_ISSUED_ORDER)
+        ..addCondition(Filter(()->GetSpellAbilityId()==SoulStage.self_id))
+            ..addAction(function SoulStage.cast)
+            ..setData(this castTo int)
+        m_tr_help..registerUnitEvent(m_self_unit, EVENT_UNIT_ISSUED_ORDER)
+            ..addCondition(Filter(()->GetSpellAbilityId()==SoulStage.help_id))
+            ..addAction(function SoulStage.revive)
+            ..setData(this castTo int)
+        m_tr_target_judge..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CHANNEL)
+            ..addCondition(Filter(()->GetSpellAbilityId()==SoulStage.help_id))
+            ..addAction(function SoulStage.prepare)
+            ..setData(this castTo int)
+
+    static function cast()
+
+    static function revive()
+        var obj = GetTriggeringTrigger().getData() castTo SoulStage
+
+        location lc = GetSpellTargetLoc()
+        vec2 target = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        unit u = ReviveHelper.can_revive(target, obj.m_revive_unit)
+        if u != null
+            ReviveHelper.revive(u, 0.8)
+
+    static function prepare()
+        var obj = GetTriggeringTrigger().getData() castTo SoulStage
+
+        location lc = GetSpellTargetLoc()
+        vec2 target = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        unit u = ReviveHelper.can_revive(target, obj.m_revive_unit)
+        if u == null
+            printTimedToPlayer(Color_Define.COLOR_PRIEST + "请对准尸体释放。", 2, obj.m_self_unit.getOwner())
+            obj.m_self_unit.issueImmediateOrder("stop")
+            return

@@ -1,6 +1,7 @@
 package SkillHelper
 
 import MathHelper
+import Buffs
 import TimerUtils
 import EditorHelper
 import BossHelper
@@ -61,6 +62,7 @@ public class Invulnerability
     trigger tr
     real armor = 0
     unit u = null
+    timer tm
     construct(unit u)
         print("protect")
         armor = u.getArmor()
@@ -68,11 +70,78 @@ public class Invulnerability
         u.setArmor(233.)
         tr = CreateTrigger()..registerUnitEvent(u, EVENT_UNIT_DAMAGED)
             ..addAction(()->BlzSetEventDamage(0))
+        tm = getTimer()
+        tm..setData(this castTo int)
+        ..startPeriodic(0.1, function des_buf)
+
+    static function des_buf()
+        var obj = GetExpiredTimer().getData() castTo Invulnerability
+        obj.u.remove_buff(BuffClearType.additions, BuffType.debuffs)
+        obj.u.remove_buff(BuffClearType.additions, BuffType.buffs)
 
     ondestroy
         tr..disable()..destr()
+        tm.release()
         u.setArmor(armor)
 
+
+public class AutoTrace
+    unit ut
+    unit uc
+    angle init_speed_ang
+    SkillHelperCb cb
+    int arg
+    unit uf
+    timer tm_f
+    static let init_speed = 55.
+    static let init_speed_deca = 5.5
+    static let init_trace_speed = 0.
+    static let trace_speed_inc = 5.5
+    static let max_speed = 66
+    real cur_ispd = init_speed
+    real cur_tspd = init_trace_speed
+    construct(int effect_id, unit ut, unit uc, angle ang, SkillHelperCb cb, int arg)
+        this.ut = ut
+        this.uc = uc
+        this.init_speed_ang = ang
+        this.cb = cb
+        this.arg = arg
+        this.uf = createUnit(uc.getOwner(), effect_id, uc.getPos(), init_speed_ang)
+        tm_f = getTimer()
+        tm_f..setData(this castTo int)
+            ..startPeriodic(0.05, function tm_cb)
+
+    ondestroy
+        tm_f.release()
+        RemoveUnit(uf)
+
+    private static function tm_cb()
+        var obj = GetExpiredTimer().getData() castTo AutoTrace
+        obj.main()
+
+    private function main()
+        if not ut.isAlive()
+            ut = uc
+            if not ut.isAlive()
+                destroy this
+                
+        vec2 curpos = uf.getPos()
+        angle to_target = MathHelper.get_angle(curpos, ut.getPos())
+        vec2 sucpos = MathHelper.forward(curpos, to_target, cur_tspd)
+        if cur_tspd < max_speed
+            cur_tspd += trace_speed_inc
+        if cur_ispd > 0
+            sucpos = MathHelper.forward(sucpos, init_speed_ang, cur_ispd)
+            cur_ispd -= init_speed_deca
+        angle face = MathHelper.get_angle(curpos, sucpos)
+        uf..setFacing(face)..setXY(sucpos)
+        if (sucpos - ut.getPos()).lengthSq() <= 150.
+            if ut != uc
+                cb.cb(arg)
+            destroy this
+
+public interface SkillHelperCb
+    function cb(int _obj)
 
 public class SkillHelper
     static function rush(unit u, angle ang, real dis, real speed, bool pauseUnit, string effect_path)
@@ -95,6 +164,10 @@ public class SkillHelper
             flashEffect("Abilities\\Spells\\Human\\Defend\\DefendCaster.mdl", utarget.getPos3Real())
             return true
         return false
+
+    
+    static function auto_trace_missile(int ef_id, unit utarget, unit ucaster, angle ang, SkillHelperCb cb, int arg)
+        new AutoTrace(ef_id, utarget, ucaster, ang, cb, arg)
         
     private construct()
 

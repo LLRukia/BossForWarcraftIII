@@ -5,5 +5,8 @@ import Camera
 init
     FogMaskEnableOn()
     for i = 0 to PLAYER_NUM-1
-        Player(i)..panCameraToTimed(PICK_RECT.getCenter(),0)
+        Player(i)
             ..setCameraBoundsToRect(PICK_RECT)
+            ..panCameraToTimed(PICK_RECT.getCenter(),0)
+            ..setCameraField(CAMERA_FIELD_FIELD_OF_VIEW, 95., 0)
+            ..setCameraField(CAMERA_FIELD_TARGET_DISTANCE, 2500., 0)

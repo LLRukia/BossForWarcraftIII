@@ -26,3 +26,5 @@ public abstract class IPlayerUnit
 
     function get_career() returns career
         return m_self_career
+
+    abstract function refresh()

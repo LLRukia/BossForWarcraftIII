@@ -45,7 +45,8 @@ public class Revive extends PriestSkill
     static function finish()
         var obj = GetTriggeringTrigger().getData() castTo Revive
         if obj.m_time == 5
-            ReviveHelper.revive(obj.u_revive, obj.m_self_unit.getHP() / obj.m_self_unit.getMaxHP())
+            if ReviveHelper.can_revive_faker(obj.u_revive)
+                ReviveHelper.revive(obj.u_revive, obj.m_self_unit.getHP() / obj.m_self_unit.getMaxHP())
     
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo Revive
@@ -73,6 +74,11 @@ public class Revive extends PriestSkill
 
     static function displaytime()
         var obj = GetExpiredTimer().getData() castTo Revive
+        if not ReviveHelper.can_revive_faker(obj.u_revive)
+            obj.m_self_unit.issueImmediateOrder("stop")
+            obj.m_tm..pause()..destr()
+            return
+        
         obj.m_time++
         real speed = 64 * 0.071 / 128
         real angle = 90

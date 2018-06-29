@@ -23,6 +23,14 @@ public class IceMage extends PlayerUnit
 		m_ls_skill.add(new IceImage(m_self_unit))
 		m_ls_skill.add(new IceShield(m_self_unit))
 
+	override function refresh()
+		super.refresh()
+		m_self_unit..removeAbility(IceBarrier.self_id)..addAbility(IceBarrier.self_id)
+			..removeAbility(IceLance.self_id)..removeAbility(IceLance.help_id)..addAbility(IceLance.self_id)
+			..removeAbility(IceImage.self_id)..addAbility(IceImage.self_id)
+			..removeAbility(IceShield.self_id)..addAbility(IceShield.self_id)
+			..removeAbility(IceStomp.self_id)..addAbility(IceStomp.self_id)
+
 @compiletime
 function create_ice_mage()
 	var editor = EditorHelper.create_template_hero(ICE_MAGE)

@@ -20,10 +20,17 @@ public class Warlock extends PlayerUnit
 		m_ls_skill.add(new ShadowCounterSpell(m_self_unit))
 		m_ls_skill.add(new UnholySprint(m_self_unit))
 		m_ls_skill.add(new ShadowBolt(m_self_unit))
-		// m_ls_skill.add(new HolyNova(m_self_unit))
-		// m_ls_skill.add(new HolyMissile(m_self_unit))
+		m_ls_skill.add(new SiphonShadow(m_self_unit))
+		m_ls_skill.add(new EternalDetermination(m_self_unit))
 		// m_ls_skill.add(new DivineAegis(m_self_unit))
 		// m_ls_skill.add(new Revive(m_self_unit))
+
+	override function refresh()
+		super.refresh()
+		m_self_unit..removeAbility(ShadowBolt.self_id)..addAbility(ShadowBolt.self_id)
+			..removeAbility(SiphonShadow.self_id)..addAbility(SiphonShadow.self_id)..setAbilityLevel(SiphonShadow.self_id, 5)
+			..removeAbility(ShadowCounterSpell.self_id)..addAbility(ShadowCounterSpell.self_id)
+			..removeAbility(EternalDetermination.self_id)..addAbility(EternalDetermination.self_id)
 
 
 @compiletime
@@ -31,6 +38,7 @@ function create_priest()
 	var editor = EditorHelper.create_template_hero(WARLOCK)
 	string wl_skill_list = ShadowCounterSpell.self_id.toRawCode() + "," + 
 		UnholySprint.self_id.toRawCode() + "," + ShadowBolt.self_id.toRawCode() + 
+		SiphonShadow.self_id.toRawCode() + 
 		",prbk,AInv,bAnA"
 
 	editor..setNormalAbilities(wl_skill_list)

@@ -11,7 +11,7 @@ public function unit.isBoss() returns boolean
 public class BossHelper
     static private var map_boss = new HashMap<unit, int>
     static private bool can_counter = false
-    static private unit cur_boss = null
+    static unit cur_boss = null
     static function create_boss(unit _u, int _index)
         map_boss.put(_u, _index)
 
