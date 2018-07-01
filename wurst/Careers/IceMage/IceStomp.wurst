@@ -21,7 +21,6 @@ public class IceStomp extends IceMageSkill
     private unit m_follow = null
     private trigger m_tr_start = CreateTrigger()
     private trigger m_tr_end = CreateTrigger()
-    private trigger m_tr_cast = CreateTrigger()
     private trigger m_tr_dmg
     private timer m_tm_effect = null
     private real m_scale_size = 0.
@@ -31,7 +30,6 @@ public class IceStomp extends IceMageSkill
 
     ondestroy
         m_tr_end..disable().destr()
-        m_tr_cast..disable().destr()
         m_tr_start..disable().destr()
 
 
@@ -47,10 +45,6 @@ public class IceStomp extends IceMageSkill
         m_tr_end..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_ENDCAST)
             ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
             ..addAction(function IceStomp.endcast)
-            ..setData(this castTo int)
-        m_tr_cast..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CAST)
-            ..addCondition(Filter(()->GetSpellAbilityId()==IceStomp.self_id))
-            ..addAction(function IceStomp.imagecast)
             ..setData(this castTo int)
         
     static function prepare()
@@ -70,45 +64,28 @@ public class IceStomp extends IceMageSkill
             obj.m_effect2 = addEffect("frozenshell.mdx", pos2)
             obj.m_effect2.setScale(0.4)
 
-    static function imagecast()
-        var obj = GetTriggeringTrigger().getData() castTo IceStomp
-        var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
-        if fat.m_self_image != null and obj.m_effect2 != null
-            obj.m_follow = createUnit(obj.m_self_unit.getOwner(), FAKE_CASTER, fat.m_self_image.getPos(), angle(0))
-            obj.m_follow..addAbility(IceStomp.help_id)..issueImmediateOrder("thunderclap")..setXY(fat.m_self_image.getPos())
-            CreateTimer()..setData(obj castTo int)
-                ..startPeriodic(1, function destroy_follow)
-            obj.m_tr_dmg = CreateTrigger()
-            obj.m_tr_dmg..setData(obj castTo int)
-                ..registerUnitEvent(obj.m_follow, EVENT_UNIT_SPELL_EFFECT)
-                ..addAction(function tr_dmg)
-
-    static function tr_dmg()
-        var obj = GetTriggeringTrigger().getData() castTo IceStomp
-        group g = CreateGroup()
-        g.enumUnitsInRange(GetSpellAbilityUnit().getPos(), IceStomp.radius+AREA_DMG_CORRECTION)
-        for i in g
-            obj.make_dmg(i)
-        g.destr()
+    function imagecast()
+        var fat = PlayerUnitHelper.get_instance(m_self_unit) castTo IceMage
+        if fat.m_self_image != null and m_effect2 != null
+            m_follow = createUnit(m_self_unit.getOwner(), FAKE_CASTER, fat.m_self_image.getPos(), angle(0))
+            m_follow..addAbility(IceStomp.help_id)..issueImmediateOrder("thunderclap")..setXY(fat.m_self_image.getPos())
+                ..setTimedLife(0.5)
+            flashEffect("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl", m_follow.getPos())
+            group g = CreateGroup()
+            g.enumUnitsInRange(m_follow.getPos(), IceStomp.radius+AREA_DMG_CORRECTION)
+            for i in g
+                make_dmg(i)
+            g.destr()
+            m_effect2..setPos(vec2(0,0))..destr()
+            m_effect2 = null
             
 
-    static function destroy_follow()
-        timer t = GetExpiredTimer()
-        var obj = t.getData() castTo IceStomp
-        if obj.m_follow != null
-            RemoveUnit(obj.m_follow)
-        obj.m_tr_dmg..disable()..destr()
-        t..pause()..destr()
 
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo IceStomp
         obj.m_effect..setPos(vec2(0,0))..destr()
         obj.m_effect = null
-        if obj.m_effect2 != null
-            obj.m_effect2..setPos(vec2(0,0))..destr()
-            obj.m_effect2 = null
-        if obj.m_follow != null
-            flashEffect("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl", obj.m_follow.getPos())
+        obj.imagecast()
 
         group g = CreateGroup()
         g.enumUnitsInRange(obj.m_self_unit.getPos(), IceStomp.radius+AREA_DMG_CORRECTION)

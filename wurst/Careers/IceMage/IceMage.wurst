@@ -12,7 +12,7 @@ public class IceMage extends PlayerUnit
 		m_self_career = ice_mage
 		init_self()
 		listen_all()
-		u.hideAbility('imbk', true)
+		//u.hideAbility('imbk', true)
 
 	override function init_self() 
 		m_ls_skill.add(new IceBarrier(m_self_unit))
@@ -38,7 +38,7 @@ function create_ice_mage()
 		IceLance.self_id.toRawCode() + "," + IceBarrier.self_id.toRawCode() + "," +
 		IceSpirit.self_id.toRawCode() + "," + IceImage.self_id.toRawCode() + "," + 
 		IceShield.self_id.toRawCode() +
-		",imbk,AInv,bAnA"
+		",imau,AInv,bAnA"
 
 	editor..setNormalAbilities(im_skill_list)
 		..setUnitSoundSet("Sorceress")
@@ -57,6 +57,8 @@ function create_im_au()
 	editor..setArtTarget("xiwa.mdx")
 		..setName("im")
 		..setBuffs(1, "imid")
+		..setButtonPositionNormalX(0)
+		..setButtonPositionNormalY(-11)
 	destroy editor
 
 @compiletime
@@ -67,7 +69,7 @@ function create_im_id()
 		..setTooltipNormalExtended(1, Color_Define.COLOR_ICEMAGE + "You are master of ice!")
 		..setIconNormal(1, "replaceabletextures\\commandbuttons\\IM.blp")
 
-@compiletime
-function create_im_mgcbook()
-	var editor = EditorHelper.create_magic_book('imbk', "imau")
-	editor..setName("imbk")
+// @compiletime
+// function create_im_mgbk()
+// 	var ed = EditorHelper.create_magic_book('imbk', "imau")
+// 	destroy ed

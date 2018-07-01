@@ -15,10 +15,17 @@ public class PowerInfusion extends PriestSkill
     static let buff_id = 'pr1g'
     static let help_id = 'pr2g'
     private trigger tr_mana_rcv = CreateTrigger()
+    private timer m_tm
     construct(unit u)
         super(u)
     ondestroy
         tr_mana_rcv..disable().destr()
+
+    override function clear()
+        if m_tm != null
+            m_tm.release()
+        if m_self_unit.hasAbility(buff_id)
+            m_self_unit.remove_buff(buff_id)
 
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
@@ -41,7 +48,8 @@ public class PowerInfusion extends PriestSkill
             ..removeAbility(HolyNova.self_id)
             ..addAbility(HolyNova.help_id)
         obj.tr_mana_rcv.enable()
-        CreateTimer()..setData(obj castTo int)
+        obj.m_tm = getTimer()
+        obj.m_tm..setData(obj castTo int)
             ..startPeriodic(last_time, function tm_cb)
 
     override function destroy_buff(unit u)
@@ -53,18 +61,19 @@ public class PowerInfusion extends PriestSkill
             ..addAbility(HolyNova.self_id)
         
     static function tm_cb()
-        timer t = GetExpiredTimer()
-        var obj = t.getData() castTo PowerInfusion
+        var obj = GetExpiredTimer().getData() castTo PowerInfusion
         if obj.m_self_unit.hasAbility(buff_id)
             obj.m_self_unit.remove_buff(buff_id)
-        t..pause()..destr()
+        obj.m_tm.release()
+        obj.m_tm = null
 
     static function mana_recovery()
         int mana_cost = BlzGetAbilityManaCost(GetSpellAbilityId(), 1)
         var obj = GetTriggeringTrigger().getData() castTo PowerInfusion
         obj.m_self_unit.setMana(obj.m_self_unit.getMana() + mana_cost*decrease)
         if mana_cost*decrease > 1
-            flashEffect("Abilities\\Spells\\Undead\\ReplenishMana\\ReplenishManaCaster.mdl", obj.m_self_unit.getPos3Zero())
+            flashEffect("cure.mdx", obj.m_self_unit.getPos3Real())
+            
 
     
 @compiletime

@@ -43,6 +43,6 @@ function create_shadow_counter_spell()
             Color_Define.COLOR_NORMAL + "→反制Boss的技能（粉色字体）|n→反制成功后，为你恢复90点魔法值。|n" +
             Color_Define. COLOR_CAST_RANGE + "→施法距离：700|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:35s")
-        ..setIconNormal("replaceabletextures\\commandbuttons\\wlf.blp")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\counterspell.blp")
 
     destroy editor

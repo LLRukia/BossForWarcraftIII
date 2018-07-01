@@ -34,7 +34,7 @@ public class ReviveHelper
         unit u = null
         for i in map_death_unit
             real dis = (i.getPos() - pos).lengthSq()
-            if dis <= 625
+            if dis <= 50*50
                 if fmin > dis
                     fmin = dis
                     u = i
@@ -47,7 +47,7 @@ public class ReviveHelper
                 print("ReviveHelper:bad revive")
             return
         real final_percent = hp_percent > 0.5 ? 0.5 : hp_percent
-
+        print("revive")
         unit u = map_death_unit.get(u_faker)
         u..revive(u_faker.getPos(), false)
             ..setXY(u_faker.getPos())
@@ -61,8 +61,9 @@ public class ReviveHelper
     
     static function can_revive(vec2 pos, unit u) returns unit
         for i in map_death_unit
+            print(i.getHandleId())
             if map_death_unit.get(i) == u
-                if (u.getPos() - pos).lengthSq() <= 625
+                if (u.getPos() - pos).lengthSq() <= 50*50
                     return i
         return null
 

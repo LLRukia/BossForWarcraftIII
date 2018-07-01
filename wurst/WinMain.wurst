@@ -8,5 +8,3 @@ init
         Player(i)
             ..setCameraBoundsToRect(PICK_RECT)
             ..panCameraToTimed(PICK_RECT.getCenter(),0)
-            ..setCameraField(CAMERA_FIELD_FIELD_OF_VIEW, 95., 0)
-            ..setCameraField(CAMERA_FIELD_TARGET_DISTANCE, 2500., 0)

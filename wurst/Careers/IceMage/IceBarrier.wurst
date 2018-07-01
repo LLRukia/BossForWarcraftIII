@@ -181,7 +181,7 @@ function create_ice_barrier_buff()
         ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Ice Barrier")
         ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位被寒冰护盾庇护着。")
         ..setArtTarget(1, "imr.mdx")
-        ..setTargetAttachmentPoint0(1, "origin")
+        ..setTargetAttachmentPoint0(1, "chest")
         ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\BTNFrostArmor.blp")
 
 

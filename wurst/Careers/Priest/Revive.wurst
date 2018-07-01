@@ -82,7 +82,7 @@ public class Revive extends PriestSkill
         obj.m_time++
         real speed = 64 * 0.071 / 128
         real angle = 90
-        createTTEx(obj.m_self_unit.getPos3with(50) - vec3(40, 0, 0), obj.m_time.toString(), 9, obj.m_self_unit.getOwner().getColor().toColor().withAlpha(255))
+        createTTEx(obj.m_self_unit.getPos3with(120) - vec3(145, 0, 0), obj.m_time.toString(), 7, color(255,204,0).withAlpha(255))
             ..setPermanent(false)
             ..setFadepoint(2.)
             ..setLifespan(3.)

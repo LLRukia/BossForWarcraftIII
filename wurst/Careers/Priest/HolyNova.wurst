@@ -46,7 +46,7 @@ public class HolyNova extends PriestSkill
         var obj = GetTriggeringTrigger().getData() castTo HolyNova
         vec2 pos = obj.m_self_unit.getPos()
         addEffect("Abilities\\Spells\\Undead\\ReplenishHealth\\ReplenishHealthCasterOverhead.mdl", pos)
-            ..setScale(3.)..destr()
+            ..setScale(3.5)..destr()
         group g = CreateGroup()
         g.enumUnitsInRange(pos, pro_radius+AREA_DMG_CORRECTION)
         for i in g
@@ -63,7 +63,7 @@ public class HolyNova extends PriestSkill
 function create_holy_nova()
     var editor = EditorHelper.create_channel_template(HolyNova.self_id, emSkillKey.W)
     editor..setManaCost(1, 55)
-        ..setCooldown(1, 9)
+        ..setCooldown(1, 12)
         ..setButtonPositionNormalX(1)
         ..setButtonPositionNormalY(2)
         ..setHotkeyNormal("W")
@@ -76,7 +76,7 @@ function create_holy_nova()
             Color_Define.COLOR_NORMAL + "爆发神圣能量，造成自身为圆心，半径为550的范围600点治疗。|n" + 
             Color_Define.COLOR_PRIEST + "↑ 1000%法术强度额外治疗|n" +
             Color_Define. COLOR_CAST_RANGE + "→施法距离：550|n" +
-            Color_Define.COLOR_COOL_DOWN + "→CD:9s")
+            Color_Define.COLOR_COOL_DOWN + "→CD:12s")
         ..setIconNormal("replaceabletextures\\commandbuttons\\prw.blp")
 
     destroy editor

@@ -88,7 +88,7 @@ function create_divine_aegis()
 @compiletime
 function create_ice_shield_buff()
     var ed = new BuffDefinition(EternalDetermination.buff_id, 'Bbsk')
-    ed..setArtTarget(1, "moltenchanneling.mdx")
+    ed..setArtTarget(1, "aaaredwarpdarkcaster.mdx")
     ..setTargetAttachments(1, 1)
     ..setTargetAttachmentPoint0(1, "chest")
     ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Eternal Determination")

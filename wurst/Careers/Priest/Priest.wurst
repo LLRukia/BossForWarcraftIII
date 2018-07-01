@@ -14,7 +14,7 @@ public class Priest extends PlayerUnit
 		m_self_career = priest
 		init_self()
 		listen_all()
-		u.hideAbility('prbk', true)
+		//u.hideAbility('prbk', true)
 
 	override function init_self() 
 		m_ls_skill.add(new Heal(m_self_unit))
@@ -40,7 +40,7 @@ function create_priest()
 		+ "," + HolyWordShield.self_id.toRawCode() +"," + HolyNova.self_id.toRawCode()
 		+"," + HolyMissile.self_id.toRawCode()+"," + DivineAegis.self_id.toRawCode()
 		+"," + Revive.self_id.toRawCode() +
-		",prbk,AInv,bAnA"
+		",prau,AInv,bAnA"
 
 	editor..setNormalAbilities(pr_skill_list)
 		..setUnitSoundSet("Priest")
@@ -55,22 +55,20 @@ function create_priest()
 		..setManaInitialAmount(300)
 
 @compiletime
-function create_im_au()
+function create_pr_au()
 	var editor = EditorHelper.create_aura('prau')
 	editor..setArtTarget("xiwa.mdx")
 		..setName("pr")
 		..setBuffs(1, "prid")
+		..setButtonPositionNormalX(0)
+		..setButtonPositionNormalY(-11)
 	destroy editor
 
 @compiletime
-function create_im_id()
+function create_pr_id()
 	var editor = new BuffDefinition('prid', 'Bdet')
 	editor..setName(1, "Priest")
 		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Priest")
 		..setTooltipNormalExtended(1, Color_Define.COLOR_PRIEST + "You are an angel!")
 		..setIconNormal(1, "replaceabletextures\\commandbuttons\\PR.blp")
 
-@compiletime
-function create_pr_mgcbook()
-	var editor = EditorHelper.create_magic_book('prbk', "prau")
-	editor..setName("prbk")

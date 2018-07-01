@@ -84,22 +84,21 @@ function create_unholy_sprint()
             Color_Define.COLOR_COOL_DOWN + "→CD:5s")
         ..setTooltipTurnOffExtended(1, Color_Define.COLOR_NORMAL + "关闭邪恶冲刺以停止消耗生命值")
         ..setTargetsAllowed(1, "")
-        ..setBuffs(1, "")
+        ..setBuffs(1, "wl3e")
+        ..setIconNormal("ReplaceableTextures\\CommandButtons\\wle.blp")
+        ..setIconTurnOff("ReplaceableTextures\\CommandButtons\\BTNCancel.blp")
 
 @compiletime
 function create_unholy_sprint_aura_speed()
-    var ed = new AbilityDefinitionAuraEnduranceCreep('wl3e')
+    var ed = new AbilityDefinitionAuraEnduranceCreep(UnholySprint.help_id)
     ed..setMovementSpeedIncrease(1, 0.7)
     ..setAttackSpeedIncrease(1, 0)
     ..setArtTarget("")
     ..setBuffs(1, UnholySprint.buff_id.toRawCode())
     ..setTargetsAllowed(1, "self")
     ..setName("UnholySprintAura")
-
-@compiletime
-function create_unholy_sprint_mgcbook()
-    var editor = EditorHelper.create_magic_book(UnholySprint.help_id, "wl3e")
-    editor..setName(UnholySprint.help_id.toRawCode())
+    ..setButtonPositionNormalX(0)
+    ..setButtonPositionNormalY(-11)
     
 
 @compiletime
@@ -107,13 +106,23 @@ function create_unholy_sprint_aura_buff()
     var editor = new BuffDefinition(UnholySprint.buff_id, 'Bdet')
     editor..setName(1, "UnholySprint")
         ..setTooltipNormal(1, Color_Define.COLOR_WARLOCK + "Unholy Sprint")
-        ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位正在自杀式冲刺。")
+        ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位正在冲刺。")
         ..setArtTarget(1, "Environment\\UndeadBuildingFire\\UndeadSmallBuildingFire2.mdl")
         ..setTargetAttachments(1, 2)
         ..setTargetAttachmentPoint0(1, "foot,left")
         ..setTargetAttachmentPoint1(1, "foot,right")
-        ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\BTNImmolationOn.blp")
+        ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\BTNAnimalWarTraining.blp")
+        
 
 
     destroy editor
+@compiletime
+function create_unholy_sprint_buff()
+    var editor = new BuffDefinition('wl3e', 'Bdet')
+    editor..setName(1, "Sacrifice")
+        ..setTooltipNormal(1, Color_Define.COLOR_WARLOCK + "Sacrifice")
+        ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位正在消耗生命。")
+        ..setArtTarget(1, "!selfbufffx.mdx")
+        ..setTargetAttachments(1, 0)
+        ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\wle.blp")
     

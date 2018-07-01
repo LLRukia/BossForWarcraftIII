@@ -1,6 +1,7 @@
 package Test
 import PlayerHelper
-import Buffs
+import PlayerUnitHelper
+import PlayerUnit
 import BossHelper
 import UnitObjEditing
 import ExternalDefines
@@ -56,15 +57,18 @@ function cam()
     GetTriggerPlayer()..setCameraField(CAMERA_FIELD_FIELD_OF_VIEW, 95., 0)
         ..setCameraField(CAMERA_FIELD_TARGET_DISTANCE, 2500., 0)
 
+function refresh()
+    (PlayerUnitHelper.get_instance(GetTriggerPlayer().get_unit()) castTo PlayerUnit).refresh()
+
 init
     unit fire_chicken = createUnit(Player(8), 'frck', BORN_RECT.getCenter() + vec2(0, 500), angle(270))
     CreateTrigger()..registerUnitEvent(fire_chicken, EVENT_UNIT_DAMAGED)
         ..addAction(function displaydamage)
-    // var tr = CreateTrigger()
-    // for i = 0 to PLAYER_NUM-1
-    //     tr.registerPlayerChatEvent(Player(i), "", true)
-    // tr..addAction(function test)
-    //     ..enable()
+    var tr = CreateTrigger()
+    for i = 0 to PLAYER_NUM-1
+        tr.registerPlayerChatEvent(Player(i), "", true)
+    tr..addAction(function test)
+        ..enable()
 
     var tr1 = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
@@ -73,13 +77,17 @@ init
         ..enable()
 
     var tr2 = CreateTrigger()
+    var refresh = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
         tr2.registerPlayerChatEvent(Player(i), "-clear1", true)
+        refresh.registerPlayerChatEvent(Player(i), "-refresh", true)
     tr2..addAction(function clear1)
         ..enable()
+    refresh..addAction(function refresh)
 
     trigger spd = CreateTrigger()
     trigger cam = CreateTrigger()
+
     for i = 0 to PLAYER_NUM-1
         spd.registerPlayerChatEvent(Player(i), "ms", true)
         cam.registerPlayerChatEvent(Player(i), "cam", true)

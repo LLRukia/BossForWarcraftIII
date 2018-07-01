@@ -1,0 +1,134 @@
+package SoulGem
+
+import Warlock
+import TriggerHelper
+import TimerUtils
+import EditorHelper
+import ExternalDefines
+import ReviveHelper
+
+public class SoulGem extends WarlockSkill
+    static let self_id = 'wl0g'
+    static let help_id = 'wl1g'
+
+    private trigger m_tr_help = CreateTrigger()
+    private trigger m_tr_target_judge = CreateTrigger()
+    private trigger m_tr_target_judge1 = CreateTrigger()
+    private unit m_revive_unit
+    private timer m_tm
+    construct(unit u)
+        super(u)
+
+    ondestroy
+        clear()
+        m_tr_help..disable().destr()
+        m_tr_target_judge..disable().destr()
+        m_tr_target_judge1..disable().destr()
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==SoulGem.self_id))
+            ..addAction(function SoulGem.cast)
+            ..setData(this castTo int)
+        m_tr_help..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==SoulGem.help_id))
+            ..addAction(function SoulGem.revive)
+            ..setData(this castTo int)
+        m_tr_target_judge..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CHANNEL)
+            ..addCondition(Filter(()->GetSpellAbilityId()==SoulGem.help_id))
+            ..addAction(function SoulGem.prepare)
+            ..setData(this castTo int)
+        m_tr_target_judge1..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_CHANNEL)
+            ..addCondition(Filter(()->GetSpellAbilityId()==SoulGem.self_id))
+            ..addAction(function SoulGem.target_judge)
+            ..setData(this castTo int)
+    static function target_judge()
+        var obj = GetTriggeringTrigger().getData() castTo SoulGem
+        if PlayerUnitHelper.get_instance(GetSpellTargetUnit()) == -1
+            printTimedToPlayer(Color_Define.COLOR_WARLOCK + "请对友方英雄释放。", 2, obj.m_self_unit.getOwner())
+            obj.m_self_unit.issueImmediateOrder("stop")
+            return
+
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo SoulGem
+        obj.m_revive_unit = GetSpellTargetUnit()
+        obj.m_self_unit..disableAbility(self_id, true, true)..addAbility(help_id)
+        obj.m_tm = getTimer()
+        obj.m_tm..setData(obj castTo int)
+            ..startPeriodic(8., function tm_cb)
+
+    static function tm_cb()
+        var obj = GetExpiredTimer().getData() castTo SoulGem
+        obj.m_revive_unit = null
+        obj.m_self_unit..removeAbility(help_id)..disableAbility(self_id, false, false)
+        obj.m_tm.release()
+
+
+    static function revive()
+        var obj = GetTriggeringTrigger().getData() castTo SoulGem
+        location lc = GetSpellTargetLoc()
+        vec2 target = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        unit u = ReviveHelper.can_revive(target, obj.m_revive_unit)
+        if u != null
+            ReviveHelper.revive(u, 0.8)
+            flashEffect("Abilities\\Spells\\Undead\\RaiseSkeletonWarrior\\RaiseSkeleton.mdl", u.getPos())
+
+    static function prepare()
+        var obj = GetTriggeringTrigger().getData() castTo SoulGem
+
+        location lc = GetSpellTargetLoc()
+        vec2 target = vec2(GetLocationX(lc), GetLocationY(lc))
+        RemoveLocation(lc)
+        unit u = ReviveHelper.can_revive(target, obj.m_revive_unit)
+        if u == null
+            printTimedToPlayer(Color_Define.COLOR_WARLOCK + "请对准尸体释放。", 2, obj.m_self_unit.getOwner())
+            obj.m_self_unit.issueImmediateOrder("stop")
+            return
+
+@compiletime
+function create_soul_gem()
+    var editor = EditorHelper.create_channel_template(SoulGem.self_id, emSkillKey.G)
+    editor..setCastRange(1, 700)
+        ..setManaCost(1, 70)
+        ..setCooldown(1, 60)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("G")
+        ..setTargetType(1, emTargetType.Unit castTo int)
+        ..setTargetsAllowed(1, "alive,ground,air,friend")
+        ..setName("SoulGem")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_WARLOCK + "Soul Gem" +
+            Color_Define.COLOR_HOT_KEY + "(G)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→选择一名友方英雄使用，储存其灵魂。持续时间内若其死亡，则可以使用此技能复活ta。|n"+
+            Color_Define.COLOR_LAST_TIME + "→持续8秒|n" +
+            Color_Define.COLOR_CAST_RANGE + "→施法距离：700|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:60s")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\wlg.blp")
+
+    destroy editor
+
+@compiletime
+function create_soul_gem_revive()
+    var editor = EditorHelper.create_channel_template(SoulGem.help_id, emSkillKey.G)
+    editor..setCastRange(1, 700)
+        ..setManaCost(1, 0)
+        ..setCooldown(1, 10)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("G")
+        ..setTargetType(1, emTargetType.Ground castTo int)
+        ..setName("SoulGem")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_WARLOCK + "Soul Gem" +
+            Color_Define.COLOR_HOT_KEY + "(G)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→选择一名友方英雄使用，储存其灵魂。持续时间内若其死亡，则可以使用此技能复活ta。|n"+
+            Color_Define.COLOR_LAST_TIME + "→持续8秒|n" +
+            Color_Define.COLOR_CAST_RANGE + "→施法距离：700|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:60s")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\wlg1.blp")
+
+    destroy editor

@@ -112,6 +112,8 @@ class EditorHelper
             ..setUnitClassification("")
             ..setAttacksEnabled(0)
             ..setCanFlee(false)
+            ..setSightRadiusDay(0)
+            ..setSightRadiusNight(0)
         return u_editor
 
     
@@ -176,9 +178,9 @@ class EditorHelper
         u_editor..setHeroAbilities("")
             ..setDefaultActiveAbility("")
             ..setCollisionSize(24.)
-            ..setScalingValue(0.9)
+            ..setScalingValue(1)
             ..setScaleProjectiles(true)
-            ..setSelectionScale(0.8)
+            ..setSelectionScale(0.9)
             ..setDeathTimeseconds(0.1)
             ..setSpeedBase(220)
             ..setTurnRate(3)

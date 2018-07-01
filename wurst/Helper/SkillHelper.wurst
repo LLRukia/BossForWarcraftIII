@@ -94,10 +94,10 @@ public class AutoTrace
     unit uf
     timer tm_f
     static let init_speed = 55.
-    static let init_speed_deca = 5.5
+    static let init_speed_deca = 1.25
     static let init_trace_speed = 0.
-    static let trace_speed_inc = 5.5
-    static let max_speed = 66
+    static let trace_speed_inc = 1.25
+    static let max_speed = 45
     real cur_ispd = init_speed
     real cur_tspd = init_trace_speed
     construct(int effect_id, unit ut, unit uc, angle ang, SkillHelperCb cb, int arg)
@@ -135,7 +135,7 @@ public class AutoTrace
             cur_ispd -= init_speed_deca
         angle face = MathHelper.get_angle(curpos, sucpos)
         uf..setFacing(face)..setXY(sucpos)
-        if (sucpos - ut.getPos()).lengthSq() <= 150.
+        if (sucpos - ut.getPos()).lengthSq() <= 150*150.
             if ut != uc
                 cb.cb(arg)
             destroy this
@@ -156,7 +156,7 @@ public class SkillHelper
         if BossHelper.counter(utarget)
             real speed = 64 * 0.071 / 128
             real angle = 90
-            createTTEx(ucaster.getPos3with(50) - vec3(40, 0, 0), "★反制成功★", 9, ucaster.getOwner().getColor().toColor().withAlpha(255))
+            createTTEx(ucaster.getPos3with(76) - vec3(245, 0, 0), "★反制成功★", 7, ucaster.getOwner().getColor().toColor().withAlpha(255))
                 ..setPermanent(false)
                 ..setFadepoint(2.)
                 ..setLifespan(3.)

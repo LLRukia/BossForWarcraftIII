@@ -63,6 +63,7 @@ public class ShadowBolt extends WarlockSkill
         obj.m_ang = MathHelper.get_angle(obj.m_cur_pos, tgt)
         obj.m_moved_dis = 0.
         obj.m_effect = createUnit(obj.m_self_unit.getOwner(), effect_id, obj.m_cur_pos, obj.m_ang)
+        flashEffect("Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", obj.m_cur_pos)
         obj.m_tm_move = CreateTimer()
         obj.m_tm_move..setData(obj castTo int)
             ..startPeriodic(0.04, function tm_cb)
@@ -76,6 +77,8 @@ public class ShadowBolt extends WarlockSkill
 
         u.setMana(u.getMana() - 30)
         flashEffect("purplevoid.mdx", u.getPos3Real())
+        flashEffect("cure.mdx", m_self_unit.getPos3Real())
+        m_self_unit.setMana(m_self_unit.getMana() + 150)
         int lev = m_self_unit.getAbilityLevel(SiphonShadow.self_id)
         if lev < 10
             m_self_unit.setAbilityLevel(SiphonShadow.self_id, lev + 1)

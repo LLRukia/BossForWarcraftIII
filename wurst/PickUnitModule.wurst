@@ -26,6 +26,13 @@ function pick()
         pl..init_self(createUnit(pl, PICK_UNITS[unit_index], pos, angle(270)), PICK_CAREERS[unit_index])
             ..setCameraBoundsToRect(BORN_RECT)
             ..panCameraToTimed(BORN_RECT.getCenter(), 0)
+            ..setCameraField(CAMERA_FIELD_FIELD_OF_VIEW, 95., 0)
+            ..setCameraField(CAMERA_FIELD_TARGET_DISTANCE, 2500., 0)
+        Player(1)..init_self(createUnit(pl, PICK_UNITS[unit_index], pos, angle(270)), PICK_CAREERS[unit_index])
+            ..setCameraBoundsToRect(BORN_RECT)
+            ..panCameraToTimed(BORN_RECT.getCenter(), 0)
+            ..setCameraField(CAMERA_FIELD_FIELD_OF_VIEW, 95., 0)
+            ..setCameraField(CAMERA_FIELD_TARGET_DISTANCE, 2500., 0)
     
         FlushChildHashtable(clk, player_id)
         SaveBoolean(clk, player_id, CAREERS_NUM + 1, true)
@@ -39,7 +46,7 @@ init
     for i in g
         if index == CAREERS_NUM
             break
-        pk.put(createUnit(Player(PLAYER_NEUTRAL_PASSIVE), PICK_UNITS[index], i.getPos(), angle(270)), index)
+        pk.put(createUnit(Player(PLAYER_NEUTRAL_PASSIVE), PICK_UNITS[index], i.getPos()+vec2(17, 0), bj_UNIT_FACING.asAngleDegrees()), index)
         index ++
     g.destr()
 

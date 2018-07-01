@@ -14,7 +14,7 @@ public class Warlock extends PlayerUnit
 		m_self_career = warlock
 		init_self()
 		listen_all()
-		u.hideAbility('wlbk', true)
+		//u.hideAbility('wlbk', true)
 
 	override function init_self() 
 		m_ls_skill.add(new ShadowCounterSpell(m_self_unit))
@@ -22,7 +22,8 @@ public class Warlock extends PlayerUnit
 		m_ls_skill.add(new ShadowBolt(m_self_unit))
 		m_ls_skill.add(new SiphonShadow(m_self_unit))
 		m_ls_skill.add(new EternalDetermination(m_self_unit))
-		// m_ls_skill.add(new DivineAegis(m_self_unit))
+		m_self_unit.setAbilityLevel(SiphonShadow.self_id, 5)
+		m_ls_skill.add(new SoulGem(m_self_unit))
 		// m_ls_skill.add(new Revive(m_self_unit))
 
 	override function refresh()
@@ -34,12 +35,13 @@ public class Warlock extends PlayerUnit
 
 
 @compiletime
-function create_priest()
+function create_warlock()
 	var editor = EditorHelper.create_template_hero(WARLOCK)
 	string wl_skill_list = ShadowCounterSpell.self_id.toRawCode() + "," + 
-		UnholySprint.self_id.toRawCode() + "," + ShadowBolt.self_id.toRawCode() + 
-		SiphonShadow.self_id.toRawCode() + 
-		",prbk,AInv,bAnA"
+		UnholySprint.self_id.toRawCode() + "," + ShadowBolt.self_id.toRawCode() + ","+
+		SiphonShadow.self_id.toRawCode() + "," + EternalDetermination.self_id.toRawCode() +
+		"," + SoulGem.self_id.toRawCode() + 
+		",wlau,AInv,bAnA"
 
 	editor..setNormalAbilities(wl_skill_list)
 		..setUnitSoundSet("Necromancer")
@@ -52,22 +54,21 @@ function create_priest()
 		..setPrimaryAttribute("INT")
 
 @compiletime
-function create_im_au()
+function create_wl_au()
 	var editor = EditorHelper.create_aura('wlau')
 	editor..setArtTarget("xiwa.mdx")
 		..setName("wl")
 		..setBuffs(1, "wlid")
+		..setButtonPositionNormalX(0)
+		..setButtonPositionNormalY(-11)
 	destroy editor
 
 @compiletime
-function create_im_id()
+function create_wl_id()
 	var editor = new BuffDefinition('wlid', 'Bdet')
 	editor..setName(1, "Warlock")
 		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Warlock")
 		..setTooltipNormalExtended(1, Color_Define.COLOR_WARLOCK + "Anti-mana.")
-		..setIconNormal(1, "WL.blp")
+		..setIconNormal(1, "replaceabletextures\\commandbuttons\\wl.blp")
 
-@compiletime
-function create_pr_mgcbook()
-	var editor = EditorHelper.create_magic_book('wlbk', "wlau")
-	editor..setName("wlbk")
+	
