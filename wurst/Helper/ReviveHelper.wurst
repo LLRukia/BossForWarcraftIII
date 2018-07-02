@@ -76,7 +76,8 @@ function create_dead_units()
         EditorHelper.create_effect_faker_unit('ddfm', 0.9, "", color(255, 255, 255))
         EditorHelper.create_effect_faker_unit('ddwr', 0.9, "", color(255, 255, 255))
     else
-        ReviveHelper.map_unit_creator..put(career.ice_mage, 'ddim')..put(career.priest, 'ddpr')
+        ReviveHelper.map_unit_creator
+            ..put(career.ice_mage, 'ddim')..put(career.priest, 'ddpr')
             ..put(career.warlock, 'ddwl')
 init
     create_dead_units()

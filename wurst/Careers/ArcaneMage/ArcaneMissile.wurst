@@ -1,0 +1,26 @@
+package ArcaneMissile
+
+import ArcaneMage
+import EditorHelper
+import ExternalDefines
+import TriggerHelper
+import SkillHelper
+import BossHelper
+import MathHelper
+import TimerUtils
+
+public class ArcaneMissile extends ArcaneMageSkill
+    static let self_id = 'am0q'
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==ArcaneMissile.self_id))
+            ..addAction(function ArcaneMissile.cast)
+            ..setData(this castTo int)
+
+    override function clear()
+        
+
+    static function cast()

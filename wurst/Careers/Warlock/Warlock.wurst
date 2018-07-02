@@ -8,7 +8,6 @@ import EditorHelper
 import PlayerUnit
 
 public class Warlock extends PlayerUnit
-	unit m_self_image = null
 	construct(player pl, unit u)
 		super(pl, u)
 		m_self_career = warlock

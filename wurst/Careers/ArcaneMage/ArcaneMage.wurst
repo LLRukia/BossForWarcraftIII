@@ -1,0 +1,71 @@
+package ArcaneMage
+
+import public PlayerUnitHelper
+import ExternalDefines
+import public ArcaneMageSkill
+import EditorHelper
+import PlayerUnit
+
+public class ArcaneMage extends PlayerUnit
+	construct(player pl, unit u)
+		super(pl, u)
+		m_self_career = arcane_mage
+		init_self()
+		listen_all()
+
+	override function init_self() 
+		m_ls_skill.add(new ArcaneCounterSpell(m_self_unit))
+		// m_ls_skill.add(new IceLance(m_self_unit))
+		// m_ls_skill.add(new IceStomp(m_self_unit))
+		// m_ls_skill.add(new FrostBolt(m_self_unit))
+		// m_ls_skill.add(new IceSpirit(m_self_unit))
+		// m_ls_skill.add(new IceImage(m_self_unit))
+		// m_ls_skill.add(new IceShield(m_self_unit))
+
+	override function refresh()
+		super.refresh()
+		m_self_unit..removeAbility(ArcaneCounterSpell.self_id)..addAbility(ArcaneCounterSpell.self_id)
+		// 	..removeAbility(IceLance.self_id)..removeAbility(IceLance.help_id)..addAbility(IceLance.self_id)
+		// 	..removeAbility(IceImage.self_id)..addAbility(IceImage.self_id)
+		// 	..removeAbility(IceShield.self_id)..addAbility(IceShield.self_id)
+		// 	..removeAbility(IceStomp.self_id)..addAbility(IceStomp.self_id)
+
+@compiletime
+function create_arcane_mage()
+	var editor = EditorHelper.create_template_hero(ARCANE_MAGE)
+	string am_skill_list = ArcaneCounterSpell.self_id.toRawCode() +
+		",amau,AInv,bAnA"
+
+	editor..setNormalAbilities(am_skill_list)
+		..setUnitSoundSet("Jaina")
+		..setProperNames(Color_Define.COLOR_ARCANEMAGE + "奥法")
+		..setName("奥法")
+		..setModelFile("units\\human\\Jaina\\Jaina")
+		..setArtSpecial("units\\human\\Jaina\\Jaina")
+		..setAttack1ProjectileArt("Abilities\\Weapons\\AncestralGuardianMissile\\AncestralGuardianMissile.mdl")
+		..setAttack1AttackType(AttackType.Magic)
+		..setPrimaryAttribute("INT")
+
+
+@compiletime
+function create_am_au()
+	var editor = EditorHelper.create_aura('amau')
+	editor..setArtTarget("xiwa.mdx")
+		..setName("am")
+		..setBuffs(1, "amid")
+		..setButtonPositionNormalX(0)
+		..setButtonPositionNormalY(-11)
+	destroy editor
+
+@compiletime
+function create_am_id()
+	var editor = new BuffDefinition('amid', 'Bdet')
+	editor..setName(1, "ArcaneMage")
+		..setTooltipNormal(1, Color_Define.COLOR_NORMAL + "Arcane Mage")
+		..setTooltipNormalExtended(1, Color_Define.COLOR_ARCANEMAGE + "Nice girl!")
+		..setIconNormal(1, "replaceabletextures\\commandbuttons\\AM.blp")
+
+// @compiletime
+// function create_im_mgbk()
+// 	var ed = EditorHelper.create_magic_book('imbk', "imau")
+// 	destroy ed

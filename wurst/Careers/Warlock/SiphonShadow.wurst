@@ -14,7 +14,7 @@ public class SiphonShadow extends WarlockSkill
     //static bool b_decrase = false
 
     static constant real dmg = 150.
-    static let inc = 25.
+    static let inc = 18.
     static let dec_mana = 15.
 
     private trigger m_tr_target_judge = CreateTrigger()
@@ -96,7 +96,7 @@ public class SiphonShadow extends WarlockSkill
         var obj = GetTriggeringTrigger().getData() castTo SiphonShadow
         if obj.m_time == 4
             obj.release_bolts()
-            obj.m_self_unit.setHP(obj.m_self_unit.getHP() - 400)
+            obj.m_self_unit.setHP(obj.m_self_unit.getHP() - 500)
 
     function release_bolts()
         m_num = GetUnitAbilityLevel(m_self_unit, self_id)
@@ -149,9 +149,9 @@ function create_revive()
                 Color_Define.COLOR_WARLOCK + "Siphon Shadow" +
                 Color_Define.COLOR_HOT_KEY + "(R)")
             ..setTooltipNormalExtended(i,
-                Color_Define.COLOR_NORMAL + "→吟唱4秒，集中意识萃取Boss身上溢出的暗影箭能量。|n4秒后，提取出"+i.toString()+ "支暗影箭矢，射向Boss造成伤害。|n" +
+                Color_Define.COLOR_NORMAL + "→吟唱4秒，集中意识萃取Boss身上溢出的暗影箭能量。|n4秒后，提取出"+i.toString()+ "支暗影箭矢，射向Boss造成150伤害。|n" +
                 Color_Define.COLOR_MANA_DECREASE + "↓每支箭矢命中后减少目标15点能量|n" +
-                Color_Define.COLOR_WARLOCK + "↑ 1500%法术强度额外伤害（每支）|n" +
+                Color_Define.COLOR_WARLOCK + "↑ 1800%法术强度额外伤害（每支）|n" +
                 Color_Define.COLOR_WARNING + "▼技能被打断也会进入CD|n▲技能释放成功时扣除自身500生命|n" +
                 Color_Define.COLOR_COOL_DOWN + "→CD:60s")
             ..setEffects(i, "")

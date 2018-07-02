@@ -96,7 +96,7 @@ public class AutoTrace
     static let init_speed = 55.
     static let init_speed_deca = 1.25
     static let init_trace_speed = 0.
-    static let trace_speed_inc = 1.25
+    static let trace_speed_inc = 2.5
     static let max_speed = 45
     real cur_ispd = init_speed
     real cur_tspd = init_trace_speed
@@ -169,6 +169,21 @@ public class SkillHelper
     static function auto_trace_missile(int ef_id, unit utarget, unit ucaster, angle ang, SkillHelperCb cb, int arg)
         new AutoTrace(ef_id, utarget, ucaster, ang, cb, arg)
         
+    static function blink_forward(unit ucaster, angle ang, int dis) returns vec2
+        vec2 pos = ucaster.getPos()
+        let each = 50
+        for i = 1 to dis div each
+            pos = MathHelper.forward(pos, ang, each.toReal())
+            unit uExplorer = createUnit(ucaster.getOwner(), Rush.unit_id, pos, ang)
+            uExplorer.setTimedLife(1)
+
+            if not IssueBuildOrderById(uExplorer, Rush.unit_id, pos.x, pos.y)
+                pos = MathHelper.forward(pos, ang, (-each).toReal())
+                break
+
+        return pos
+
+
     private construct()
 
     

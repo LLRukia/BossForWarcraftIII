@@ -221,6 +221,7 @@ class EditorHelper
             ..setCanFlee(false)
             ..hideHeroInterfaceIcon(true)
             ..hideHeroMinimapDisplay(true)
+            ..setTargetedAs("ground")
 
         return u_editor
 

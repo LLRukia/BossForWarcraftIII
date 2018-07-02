@@ -96,7 +96,7 @@ function create_soul_gem()
         ..setButtonPositionNormalY(1)
         ..setHotkeyNormal("G")
         ..setTargetType(1, emTargetType.Unit castTo int)
-        ..setTargetsAllowed(1, "alive,ground,air,friend")
+        ..setTargetsAllowed(1, TYPE_ALLOWED_ALLY_WITHOUT_SELF)
         ..setName("SoulGem")
         ..setTooltipNormal(1,
             Color_Define.COLOR_WARLOCK + "Soul Gem" +

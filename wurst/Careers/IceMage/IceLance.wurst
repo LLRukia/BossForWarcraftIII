@@ -185,6 +185,7 @@ function create_ice_lance_ice_block()
 		..setSightRadiusNight(0)
 		..setHideMinimapDisplay(true)
 		..setFoodCost(0)
+		..setTargetedAs("ward")
 
 
 	destroy editor
