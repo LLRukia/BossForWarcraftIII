@@ -55,7 +55,7 @@ function create_warlock()
 @compiletime
 function create_wl_au()
 	var editor = EditorHelper.create_aura('wlau')
-	editor..setArtTarget("xiwa.mdx")
+	editor..setArtTarget("")
 		..setName("wl")
 		..setBuffs(1, "wlid")
 		..setButtonPositionNormalX(0)

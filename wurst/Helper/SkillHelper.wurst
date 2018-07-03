@@ -35,7 +35,7 @@ class Rush
         vec2 pos = data.u.getPos()
         pos = MathHelper.forward(pos, data.ang, data.speed)
         unit uExplorer = createUnit(data.u.getOwner(), Rush.unit_id, pos, data.ang)
-        uExplorer.setTimedLife(1)
+        uExplorer.setTimedLife(0.3)
 
         if not IssueBuildOrderById(uExplorer, Rush.unit_id, pos.x, pos.y) or data.moved_dis >= data.dis
             if data.pause
@@ -97,9 +97,11 @@ public class AutoTrace
     static let init_speed_deca = 1.25
     static let init_trace_speed = 0.
     static let trace_speed_inc = 2.5
-    static let max_speed = 45
+    static let max_speed = 55
     real cur_ispd = init_speed
     real cur_tspd = init_trace_speed
+    real ini_dec = init_speed_deca
+    real tra_inc = trace_speed_inc
     construct(int effect_id, unit ut, unit uc, angle ang, SkillHelperCb cb, int arg)
         this.ut = ut
         this.uc = uc
@@ -111,6 +113,11 @@ public class AutoTrace
         tm_f..setData(this castTo int)
             ..startPeriodic(0.05, function tm_cb)
 
+    function set_speed(real is, real its, real isd, real tsi)
+        cur_ispd = is
+        cur_tspd = its
+        ini_dec = isd
+        tra_inc = tsi
     ondestroy
         tm_f.release()
         RemoveUnit(uf)
@@ -168,6 +175,11 @@ public class SkillHelper
     
     static function auto_trace_missile(int ef_id, unit utarget, unit ucaster, angle ang, SkillHelperCb cb, int arg)
         new AutoTrace(ef_id, utarget, ucaster, ang, cb, arg)
+
+    static function auto_trace_missile_modify_speed(int ef_id, unit utarget, unit ucaster, angle ang, SkillHelperCb cb,
+        int arg, real init_speed, real init_speed_deca, real init_trace_speed, real trace_speed_inc)
+        var o = new AutoTrace(ef_id, utarget, ucaster, ang, cb, arg)
+        o.set_speed(init_speed,init_speed_deca, init_trace_speed, trace_speed_inc)
         
     static function blink_forward(unit ucaster, angle ang, int dis) returns vec2
         vec2 pos = ucaster.getPos()
@@ -175,7 +187,7 @@ public class SkillHelper
         for i = 1 to dis div each
             pos = MathHelper.forward(pos, ang, each.toReal())
             unit uExplorer = createUnit(ucaster.getOwner(), Rush.unit_id, pos, ang)
-            uExplorer.setTimedLife(1)
+            uExplorer.setTimedLife(0.3)
 
             if not IssueBuildOrderById(uExplorer, Rush.unit_id, pos.x, pos.y)
                 pos = MathHelper.forward(pos, ang, (-each).toReal())

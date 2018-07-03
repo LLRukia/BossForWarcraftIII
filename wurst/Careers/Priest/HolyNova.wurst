@@ -30,7 +30,7 @@ public class HolyNova extends PriestSkill
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo HolyNova
         vec2 pos = obj.m_self_unit.getPos()
-        flashEffect("judgement.mdx", pos)
+        flashEffect("prw.mdx", pos)
         group g = CreateGroup()
         g.enumUnitsInRange(pos, radius+AREA_DMG_CORRECTION)
         for i in g

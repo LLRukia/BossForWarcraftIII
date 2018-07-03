@@ -44,6 +44,7 @@ public class PowerInfusion extends PriestSkill
         ..issueTargetOrder("bloodlust", obj.m_self_unit)
         ..setTimedLife(1.)
 
+        flashEffect("scrollyell.mdx", obj.m_self_unit.getPos())
         obj.m_self_unit..add_buff(buff_id, BuffClearType.stable, BuffType.buffs, obj)
             ..removeAbility(HolyNova.self_id)
             ..addAbility(HolyNova.help_id)
@@ -59,6 +60,9 @@ public class PowerInfusion extends PriestSkill
         tr_mana_rcv.disable()
         m_self_unit..removeAbility(HolyNova.help_id)
             ..addAbility(HolyNova.self_id)
+        if m_tm != null
+            m_tm.release()
+            m_tm = null
         
     static function tm_cb()
         var obj = GetExpiredTimer().getData() castTo PowerInfusion
@@ -72,7 +76,7 @@ public class PowerInfusion extends PriestSkill
         var obj = GetTriggeringTrigger().getData() castTo PowerInfusion
         obj.m_self_unit.setMana(obj.m_self_unit.getMana() + mana_cost*decrease)
         if mana_cost*decrease > 1
-            flashEffect("cure.mdx", obj.m_self_unit.getPos3Real())
+            flashEffect("Abilities\\Spells\\Items\\AIma\\AImaTarget.mdl", obj.m_self_unit.getPos3Real())
             
 
     
@@ -95,12 +99,11 @@ function create_power_infusion()
             Color_Define.COLOR_WARNING + "★D不会驱散此技能|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:70s")
         ..setIconNormal("replaceabletextures\\commandbuttons\\prg.blp")
-        ..setBuffs(1, PowerInfusion.buff_id.toRawCode())
 
 @compiletime
 function create_power_infusion_buff()
     var ed = new BuffDefinition(PowerInfusion.buff_id, 'Bhea')
-    ed..setArtTarget(1, "scrollyell.mdx")
+    ed..setArtTarget(1, "prg.mdx")
     ..setTargetAttachments(1, 1)
     ..setTargetAttachmentPoint0(1, "origin")
     ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Power Infusion")
@@ -113,8 +116,8 @@ function create_power_infusion_buff_adder()
     ed1..setScalingFactor(1, 0.)
         ..setAttackSpeedIncrease(1, PowerInfusion.speed_up)
         ..setMovementSpeedIncrease(1, PowerInfusion.speed_up)
-        ..setDurationHero(1, 20)
-        ..setDurationNormal(1, 20)
+        ..setDurationHero(1, PowerInfusion.last_time)
+        ..setDurationNormal(1, PowerInfusion.last_time)
         ..setManaCost(1, 0)
         ..setCastRange(1, 99999)
         ..setCooldown(1, 0)

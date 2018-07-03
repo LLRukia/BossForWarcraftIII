@@ -54,7 +54,7 @@ function create_ice_mage()
 @compiletime
 function create_im_au()
 	var editor = EditorHelper.create_aura('imau')
-	editor..setArtTarget("xiwa.mdx")
+	editor..setArtTarget("")
 		..setName("im")
 		..setBuffs(1, "imid")
 		..setButtonPositionNormalX(0)

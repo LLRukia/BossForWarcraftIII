@@ -4,6 +4,10 @@ import public Buffs
 import public StatisticsHelper
 
 import public initlater ArcaneCounterSpell
+import public initlater ArcaneBlink
+import public initlater ArcaneMissile
+import public initlater ArcaneBarrage
+import public initlater ArcaneEmpowerment
 
 import BaseSkills
 

@@ -48,7 +48,7 @@ function create_arcane_mage()
 @compiletime
 function create_am_au()
 	var editor = EditorHelper.create_aura('fmau')
-	editor..setArtTarget("xiwa.mdx")
+	editor..setArtTarget("")
 		..setName("fm")
 		..setBuffs(1, "fmid")
 		..setButtonPositionNormalX(0)

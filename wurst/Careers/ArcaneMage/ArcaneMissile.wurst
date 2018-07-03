@@ -5,12 +5,12 @@ import EditorHelper
 import ExternalDefines
 import TriggerHelper
 import SkillHelper
-import BossHelper
-import MathHelper
-import TimerUtils
 
 public class ArcaneMissile extends ArcaneMageSkill
     static let self_id = 'am0q'
+    static let effect_id = 'am1q'
+    static let inc = 5.
+    static let dmg = 200.
     construct(unit u)
         super(u)
 
@@ -20,7 +20,54 @@ public class ArcaneMissile extends ArcaneMageSkill
             ..addAction(function ArcaneMissile.cast)
             ..setData(this castTo int)
 
-    override function clear()
-        
-
     static function cast()
+        unit uc = GetSpellAbilityUnit()
+        unit ut = GetSpellTargetUnit()
+        angle ang
+        if GetRandomInt(1, 2) == 1
+            ang = GetRandomReal(-90., -30.).asAngleDegrees()
+        else
+            ang = GetRandomReal(30., 90.).asAngleDegrees()
+        
+        SkillHelper.auto_trace_missile_modify_speed(effect_id, ut, uc, ang,
+            new ArcaneMissileCb, GetTriggeringTrigger().getData(), 55., 5.5, 0., 5.5)
+    
+public class ArcaneMissileCb implements SkillHelperCb
+    override function cb(int _obj)
+        var obj = _obj castTo ArcaneMissile
+        unit u = obj.m_self_unit
+        unit ut = GetSpellTargetUnit()
+        real final_dmg = GetHeroAgi(u, true) * ArcaneMissile.inc + ArcaneMissile.dmg
+        u.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
+        ut.setMana(ut.getMana() - 3.)
+        StatisticsHelper.add_real(u.getOwner(), final_dmg)
+        destroy this
+
+@compiletime
+function create_arcane_bolt()
+    var ed = EditorHelper.create_channel_template(ArcaneMissile.self_id, emSkillKey.Q)
+    ed..setCastRange(1, 800)
+        ..setManaCost(1, 22)
+        ..setCooldown(1, 1.8)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("Q")
+        ..setTargetType(1, emTargetType.Unit castTo int)
+        ..setTargetsAllowed(1, TYPE_ALLOWED_ENEMY)
+        ..setName("ArcaneMissile")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_ICEMAGE + "Arcane Missile" +
+            Color_Define.COLOR_HOT_KEY + "(Q)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→向目标射出一枚奥术飞弹，造成200伤害。|n" +
+            Color_Define.COLOR_MANA_DECREASE + "↓减少目标3点能量。|n" +
+            Color_Define.COLOR_ICEMAGE + "↑ 500%法术强度额外伤害|n" +
+            Color_Define.COLOR_CAST_RANGE + "→施法距离：800|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:1.8s")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\amq.blp")
+
+@compiletime
+function create_arcane_bolt_effect()
+    var ed = EditorHelper.create_effect_faker_unit(ArcaneMissile.effect_id, 1, "amq.mdx", color(255,255,255))
+    ed.setMovementHeight(100)
+    destroy ed

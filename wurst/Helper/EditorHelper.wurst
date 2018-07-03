@@ -186,7 +186,7 @@ class EditorHelper
             ..setTurnRate(3)
             ..setSpeedMinimum(90)
             ..setAcquisitionRange(700)
-            ..setAttack1AreaofEffectTargets(TYPE_ALLOWED_COMMON)
+            ..setAttack1AreaofEffectTargets(TYPE_ALLOWED_ENEMY)
             ..setAttack1AnimationDamagePoint(0.2)
             ..setAttack1AnimationBackswingPoint(0.2)
             ..setAttack1CooldownTime(2.2)

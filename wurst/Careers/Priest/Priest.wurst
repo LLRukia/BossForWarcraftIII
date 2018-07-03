@@ -57,7 +57,7 @@ function create_priest()
 @compiletime
 function create_pr_au()
 	var editor = EditorHelper.create_aura('prau')
-	editor..setArtTarget("xiwa.mdx")
+	editor..setArtTarget("")
 		..setName("pr")
 		..setBuffs(1, "prid")
 		..setButtonPositionNormalX(0)

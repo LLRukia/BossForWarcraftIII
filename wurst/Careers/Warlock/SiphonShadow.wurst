@@ -73,8 +73,7 @@ public class SiphonShadow extends WarlockSkill
             obj.m_self_unit.issueImmediateOrder("stop")
             return
 
-        flashEffect("Abilities\\Spells\\Undead\\DeathPact\\DeathPactCaster.mdl", obj.m_self_unit.getPos3Real())
-        flashEffect("Abilities\\Spells\\Undead\\DeathPact\\DeathPactTarget.mdl", BossHelper.cur_boss.getPos3Real())
+        flashEffect("scrollpurp.mdx", obj.m_self_unit.getPos())
         
         obj.m_time++
         real speed = 64 * 0.071 / 128
@@ -101,7 +100,7 @@ public class SiphonShadow extends WarlockSkill
     function release_bolts()
         m_num = GetUnitAbilityLevel(m_self_unit, self_id)
         m_cur_num = 0
-        m_self_unit.setAbilityLevel(self_id, 1)
+        m_self_unit.setAbilityLevel(self_id, 5)
 
         timer t = getTimer()
         t..setData(this castTo int)
@@ -114,9 +113,8 @@ public class SiphonShadow extends WarlockSkill
         if GetRandomInt(1, 2) == 1
             ang = GetRandomReal(-90., -30.).asAngleDegrees()
         else
-            ang = GetRandomReal(30, 90).asAngleDegrees()
-        flashEffect("scrollpurp.mdx", obj.m_self_unit.getPos())
-        flashEffect("Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", obj.m_self_unit.getPos())
+            ang = GetRandomReal(30., 90.).asAngleDegrees()
+        flashEffect("wlq1.mdx", obj.m_self_unit.getPos3Real())
         SkillHelper.auto_trace_missile(ShadowBolt.effect_id, BossHelper.cur_boss, obj.m_self_unit,
             ang + obj.m_self_unit.getFacingAngle(), new ShadowKingCb, obj castTo int)
 
@@ -126,17 +124,18 @@ public class SiphonShadow extends WarlockSkill
     static class ShadowKingCb implements SkillHelperCb
         override function cb(int obj)
             var ts = obj castTo SiphonShadow
-            flashEffect("death2greencursebolt.mdx", BossHelper.cur_boss.getPos3Real())
+            flashEffect("wlq1.mdx", BossHelper.cur_boss.getPos3Real())
             real f_dmg = GetHeroAgi(ts.m_self_unit, true) * SiphonShadow.inc + SiphonShadow.dmg
             ts.m_self_unit.damageTarget(BossHelper.cur_boss, f_dmg, ATTACK_TYPE_MAGIC)
             StatisticsHelper.add_real(ts.m_self_unit.getOwner(), f_dmg)
             BossHelper.cur_boss.setMana(BossHelper.cur_boss.getMana() - dec_mana)
+            destroy this
 
 @compiletime
 function create_revive()
     var ed = new AbilityDefinitionKeeperoftheGroveTranquility(SiphonShadow.self_id)
-    ed.setLevels(10)
-    for i = 1 to 10
+    ed.setLevels(15)
+    for i = 1 to 15
         ed..setHealInterval(i, 4.)
             ..setBuildingReduction(i, 0.)
             ..setLifeHealed(i, 0.)

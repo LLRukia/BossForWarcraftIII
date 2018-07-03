@@ -14,10 +14,10 @@ public let PICK_RECT = gg_rct_PICK
 
 public let PLAYER_NUM = 8
 
-public let TYPE_ALLOWED_COMMON              = "alive,enemies,ground,air"
-public let TYPE_ALLOWED_ALLY                = "alive,ground,air,friend,self"
-public let TYPE_ALLOWED_ALLY_WITHOUT_SELF   = "alive,ground,air,friend"
-public let TYPE_ALLOWED_ALL                 = "air,ground"
+public let TYPE_ALLOWED_ENEMY              = "alive,enemies,ground,air,neutral"
+public let TYPE_ALLOWED_ALLY                = "alive,ground,air,friend,self,allies"
+public let TYPE_ALLOWED_ALLY_WITHOUT_SELF   = "alive,ground,air,friend,allies"
+public let TYPE_ALLOWED_ALL                 = "air,ground,alive,invulnerable,vulnerable,allies,friend,enemies,neutral,self"
 /** 
 这个值是因为范围技能的半径和选取单位范围的半径有误差（单位本体大小等原因）
 本图选取40作为修正值，请在技能定义里减掉修正，同时在选取单位范围的时候加上修正。

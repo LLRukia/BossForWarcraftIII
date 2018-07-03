@@ -59,11 +59,10 @@ public class ShadowBolt extends WarlockSkill
         RemoveLocation(lc)
         
         obj.m_cur_pos = obj.m_self_unit.getPos()
-        flashEffect("scrollpurp.mdx", obj.m_cur_pos)
         obj.m_ang = MathHelper.get_angle(obj.m_cur_pos, tgt)
         obj.m_moved_dis = 0.
         obj.m_effect = createUnit(obj.m_self_unit.getOwner(), effect_id, obj.m_cur_pos, obj.m_ang)
-        flashEffect("Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", obj.m_cur_pos)
+        flashEffect("wlq.mdx", obj.m_cur_pos)
         obj.m_tm_move = CreateTimer()
         obj.m_tm_move..setData(obj castTo int)
             ..startPeriodic(0.04, function tm_cb)
@@ -76,11 +75,11 @@ public class ShadowBolt extends WarlockSkill
 
 
         u.setMana(u.getMana() - 30)
-        flashEffect("purplevoid.mdx", u.getPos3Real())
+        flashEffect("wlq1.mdx", u.getPos3Real())
         flashEffect("cure.mdx", m_self_unit.getPos3Real())
         m_self_unit.setMana(m_self_unit.getMana() + 150)
         int lev = m_self_unit.getAbilityLevel(SiphonShadow.self_id)
-        if lev < 10
+        if lev < 15
             m_self_unit.setAbilityLevel(SiphonShadow.self_id, lev + 1)
 
         unit u_faker = createUnit(m_self_unit.getOwner(), FAKE_CASTER, u.getPos(), angle(0))
@@ -103,7 +102,7 @@ public class ShadowBolt extends WarlockSkill
         obj.m_self_unit.damageTarget(obj.m_u_dmging, final_dmg)
         obj.m_u_dmging.setMana(obj.m_u_dmging.getMana() - 9)
 
-        flashEffect("death2cursebolt.mdx", obj.m_u_dmging.getPos3Real())
+        flashEffect("death2greencursebolt.mdx", obj.m_u_dmging.getPos3Real())
 
         if obj.m_times >= dmg_times
             GetExpiredTimer()..pause()..destr()
@@ -199,5 +198,6 @@ function create_shadow_bolt()
 
 @compiletime
 function create_shadow_bolt_faker()
-    var ed = EditorHelper.create_effect_faker_unit(ShadowBolt.effect_id, 1.5, "Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", color(255,255,255))
+    var ed = EditorHelper.create_effect_faker_unit(ShadowBolt.effect_id, 1.5, "wlq.mdx", color(255,255,255))
     ed.setMovementHeight(100)
+    //Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl

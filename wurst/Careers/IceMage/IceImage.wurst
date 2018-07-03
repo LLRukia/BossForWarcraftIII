@@ -37,6 +37,7 @@ public class IceImage extends IceMageSkill
             ..registerAnyUnitEvent(EVENT_PLAYER_UNIT_SUMMON)
             ..addAction(function IceImage.tr_summon)
         m_summoning.issueTargetOrderById(852274, m_self_unit)
+        flashEffect("scrollblue.mdx", m_self_unit.getPos())
 
     static function tr_summon()
         trigger tr = GetTriggeringTrigger()
@@ -69,7 +70,7 @@ public class IceImage extends IceMageSkill
 
     override function clear()
         if m_summoned != null
-            flashEffect("Objects\\Spawnmodels\\NightElf\\NECancelDeath\\NECancelDeath.mdl", m_summoned.getPos())
+            flashEffect("img.mdx", m_summoned.getPos())
             RemoveUnit(m_summoned)
             m_summoned = null
             var fat = PlayerUnitHelper.get_instance(m_self_unit) castTo IceMage

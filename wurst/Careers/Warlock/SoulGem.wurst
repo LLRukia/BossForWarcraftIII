@@ -52,6 +52,7 @@ public class SoulGem extends WarlockSkill
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo SoulGem
         obj.m_revive_unit = GetSpellTargetUnit()
+        flashEffect("Abilities\\Spells\\Undead\\DeathPact\\DeathPactTarget.mdl", obj.m_revive_unit.getPos())
         obj.m_self_unit..disableAbility(self_id, true, true)..addAbility(help_id)
         obj.m_tm = getTimer()
         obj.m_tm..setData(obj castTo int)

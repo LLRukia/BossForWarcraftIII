@@ -89,7 +89,7 @@ function create_ice_shield()
 @compiletime
 function create_ice_shield_buff()
     var ed = new BuffDefinition(IceShield.buff_id, 'Bbsk')
-    ed..setArtTarget(1, "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathTargetArt.mdl")
+    ed..setArtTarget(1, "imd.mdx")
     ..setTargetAttachments(1, 1)
     ..setTargetAttachmentPoint0(1, "origin")
     ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Ice Shield")

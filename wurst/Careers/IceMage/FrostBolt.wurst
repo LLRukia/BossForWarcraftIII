@@ -4,13 +4,16 @@ import EditorHelper
 import ExternalDefines
 import TriggerHelper
 import StatisticsHelper
+import SkillHelper
+import MathHelper
 
 public class FrostBolt extends IceMageSkill
 	static constant int self_id = 'im0q'
-	static let buff_id = 'im4b'
+	static let buff_id = 'im2q'
+	static let effect_id = 'im1q'
+	static let fake_id = 'im3q'
 	static constant real dmg = 210.
 	static let inc = 8.
-	//static constant int buff_id = 'B001'
 	
 	construct(unit u)
 		super(u)
@@ -22,23 +25,36 @@ public class FrostBolt extends IceMageSkill
 			..setData(this castTo int)
 	
 	static function cast()
-		unit u = (GetTriggeringTrigger().getData() castTo FrostBolt).m_self_unit
-		real final_dmg = GetHeroAgi(u, true) * FrostBolt.inc + FrostBolt.dmg
-		u.damageTarget(GetSpellTargetUnit(), final_dmg, ATTACK_TYPE_MAGIC)
-		StatisticsHelper.add_real(u.getOwner(), final_dmg)
+		unit uc = GetSpellAbilityUnit()
+		unit ut = GetSpellTargetUnit()
+		SkillHelper.auto_trace_missile(effect_id, ut, uc, MathHelper.get_angle(uc.getPos(), ut.getPos()),
+			new FrostBoltCb, GetTriggeringTrigger().getData())
+	
+	static class FrostBoltCb implements SkillHelperCb
+		override function cb(int _obj)
+			var obj = _obj castTo FrostBolt
+			unit u = obj.m_self_unit
+			unit ut = GetSpellTargetUnit()
+			real final_dmg = GetHeroAgi(u, true) * FrostBolt.inc + FrostBolt.dmg
+			u.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
+			ut.setMana(ut.getMana() - 4.)
+			unit uf = createUnit(u.getOwner(), FAKE_CASTER, u.getPos(), angle(0))
+			uf..addAbility(fake_id)..issueTargetOrder("cripple", ut)..setTimedLife(0.5)
+			StatisticsHelper.add_real(u.getOwner(), final_dmg)
+			destroy this
+
 
 @compiletime
 function create_frost_bolt()
-	var editor = EditorHelper.create_cripple_template(FrostBolt.self_id, 1.5, FrostBolt.buff_id)
-	editor..setAttackSpeedReduction(1, 0.05)
-		..setMovementSpeedReduction(1, 0.05)
-		..setCastRange(1, 800)
+	var ed = EditorHelper.create_channel_template(FrostBolt.self_id, emSkillKey.Q)
+	ed..setCastRange(1, 800)
 		..setManaCost(1, 17)
 		..setCooldown(1, 1.8)
 		..setButtonPositionNormalX(0)
 		..setButtonPositionNormalY(2)
 		..setHotkeyNormal("Q")
-		..setTargetsAllowed(1, TYPE_ALLOWED_COMMON)
+		..setTargetType(1, emTargetType.Unit castTo int)
+		..setTargetsAllowed(1, TYPE_ALLOWED_ENEMY)
 		..setName("FrostBolt")
 		..setTooltipNormal(1,
 			Color_Define.COLOR_ICEMAGE + "Frost Bolt" +
@@ -51,6 +67,20 @@ function create_frost_bolt()
 			Color_Define.COLOR_CAST_RANGE + "→施法距离：800|n" +
 			Color_Define.COLOR_COOL_DOWN + "→CD:1.8s")
 		..setIconNormal("replaceabletextures\\commandbuttons\\imq.blp")
+
+
+@compiletime
+function create_frost_bolt_faker()
+	var editor = EditorHelper.create_cripple_template(FrostBolt.fake_id, 1.5, FrostBolt.buff_id)
+	editor..setAttackSpeedReduction(1, 0.05)
+		..setMovementSpeedReduction(1, 0.05)
+		..setCastRange(1, 9999)
+		..setManaCost(1, 0)
+		..setCooldown(1, 0)
+		..setDurationHero(1, 1.5)
+		..setDurationNormal(1, 1.5)
+		..setTargetsAllowed(1, TYPE_ALLOWED_ENEMY)
+		..setName("FrostBolt")
 		..setArtTarget("Abilities\\Spells\\Items\\SpellShieldAmulet\\SpellShieldCaster.mdl")
 		
 	destroy editor
@@ -67,3 +97,9 @@ function create_frost_bolt_buff()
 
 
 	destroy editor
+
+@compiletime
+function create_frost_bolt_effect()
+	var ed = EditorHelper.create_effect_faker_unit(FrostBolt.effect_id, 1, "imq.mdx", color(255,255,255))
+	ed.setMovementHeight(100)
+	destroy ed

@@ -1,0 +1,98 @@
+package ArcaneBarrage
+
+import ArcaneMage
+import EditorHelper
+import ExternalDefines
+import TriggerHelper
+import SkillHelper
+
+public class ArcaneBarrage extends ArcaneMageSkill
+    static let self_id = 'am0w'
+    static let num = 1
+    static let range = 800.
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==ArcaneMissile.self_id))
+            ..addAction(function ArcaneBarrage.cast)
+            ..setData(this castTo int)
+
+    static function cast()
+        unit uc = GetSpellAbilityUnit()
+        unit ut = GetSpellTargetUnit()
+        //flashEffect("scrollpink.mdx", uc.getPos())
+        group g = CreateGroup()
+        g.enumUnitsInRange(uc.getPos(), range + AREA_DMG_CORRECTION)
+        bool bOnly = true
+        for i in g
+            if i == ut
+                g.removeUnit(i)
+            else
+                bOnly = false
+
+        group gg = CreateGroup()
+        int num = ArcaneBarrage.num
+        if uc.hasAbility(ArcaneEmpowerment.buff_id)
+            num *= 3
+            for i = 0 to 1
+                angle ang
+                if GetRandomInt(1, 2) == 1
+                    ang = GetRandomReal(-90., -30.).asAngleDegrees()
+                else
+                    ang = GetRandomReal(30., 90.).asAngleDegrees()
+                
+                SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, ut, uc, ang,
+                    new ArcaneMissileCb, GetTriggeringTrigger().getData(), 55., 5.5, 0., 5.5)
+
+        
+        
+        for i = 0 to num -1
+            unit utr = null
+            if not bOnly
+                if g.size() != 0
+                    utr = g.getRandomUnit()
+                    g.removeUnit(utr)
+                    gg.addUnit(utr)
+                else
+                    group t = g
+                    g = gg
+                    gg = t
+            else
+                utr = ut
+
+            angle ang
+            if GetRandomInt(1, 2) == 1
+                ang = GetRandomReal(-90., -30.).asAngleDegrees()
+            else
+                ang = GetRandomReal(30., 90.).asAngleDegrees()
+            
+            SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, utr, uc, ang,
+                new ArcaneMissileCb, GetTriggeringTrigger().getData(), 55., 5.5, 0., 5.5)
+
+        g.destr()
+        gg.destr()
+    
+
+@compiletime
+function create_arcane_bolt()
+    var ed = new AbilityDefinitionMountainKingBash(ArcaneBarrage.self_id)
+    
+    ed..setChancetoBash(1, 0)
+        ..setChancetoMiss(1, 0)
+        ..setDamageBonus(1, 0)
+        ..setNeverMiss(1, false)
+        ..setDamageMultiplier(1, 0)
+        ..setName("ArcaneBarrage")
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("W")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_ICEMAGE + "Arcane Barrage")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→你每次施放奥术飞弹时，会额外射出一枚奥术飞弹随机打击周围的敌人。|n" +
+            Color_Define.COLOR_MANA_DECREASE + "↓减少目标3点能量。|n" +
+            Color_Define.COLOR_ICEMAGE + "↑ 500%法术强度额外伤害|n" +
+            Color_Define.COLOR_CAST_RANGE + "→最大距离：800|n")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\amw.blp")

@@ -33,13 +33,13 @@ function create_shadow_counter_spell()
         ..setButtonPositionNormalY(1)
         ..setHotkeyNormal("F")
         ..setTargetType(1, emTargetType.Unit castTo int)
-        ..setTargetsAllowed(1, TYPE_ALLOWED_COMMON+",invulnerable")
+        ..setTargetsAllowed(1, TYPE_ALLOWED_ENEMY+",invulnerable")
         ..setName("ArcaneCounterSpell")
         ..setTooltipNormal(1,
             Color_Define.COLOR_ICEMAGE + "Counter Spell" +
             Color_Define.COLOR_HOT_KEY + "(F)")
         ..setTooltipNormalExtended(1,
-            Color_Define.COLOR_NORMAL + "→反制Boss的技能（粉色字体）|n|n" +
+            Color_Define.COLOR_NORMAL + "→反制Boss的技能（粉色字体）|n" +
             Color_Define. COLOR_CAST_RANGE + "→施法距离：800|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:35s")
         ..setIconNormal("replaceabletextures\\commandbuttons\\counterspell.blp")

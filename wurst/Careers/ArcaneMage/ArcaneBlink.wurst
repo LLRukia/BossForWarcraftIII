@@ -1,0 +1,48 @@
+package ArcaneBlink
+
+import ArcaneMage
+import SkillHelper
+import TriggerHelper
+import EditorHelper
+import ExternalDefines
+
+public class ArcaneBlink extends ArcaneMageSkill
+    static let self_id = 'am0e'
+    static let max_dis = 400
+    construct(unit u)
+        super(u)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==ArcaneBlink.self_id))
+            ..addAction(function ArcaneBlink.cast)
+            ..setData(this castTo int)
+
+    static function cast()
+        unit u = (GetTriggeringTrigger().getData() castTo ArcaneBlink).m_self_unit
+        vec2 p = SkillHelper.blink_forward(u, u.getFacingAngle(), max_dis)
+        flashEffect("blink.mdx", u.getPos())
+        flashEffect("blink.mdx", p)
+        u.setPos(p)
+
+@compiletime
+function create_shadow_counter_spell()
+    var editor = EditorHelper.create_channel_template(ArcaneBlink.self_id, emSkillKey.E)
+    editor
+        ..setManaCost(1, 20)
+        ..setCooldown(1, 18)
+        ..setButtonPositionNormalX(2)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("E")
+        ..setTargetType(1, emTargetType.None castTo int)
+        ..setName("ArcaneBlink")
+        ..setTooltipNormal(1,
+            Color_Define.COLOR_ICEMAGE + "Arcane Blink" +
+            Color_Define.COLOR_HOT_KEY + "(E)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→向前闪现|n→遇到障碍物会停下来。|n" +
+            Color_Define. COLOR_CAST_RANGE + "→最大距离：400|n" +
+            Color_Define.COLOR_COOL_DOWN + "→CD:18s")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\blink.blp")
+
+    destroy editor

@@ -1,0 +1,109 @@
+package ArcaneEmpowerment
+
+import ArcaneMage
+import TriggerHelper
+import EditorHelper
+import SkillHelper
+import ExternalDefines
+import TimerUtils
+
+public class ArcaneEmpowerment extends ArcaneMageSkill
+    static let self_id = 'am0r'
+    static let last_time = 8.
+    static let buff_id = 'am1r'
+    static let help_id = 'am2r'
+
+    private timer m_tm
+    construct(unit u)
+        super(u)
+
+    ondestroy
+        
+
+    override function clear()
+        if m_tm != null
+            m_tm.release()
+        if m_self_unit.hasAbility(buff_id)
+            m_self_unit.remove_buff(buff_id)
+
+    override function listen()
+        m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
+            ..addCondition(Filter(()->GetSpellAbilityId()==ArcaneEmpowerment.self_id))
+            ..addAction(function ArcaneEmpowerment.cast)
+            ..setData(this castTo int)
+
+    static function cast()
+        var obj = GetTriggeringTrigger().getData() castTo ArcaneEmpowerment
+        unit u =createUnit(obj.m_self_unit.getOwner(), FAKE_CASTER, obj.m_self_unit.getPos(), angle(0))
+        u..addAbility(ArcaneEmpowerment.help_id)
+        ..issueTargetOrder("bloodlust", obj.m_self_unit)
+        ..setTimedLife(1.)
+
+        flashEffect("scrollpink.mdx", obj.m_self_unit.getPos())
+        obj.m_self_unit..add_buff(buff_id, BuffClearType.additions, BuffType.buffs, obj)
+        
+        obj.m_tm = getTimer()
+        obj.m_tm..setData(obj castTo int)
+            ..startPeriodic(last_time, function tm_cb)
+
+    override function destroy_buff(unit u)
+        if m_tm != null
+            m_tm.release()
+            m_tm = null
+        
+    static function tm_cb()
+        var obj = GetExpiredTimer().getData() castTo ArcaneEmpowerment
+        if obj.m_self_unit.hasAbility(buff_id)
+            obj.m_self_unit.remove_buff(buff_id)
+        if obj.m_tm != null
+            obj.m_tm.release()
+            obj.m_tm = null
+            
+
+    
+@compiletime
+function create_power_infusion()
+    var ed = EditorHelper.create_channel_template(ArcaneEmpowerment.self_id, emSkillKey.R)
+    ed..setHotkeyNormal("R")
+        ..setManaCost(1, 55)
+        ..setCooldown(1, 18)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(2)
+        ..setTargetType(1, emTargetType.None castTo int)
+        ..setName("ArcaneEmpowerment")
+        ..setTooltipNormal(1,
+			Color_Define.COLOR_PRIEST + "Arcane Empowerment" +
+			Color_Define.COLOR_HOT_KEY + "(R)")
+        ..setTooltipNormalExtended(1,
+            Color_Define.COLOR_NORMAL + "→奥术充能->|n↑使得你每次释放奥术飞弹时会额外释放2枚|n" +
+            Color_Define.COLOR_LAST_TIME + "→持续8秒。|n" +
+            Color_Define.COLOR_WARNING + "★额外的奥术飞弹可触发被动效果|n" +
+			Color_Define.COLOR_COOL_DOWN + "→CD:18s")
+        ..setIconNormal("replaceabletextures\\commandbuttons\\amr.blp")
+
+@compiletime
+function create_power_infusion_buff()
+    var ed = new BuffDefinition(ArcaneEmpowerment.buff_id, 'Bhea')
+    ed..setArtTarget(1, "amr.mdx")
+    ..setTargetAttachments(1, 1)
+    ..setTargetAttachmentPoint0(1, "origin")
+    ..setTooltipNormal(1, Color_Define.COLOR_PRIEST + "Arcane Empowerment")
+    ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位充满了奥术能量。")
+    ..setIconNormal(1, "replaceabletextures\\commandbuttons\\amr.blp")
+
+@compiletime
+function create_power_infusion_buff_adder()
+    var ed1 = new AbilityDefinitionBloodlust(ArcaneEmpowerment.help_id)
+    ed1..setScalingFactor(1, 0.)
+        ..setAttackSpeedIncrease(1, 0.)
+        ..setMovementSpeedIncrease(1, 0.)
+        ..setDurationHero(1, ArcaneEmpowerment.last_time)
+        ..setDurationNormal(1, ArcaneEmpowerment.last_time)
+        ..setManaCost(1, 0)
+        ..setCastRange(1, 99999)
+        ..setCooldown(1, 0)
+        ..setLevels(1)
+        ..setRequirements("")
+        ..setRequirementsLevels("")
+        ..setBuffs(1, ArcaneEmpowerment.buff_id.toRawCode())
+        ..setName("ArcaneEmpowermentFaker")
