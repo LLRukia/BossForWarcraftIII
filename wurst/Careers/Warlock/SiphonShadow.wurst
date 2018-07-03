@@ -114,7 +114,7 @@ public class SiphonShadow extends WarlockSkill
             ang = GetRandomReal(-90., -30.).asAngleDegrees()
         else
             ang = GetRandomReal(30., 90.).asAngleDegrees()
-        flashEffect("wlq1.mdx", obj.m_self_unit.getPos3Real())
+        flashEffect("Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", obj.m_self_unit.getPos3Real())
         SkillHelper.auto_trace_missile(ShadowBolt.effect_id, BossHelper.cur_boss, obj.m_self_unit,
             ang + obj.m_self_unit.getFacingAngle(), new ShadowKingCb, obj castTo int)
 
@@ -124,7 +124,7 @@ public class SiphonShadow extends WarlockSkill
     static class ShadowKingCb implements SkillHelperCb
         override function cb(int obj)
             var ts = obj castTo SiphonShadow
-            flashEffect("wlq1.mdx", BossHelper.cur_boss.getPos3Real())
+            flashEffect("wlq.mdx", BossHelper.cur_boss.getPos3Real())
             real f_dmg = GetHeroAgi(ts.m_self_unit, true) * SiphonShadow.inc + SiphonShadow.dmg
             ts.m_self_unit.damageTarget(BossHelper.cur_boss, f_dmg, ATTACK_TYPE_MAGIC)
             StatisticsHelper.add_real(ts.m_self_unit.getOwner(), f_dmg)

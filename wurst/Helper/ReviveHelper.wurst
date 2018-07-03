@@ -52,7 +52,7 @@ public class ReviveHelper
         u..revive(u_faker.getPos(), false)
             ..setXY(u_faker.getPos())
             ..setHP(u.getMaxHP() * final_percent)
-        flashEffect("Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl", u.getPos())
+        
         map_death_unit.remove(u_faker)
         RemoveUnit(u_faker)
 
@@ -73,11 +73,10 @@ function create_dead_units()
         EditorHelper.create_effect_faker_unit('ddim', 0.9, "units\\human\\Sorceress\\Sorceress_V1.mdl", color(255, 255, 255))
         EditorHelper.create_effect_faker_unit('ddpr', 0.9, "units\\human\\Priest\\Priest", color(255, 255, 255))
         EditorHelper.create_effect_faker_unit('ddwl', 0.9, "units\\undead\\Necromancer\\Necromancer", color(255, 255, 255))
-        EditorHelper.create_effect_faker_unit('ddfm', 0.9, "", color(255, 255, 255))
+        EditorHelper.create_effect_faker_unit('ddam', 0.9, "units\\human\\Jaina\\Jaina", color(255, 255, 255))
         EditorHelper.create_effect_faker_unit('ddwr', 0.9, "", color(255, 255, 255))
     else
-        ReviveHelper.map_unit_creator
-            ..put(career.ice_mage, 'ddim')..put(career.priest, 'ddpr')
-            ..put(career.warlock, 'ddwl')
+        ReviveHelper.map_unit_creator..put(career.ice_mage, 'ddim')..put(career.priest, 'ddpr')
+            ..put(career.warlock, 'ddwl')..put(career.arcane_mage, 'ddam')
 init
     create_dead_units()

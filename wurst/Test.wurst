@@ -8,7 +8,7 @@ import ExternalDefines
 import Camera
 
 function test()
-    flashEffect(GetEventPlayerChatString(), GetTriggerPlayer().get_unit().getPos())
+    flashEffect(GetEventPlayerChatString(), GetTriggerPlayer().get_unit().getPos().withZ(200))
     
 
     

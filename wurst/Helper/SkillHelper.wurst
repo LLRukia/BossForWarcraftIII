@@ -183,6 +183,7 @@ public class SkillHelper
         
     static function blink_forward(unit ucaster, angle ang, int dis) returns vec2
         vec2 pos = ucaster.getPos()
+        ucaster.addAbility('Aeth')
         let each = 50
         for i = 1 to dis div each
             pos = MathHelper.forward(pos, ang, each.toReal())
@@ -192,7 +193,7 @@ public class SkillHelper
             if not IssueBuildOrderById(uExplorer, Rush.unit_id, pos.x, pos.y)
                 pos = MathHelper.forward(pos, ang, (-each).toReal())
                 break
-
+        ucaster.removeAbility('Aeth')
         return pos
 
 

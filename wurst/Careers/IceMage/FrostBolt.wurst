@@ -2,7 +2,6 @@ package FrostBolt
 import IceMage
 import EditorHelper
 import ExternalDefines
-import TriggerHelper
 import StatisticsHelper
 import SkillHelper
 import MathHelper
@@ -22,25 +21,26 @@ public class FrostBolt extends IceMageSkill
 		m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
 			..addCondition(Filter(()->GetSpellAbilityId()==FrostBolt.self_id))
 			..addAction(function FrostBolt.cast)
-			..setData(this castTo int)
 	
 	static function cast()
 		unit uc = GetSpellAbilityUnit()
 		unit ut = GetSpellTargetUnit()
 		SkillHelper.auto_trace_missile(effect_id, ut, uc, MathHelper.get_angle(uc.getPos(), ut.getPos()),
-			new FrostBoltCb, GetTriggeringTrigger().getData())
+			new FrostBoltCb(uc, ut), 0)
 	
 	static class FrostBoltCb implements SkillHelperCb
+		unit uc
+		unit ut
+		construct(unit uc, unit ut)
+			this.uc = uc
+			this.ut = ut
 		override function cb(int _obj)
-			var obj = _obj castTo FrostBolt
-			unit u = obj.m_self_unit
-			unit ut = GetSpellTargetUnit()
-			real final_dmg = GetHeroAgi(u, true) * FrostBolt.inc + FrostBolt.dmg
-			u.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
+			real final_dmg = GetHeroAgi(uc, true) * FrostBolt.inc + FrostBolt.dmg
+			uc.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
 			ut.setMana(ut.getMana() - 4.)
-			unit uf = createUnit(u.getOwner(), FAKE_CASTER, u.getPos(), angle(0))
+			unit uf = createUnit(uc.getOwner(), FAKE_CASTER, uc.getPos(), angle(0))
 			uf..addAbility(fake_id)..issueTargetOrder("cripple", ut)..setTimedLife(0.5)
-			StatisticsHelper.add_real(u.getOwner(), final_dmg)
+			StatisticsHelper.add_real(uc.getOwner(), final_dmg)
 			destroy this
 
 

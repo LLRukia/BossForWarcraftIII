@@ -44,7 +44,6 @@ public class Buffs
         if set_buff.has(id)
             var bf = set_buff.get(id)
             set_buff.remove(id)
-            m_u.removeAbility(id)
             bf.m_cb.destroy_buff(m_u)
         
         set_buff.put(id, temp)

@@ -21,6 +21,8 @@ public class ArcaneBlink extends ArcaneMageSkill
     static function cast()
         unit u = (GetTriggeringTrigger().getData() castTo ArcaneBlink).m_self_unit
         vec2 p = SkillHelper.blink_forward(u, u.getFacingAngle(), max_dis)
+        print(p.toString())
+        print(u.getPos().toString())
         flashEffect("blink.mdx", u.getPos())
         flashEffect("blink.mdx", p)
         u.setPos(p)

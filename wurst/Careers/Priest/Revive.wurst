@@ -47,6 +47,7 @@ public class Revive extends PriestSkill
         if obj.m_time == 5
             if ReviveHelper.can_revive_faker(obj.u_revive)
                 ReviveHelper.revive(obj.u_revive, obj.m_self_unit.getHP() / obj.m_self_unit.getMaxHP())
+                flashEffect("Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl", obj.u_revive.getPos())
     
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo Revive

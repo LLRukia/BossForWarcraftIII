@@ -107,10 +107,6 @@ function create_unholy_sprint_aura_buff()
     editor..setName(1, "UnholySprint")
         ..setTooltipNormal(1, Color_Define.COLOR_WARLOCK + "Unholy Sprint")
         ..setTooltipNormalExtended(1, Color_Define.COLOR_NORMAL + "此单位正在冲刺。")
-        // ..setArtTarget(1, "Environment\\UndeadBuildingFire\\UndeadSmallBuildingFire2.mdl")
-        // ..setTargetAttachments(1, 2)
-        // ..setTargetAttachmentPoint0(1, "foot,left")
-        // ..setTargetAttachmentPoint1(1, "foot,right")
         ..setIconNormal(1, "ReplaceableTextures\\CommandButtons\\BTNAnimalWarTraining.blp")
         
 

@@ -14,7 +14,7 @@ public let PICK_RECT = gg_rct_PICK
 
 public let PLAYER_NUM = 8
 
-public let TYPE_ALLOWED_ENEMY              = "alive,enemies,ground,air,neutral"
+public let TYPE_ALLOWED_ENEMY               = "alive,enemies,ground,air"
 public let TYPE_ALLOWED_ALLY                = "alive,ground,air,friend,self,allies"
 public let TYPE_ALLOWED_ALLY_WITHOUT_SELF   = "alive,ground,air,friend,allies"
 public let TYPE_ALLOWED_ALL                 = "air,ground,alive,invulnerable,vulnerable,allies,friend,enemies,neutral,self"

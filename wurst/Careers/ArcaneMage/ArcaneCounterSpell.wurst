@@ -33,7 +33,7 @@ function create_shadow_counter_spell()
         ..setButtonPositionNormalY(1)
         ..setHotkeyNormal("F")
         ..setTargetType(1, emTargetType.Unit castTo int)
-        ..setTargetsAllowed(1, TYPE_ALLOWED_ENEMY+",invulnerable")
+        ..setTargetsAllowed(1, TYPE_ALLOWED_ENEMY+",invulnerable,vulnerable")
         ..setName("ArcaneCounterSpell")
         ..setTooltipNormal(1,
             Color_Define.COLOR_ICEMAGE + "Counter Spell" +

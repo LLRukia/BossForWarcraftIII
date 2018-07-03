@@ -3,7 +3,6 @@ package ArcaneMissile
 import ArcaneMage
 import EditorHelper
 import ExternalDefines
-import TriggerHelper
 import SkillHelper
 
 public class ArcaneMissile extends ArcaneMageSkill
@@ -18,29 +17,32 @@ public class ArcaneMissile extends ArcaneMageSkill
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
             ..addCondition(Filter(()->GetSpellAbilityId()==ArcaneMissile.self_id))
             ..addAction(function ArcaneMissile.cast)
-            ..setData(this castTo int)
 
     static function cast()
         unit uc = GetSpellAbilityUnit()
         unit ut = GetSpellTargetUnit()
         angle ang
         if GetRandomInt(1, 2) == 1
-            ang = GetRandomReal(-90., -30.).asAngleDegrees()
+            ang = GetRandomReal(-60., -30.).asAngleDegrees()
         else
-            ang = GetRandomReal(30., 90.).asAngleDegrees()
+            ang = GetRandomReal(30., 60.).asAngleDegrees()
         
-        SkillHelper.auto_trace_missile_modify_speed(effect_id, ut, uc, ang,
-            new ArcaneMissileCb, GetTriggeringTrigger().getData(), 55., 5.5, 0., 5.5)
+        SkillHelper.auto_trace_missile_modify_speed(effect_id, ut, uc, ang + uc.getFacingAngle(),
+            new ArcaneMissileCb(uc, ut), 0, 55., 11., 55., 0)
     
 public class ArcaneMissileCb implements SkillHelperCb
+    unit uc
+    unit ut
+    construct(unit uc, unit ut)
+        this.uc = uc
+        this.ut = ut
     override function cb(int _obj)
-        var obj = _obj castTo ArcaneMissile
-        unit u = obj.m_self_unit
-        unit ut = GetSpellTargetUnit()
-        real final_dmg = GetHeroAgi(u, true) * ArcaneMissile.inc + ArcaneMissile.dmg
-        u.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
+        real final_dmg = GetHeroAgi(uc, true) * ArcaneMissile.inc + ArcaneMissile.dmg
+        uc.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
+        flashEffect("amq1.mdx", ut.getPos3Real())
+        flashEffect("amq2.mdx", ut.getPos3Real())
         ut.setMana(ut.getMana() - 3.)
-        StatisticsHelper.add_real(u.getOwner(), final_dmg)
+        StatisticsHelper.add_real(uc.getOwner(), final_dmg)
         destroy this
 
 @compiletime

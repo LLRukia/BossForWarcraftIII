@@ -98,7 +98,7 @@ public class IceLance extends IceMageSkill
 					StatisticsHelper.add_real(instance.m_self_unit.getOwner(), final_dmg)
 					dmg_once.put(uTarget, true)
 			g.destr()
-			flashEffect("ime1.mdx", cur_loc)
+			flashEffect("Abilities\\Spells\\Undead\\FrostNova\\FrostNovaTarget.mdl", cur_loc)
 			cur_loc = MathHelper.forward(cur_loc, MathHelper.get_angle(pt1, pt2), IceLance.unit_offset)
 
 
@@ -134,7 +134,7 @@ function create_ice_lance()
 			Color_Define. COLOR_CAST_RANGE + "→施法距离：900, 1100|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:8s")
 		..setIconNormal("replaceabletextures\\commandbuttons\\ime.blp")
-		..setArtEffect("ime.mdx")
+		..setArtEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl")
 
 	destroy editor
 

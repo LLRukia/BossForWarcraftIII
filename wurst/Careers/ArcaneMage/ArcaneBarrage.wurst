@@ -3,8 +3,8 @@ package ArcaneBarrage
 import ArcaneMage
 import EditorHelper
 import ExternalDefines
-import TriggerHelper
 import SkillHelper
+import LinkedList
 
 public class ArcaneBarrage extends ArcaneMageSkill
     static let self_id = 'am0w'
@@ -17,62 +17,55 @@ public class ArcaneBarrage extends ArcaneMageSkill
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
             ..addCondition(Filter(()->GetSpellAbilityId()==ArcaneMissile.self_id))
             ..addAction(function ArcaneBarrage.cast)
-            ..setData(this castTo int)
 
     static function cast()
         unit uc = GetSpellAbilityUnit()
         unit ut = GetSpellTargetUnit()
         //flashEffect("scrollpink.mdx", uc.getPos())
         group g = CreateGroup()
+        var ls = new LinkedList<unit>
         g.enumUnitsInRange(uc.getPos(), range + AREA_DMG_CORRECTION)
-        bool bOnly = true
         for i in g
-            if i == ut
-                g.removeUnit(i)
-            else
-                bOnly = false
-
-        group gg = CreateGroup()
+            if i != ut and i != uc and i.isAlive() and not IsUnitAlly(i, uc.getOwner())
+                ls.add(i)
+        g.destr()
         int num = ArcaneBarrage.num
         if uc.hasAbility(ArcaneEmpowerment.buff_id)
             num *= 3
             for i = 0 to 1
                 angle ang
                 if GetRandomInt(1, 2) == 1
-                    ang = GetRandomReal(-90., -30.).asAngleDegrees()
+                    ang = GetRandomReal(-60., -30.).asAngleDegrees()
                 else
-                    ang = GetRandomReal(30., 90.).asAngleDegrees()
+                    ang = GetRandomReal(30., 60.).asAngleDegrees()
                 
-                SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, ut, uc, ang,
-                    new ArcaneMissileCb, GetTriggeringTrigger().getData(), 55., 5.5, 0., 5.5)
+                SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, ut, uc, ang + uc.getFacingAngle(),
+                    new ArcaneMissileCb(uc,ut), 0, 44., 11., 55., 0)
 
-        
-        
-        for i = 0 to num -1
+        var t = new LinkedList<unit>(ls)
+
+        for i = 0 to num - 1
             unit utr = null
-            if not bOnly
-                if g.size() != 0
-                    utr = g.getRandomUnit()
-                    g.removeUnit(utr)
-                    gg.addUnit(utr)
-                else
-                    group t = g
-                    g = gg
-                    gg = t
+            if t.size() != 0
+                int index = GetRandomInt(0, t.size()-1)
+                utr = t.get(index)
+                t.removeAt(index)
+                if t.size() == 0
+                    destroy t
+                    t = new LinkedList<unit>(ls)
             else
                 utr = ut
 
             angle ang
             if GetRandomInt(1, 2) == 1
-                ang = GetRandomReal(-90., -30.).asAngleDegrees()
+                ang = GetRandomReal(-60., -30.).asAngleDegrees()
             else
-                ang = GetRandomReal(30., 90.).asAngleDegrees()
+                ang = GetRandomReal(30., 60.).asAngleDegrees()
             
-            SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, utr, uc, ang,
-                new ArcaneMissileCb, GetTriggeringTrigger().getData(), 55., 5.5, 0., 5.5)
-
-        g.destr()
-        gg.destr()
+            SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, utr, uc, ang + uc.getFacingAngle(),
+                new ArcaneMissileCb(uc,utr), 0, 44., 11., 55., 0)
+        destroy ls
+        destroy t
     
 
 @compiletime
