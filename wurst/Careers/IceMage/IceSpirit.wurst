@@ -95,7 +95,7 @@ public class IceSpirit extends IceMageSkill
         m_exist_spirit_num++
 
         rect rc = Rect(pos.x - 40, pos.y - 40, pos.x + 40, pos.y + 40)
-        effect e = addEffect("frostaura.mdx", pos)
+        effect e = addEffect("imf.mdx", pos)
         m_map_spirit.put(e, rc)
         
         m_rg_judge.addRect(rc)

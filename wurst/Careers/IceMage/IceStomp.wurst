@@ -6,12 +6,14 @@ import EditorHelper
 import TriggerHelper
 import TimerUtils
 import SkillHelper
+import SoundUtils
 import StatisticsHelper
+
 public class IceStomp extends IceMageSkill
     static let self_id = 'im0w'
     static let effect_id = 'im1w'
     static let help_id = 'im2w'
-    static let buff_id = 'im3b'
+    static let buff_id = 'im3w'
     static let dmg = 240.
     static let radius = 350.
     static let last_time = 3.
@@ -21,9 +23,9 @@ public class IceStomp extends IceMageSkill
     private unit m_follow = null
     private trigger m_tr_start = CreateTrigger()
     private trigger m_tr_end = CreateTrigger()
-    private trigger m_tr_dmg
     private timer m_tm_effect = null
     private real m_scale_size = 0.
+    static var clap = new SoundDefinition(Sounds.thunderclapCaster1, false, true)
 
     construct(unit u)
         super(u)
@@ -48,10 +50,9 @@ public class IceStomp extends IceMageSkill
             ..setData(this castTo int)
         
     static function prepare()
-        print("prepare")
         var obj = GetTriggeringTrigger().getData() castTo IceStomp
         vec2 pos = obj.m_self_unit.getPos()
-        obj.m_effect = addEffect("frozenshell.mdx", pos)
+        obj.m_effect = addEffect("imw.mdx", pos)
         obj.m_scale_size = 0.4
         obj.m_effect.setScale(0.4)
         obj.m_tm_effect = CreateTimer()
@@ -61,7 +62,7 @@ public class IceStomp extends IceMageSkill
         var fat = PlayerUnitHelper.get_instance(obj.m_self_unit) castTo IceMage
         if fat.m_self_image != null
             vec2 pos2 = fat.m_self_image.getPos()
-            obj.m_effect2 = addEffect("frozenshell.mdx", pos2)
+            obj.m_effect2 = addEffect("imw.mdx", pos2)
             obj.m_effect2.setScale(0.4)
 
     function imagecast()
@@ -70,7 +71,7 @@ public class IceStomp extends IceMageSkill
             m_follow = createUnit(m_self_unit.getOwner(), FAKE_CASTER, fat.m_self_image.getPos(), angle(0))
             m_follow..addAbility(IceStomp.help_id)..issueImmediateOrder("thunderclap")..setXY(fat.m_self_image.getPos())
                 ..setTimedLife(0.5)
-            flashEffect("imw.mdx", m_follow.getPos())
+            clap.playOnPoint(m_follow.getPos3Real())
             group g = CreateGroup()
             g.enumUnitsInRange(m_follow.getPos(), IceStomp.radius+AREA_DMG_CORRECTION)
             for i in g
@@ -92,7 +93,7 @@ public class IceStomp extends IceMageSkill
         for i in g
             obj.make_dmg(i)
         g.destr()
-
+        clap.playOnPoint(obj.m_self_unit.getPos3Real())
         obj.m_tm_effect..pause()..destr()
         obj.m_scale_size = 0
 

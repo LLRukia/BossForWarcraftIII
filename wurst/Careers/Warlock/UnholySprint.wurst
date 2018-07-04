@@ -54,7 +54,7 @@ public class UnholySprint extends WarlockSkill
 
     static function tm_cb()
         var obj = GetExpiredTimer().getData() castTo UnholySprint
-        real r = obj.m_self_unit.getMaxHP() * 0.0025
+        real r = obj.m_self_unit.getMaxHP() * 0.002
         obj.m_self_unit.setHP(obj.m_self_unit.getHP() - r)
 
 @compiletime
@@ -79,7 +79,7 @@ function create_unholy_sprint()
             Color_Define.COLOR_WARLOCK + "Turn Off Unholy Sprint" +
             Color_Define.COLOR_HOT_KEY + "(E)")
         ..setTooltipNormalExtended(1, 
-            Color_Define.COLOR_NORMAL + "开启邪恶冲刺，每秒消耗最大生命的5%，使你移动速度提升70%。|n" +
+            Color_Define.COLOR_NORMAL + "开启邪恶冲刺，每秒消耗最大生命的4%，使你移动速度提升70%。|n" +
             Color_Define.COLOR_WARNING + "可致死|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:5s")
         ..setTooltipTurnOffExtended(1, Color_Define.COLOR_NORMAL + "关闭邪恶冲刺以停止消耗生命值")

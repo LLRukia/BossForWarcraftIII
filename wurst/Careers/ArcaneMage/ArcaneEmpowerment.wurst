@@ -6,6 +6,7 @@ import EditorHelper
 import SkillHelper
 import ExternalDefines
 import TimerUtils
+import SoundHelper
 
 public class ArcaneEmpowerment extends ArcaneMageSkill
     static let self_id = 'am0r'
@@ -39,6 +40,7 @@ public class ArcaneEmpowerment extends ArcaneMageSkill
         ..issueTargetOrder("bloodlust", obj.m_self_unit)
         ..setTimedLife(1.)
 
+        SoundHelper.play_scroll(obj.m_self_unit.getPos().withZ(0))
         flashEffect("scrollpink.mdx", obj.m_self_unit.getPos())
         obj.m_self_unit..add_buff(buff_id, BuffClearType.additions, BuffType.buffs, obj)
         

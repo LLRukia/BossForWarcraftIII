@@ -46,7 +46,7 @@ init
     for i in g
         if index == CAREERS_NUM
             break
-        pk.put(createUnit(Player(PLAYER_NEUTRAL_PASSIVE), PICK_UNITS[index], i.getPos()+vec2(16, 0), bj_UNIT_FACING.asAngleDegrees()), index)
+        pk.put(createUnit(Player(PLAYER_NEUTRAL_PASSIVE), PICK_UNITS[index], i.getPos()+vec2(16, 16), bj_UNIT_FACING.asAngleDegrees()), index)
         index ++
     g.destr()
 

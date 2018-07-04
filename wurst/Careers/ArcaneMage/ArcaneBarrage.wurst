@@ -38,14 +38,14 @@ public class ArcaneBarrage extends ArcaneMageSkill
                     ang = GetRandomReal(-60., -30.).asAngleDegrees()
                 else
                     ang = GetRandomReal(30., 60.).asAngleDegrees()
-                
+                ArcaneMissile.launch.playOnPoint(uc.getPos3Real())
                 SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, ut, uc, ang + uc.getFacingAngle(),
                     new ArcaneMissileCb(uc,ut), 0, 44., 11., 55., 0)
 
         var t = new LinkedList<unit>(ls)
 
         for i = 0 to num - 1
-            unit utr = null
+            unit utr
             if t.size() != 0
                 int index = GetRandomInt(0, t.size()-1)
                 utr = t.get(index)
@@ -61,7 +61,7 @@ public class ArcaneBarrage extends ArcaneMageSkill
                 ang = GetRandomReal(-60., -30.).asAngleDegrees()
             else
                 ang = GetRandomReal(30., 60.).asAngleDegrees()
-            
+            ArcaneMissile.launch.playOnPoint(uc.getPos3Real())
             SkillHelper.auto_trace_missile_modify_speed(ArcaneMissile.effect_id, utr, uc, ang + uc.getFacingAngle(),
                 new ArcaneMissileCb(uc,utr), 0, 44., 11., 55., 0)
         destroy ls

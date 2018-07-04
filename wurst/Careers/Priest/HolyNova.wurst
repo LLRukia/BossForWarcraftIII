@@ -29,7 +29,7 @@ public class HolyNova extends PriestSkill
             ..setData(this castTo int)
     static function cast()
         var obj = GetTriggeringTrigger().getData() castTo HolyNova
-        vec2 pos = obj.m_self_unit.getPos()
+        vec2 pos = obj.m_self_unit.getPos()+ vec2(16,16)
         flashEffect("prw.mdx", pos)
         group g = CreateGroup()
         g.enumUnitsInRange(pos, radius+AREA_DMG_CORRECTION)
@@ -44,8 +44,8 @@ public class HolyNova extends PriestSkill
 
     static function cast_pro()
         var obj = GetTriggeringTrigger().getData() castTo HolyNova
-        vec2 pos = obj.m_self_unit.getPos()
-        addEffect("Abilities\\Spells\\Undead\\ReplenishHealth\\ReplenishHealthCasterOverhead.mdl", pos)
+        vec2 pos = obj.m_self_unit.getPos() + vec2(16,16)
+        addEffect("Abilities\\Spells\\Undead\\ReplenishHealth\\ReplenishHealthCasterOverhead.mdl", pos.withZ(300.))
             ..setScale(3.5)..destr()
         group g = CreateGroup()
         g.enumUnitsInRange(pos, pro_radius+AREA_DMG_CORRECTION)
