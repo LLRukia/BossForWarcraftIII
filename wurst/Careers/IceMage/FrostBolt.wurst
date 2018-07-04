@@ -27,7 +27,7 @@ public class FrostBolt extends IceMageSkill
 	static function cast()
 		unit uc = GetSpellAbilityUnit()
 		unit ut = GetSpellTargetUnit()
-		SkillHelper.auto_trace_missile(effect_id, ut, uc, MathHelper.get_angle(uc.getPos(), ut.getPos()),
+		SkillHelper.auto_trace_missile(effect_id, ut, uc, MathHelper.get_angle(uc.getPos()+vec2(16,16), ut.getPos()),
 			new FrostBoltCb(uc, ut), 0)
 		launch.playOnPoint(uc.getPos3Real())
 	

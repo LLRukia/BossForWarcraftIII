@@ -55,7 +55,7 @@ function create_arcane_mage()
 @compiletime
 function create_am_au()
 	var editor = EditorHelper.create_aura('amau')
-	editor..setArtTarget("")
+	editor..setArtTarget("am.mdx")
 		..setName("am")
 		..setBuffs(1, "amid")
 		..setButtonPositionNormalX(0)

@@ -54,7 +54,7 @@ public class HolyMissile extends PriestSkill
             ..startPeriodic(0.04, function tm_cb)
 
     function hit_ally(unit u)
-        u.addEffect("Abilities\\Spells\\Human\\ReviveHuman\\ReviveHuman.mdl", "origin").destr()
+        u.addEffect("prr1.mdx", "origin").destr()
         holyheal.playOnPoint(u.getPos3Real())
         real hp_prev = u.getHP()
         real final_heal = GetHeroAgi(m_self_unit, true) * HolyMissile.heal_inc + HolyMissile.heal
@@ -71,7 +71,7 @@ public class HolyMissile extends PriestSkill
 
         obj.m_cur_pos = MathHelper.forward(obj.m_cur_pos, obj.m_ang, 50)
         obj.m_moved_dis += 50
-        flashEffect("Abilities\\Spells\\Human\\HolyBolt\\HolyBoltSpecialArt.mdl", obj.m_cur_pos)
+        flashEffect("prr.mdx", obj.m_cur_pos)
         group g = CreateGroup()
         bool bhit_ally = false
         g.enumUnitsInRange(obj.m_cur_pos, HolyMissile.radius)

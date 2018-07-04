@@ -62,7 +62,7 @@ public class ShadowBolt extends WarlockSkill
         vec2 tgt = vec2(GetLocationX(lc),GetLocationY(lc))
         RemoveLocation(lc)
         
-        obj.m_cur_pos = obj.m_self_unit.getPos() + vec2(16,16)
+        obj.m_cur_pos = obj.m_self_unit.getPos()
         obj.m_ang = MathHelper.get_angle(obj.m_cur_pos, tgt)
         obj.m_moved_dis = 0.
         obj.m_effect = createUnit(obj.m_self_unit.getOwner(), effect_id, obj.m_cur_pos, obj.m_ang)

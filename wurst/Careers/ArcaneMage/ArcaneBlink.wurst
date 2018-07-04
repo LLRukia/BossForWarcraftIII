@@ -21,11 +21,10 @@ public class ArcaneBlink extends ArcaneMageSkill
     static function cast()
         unit u = (GetTriggeringTrigger().getData() castTo ArcaneBlink).m_self_unit
         vec2 p = SkillHelper.blink_forward(u, u.getFacingAngle(), max_dis)
-        print(p.toString())
-        print(u.getPos().toString())
+
         flashEffect("blink.mdx", u.getPos())
         flashEffect("blink.mdx", p)
-        u.setPos(p)
+        u.setXY(p)
 
 @compiletime
 function create_shadow_counter_spell()
@@ -43,7 +42,7 @@ function create_shadow_counter_spell()
             Color_Define.COLOR_HOT_KEY + "(E)")
         ..setTooltipNormalExtended(1,
             Color_Define.COLOR_NORMAL + "→向前闪现|n→遇到障碍物会停下来。|n" +
-            Color_Define. COLOR_CAST_RANGE + "→最大距离：400|n" +
+            Color_Define.COLOR_CAST_RANGE + "→最大距离：400|n" +
             Color_Define.COLOR_COOL_DOWN + "→CD:18s")
         ..setIconNormal("replaceabletextures\\commandbuttons\\blink.blp")
 

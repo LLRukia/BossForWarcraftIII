@@ -21,7 +21,6 @@ public class ArcaneCounterSpell extends ArcaneMageSkill
         unit u = (GetTriggeringTrigger().getData() castTo ArcaneCounterSpell).m_self_unit
         unit uT = GetSpellTargetUnit()
         if SkillHelper.counter_spell(u, uT)
-            // flashEffect("Abilities\\Spells\\Undead\\ReplenishMana\\ReplenishManaCaster.mdl", u.getPos3Real())
             uT.addEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl", "chest").destr()
 
 @compiletime

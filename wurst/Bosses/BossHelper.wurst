@@ -24,7 +24,7 @@ public class BossHelper
                 print("counter a Boss which is not current Boss???")
             return false
         if can_counter
-            map_boss.get(cur_boss_index).countered()
+            //map_boss.get(cur_boss_index).countered()
     
         return can_counter
 

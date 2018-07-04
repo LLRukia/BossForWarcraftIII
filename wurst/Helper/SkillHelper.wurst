@@ -5,6 +5,9 @@ import Buffs
 import TimerUtils
 import EditorHelper
 import BossHelper
+import SoundUtils
+
+let counter_spell_sound = CreateSound(Sounds.manaDrainTarget1, false, false, false, 10, 10, "CombatSoundsEAX")
 
 public let FAKE_CASTER = 'ctfk'
 
@@ -143,7 +146,7 @@ public class AutoTrace
             cur_ispd -= init_speed_deca
         angle face = MathHelper.get_angle(curpos, sucpos)
         uf..setFacing(face)..setXY(sucpos)
-        if (sucpos - ut.getPos()).lengthSq() <= 150*150.
+        if (sucpos - ut.getPos()).lengthSq() <= 56*56.
             if ut != uc
                 cb.cb(arg)
             destroy this
@@ -169,7 +172,7 @@ public class SkillHelper
                 ..setFadepoint(2.)
                 ..setLifespan(3.)
                 ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
-            flashEffect("Abilities\\Spells\\Human\\Defend\\DefendCaster.mdl", utarget.getPos3Real())
+            counter_spell_sound.play()
             return true
         return false
 
@@ -226,3 +229,6 @@ function create_rush_explorer()
 function create_ice_spirit_faker_caster()
     var ed = EditorHelper.create_caster_faker_unit(FAKE_CASTER, 1)
     destroy ed
+
+init
+    counter_spell_sound.setPitch(1.2)

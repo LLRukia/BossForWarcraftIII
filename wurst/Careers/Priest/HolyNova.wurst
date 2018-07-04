@@ -38,6 +38,7 @@ public class HolyNova extends PriestSkill
                 real final_dmg = dmg + inc*GetHeroAgi(obj.m_self_unit, true)
                 real prev = i.getHP()
                 i.setHP(prev + final_dmg)
+                i.addEffect("Abilities\\Spells\\Human\\Heal\\HealTarget.mdl", "chest").destr()
                 StatisticsHelper.add_real(obj.m_self_unit.getOwner(), prev - i.getHP())
 
         g.destr()
@@ -54,6 +55,7 @@ public class HolyNova extends PriestSkill
                 real final_dmg = dmg + inc*GetHeroAgi(obj.m_self_unit, true)
                 real prev = i.getHP()
                 i.setHP(prev + final_dmg)
+                i.addEffect("Abilities\\Spells\\Human\\Heal\\HealTarget.mdl", "chest").destr()
                 StatisticsHelper.add_real(obj.m_self_unit.getOwner(), prev - i.getHP())
 
         g.destr()

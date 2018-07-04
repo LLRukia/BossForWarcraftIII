@@ -22,8 +22,7 @@ public class ShadowCounterSpell extends WarlockSkill
         unit uT = GetSpellTargetUnit()
         if SkillHelper.counter_spell(u, uT)
             u.setMana(u.getMana() + 90)
-            // flashEffect("Abilities\\Spells\\Undead\\ReplenishMana\\ReplenishManaCaster.mdl", u.getPos3Real())
-            uT.addEffect("Abilities\\Spells\\NightElf\\Blink\\BlinkCaster.mdl", "chest").destr()
+            uT.addEffect("purpleblink.mdx", "chest").destr()
 
 @compiletime
 function create_shadow_counter_spell()

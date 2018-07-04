@@ -90,7 +90,7 @@ function create_arcane_fume()
 @compiletime
 function create_arcane_fume_buff()
     var ed = new BuffDefinition(ArcaneFume.buff_id, 'Bbsk')
-    ed..setArtTarget(1, "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathTargetArt.mdl")
+    ed..setArtTarget(1, "amd.mdx")
     ..setTargetAttachments(1, 1)
     ..setTargetAttachmentPoint0(1, "origin")
     ..setTooltipNormal(1, Color_Define.COLOR_ICEMAGE + "Arcane Fume")

@@ -25,6 +25,7 @@ public class PowerInfusion extends PriestSkill
     override function clear()
         if m_tm != null
             m_tm.release()
+            m_tm = null
         if m_self_unit.hasAbility(buff_id)
             m_self_unit.remove_buff(buff_id)
 
@@ -71,8 +72,10 @@ public class PowerInfusion extends PriestSkill
         var obj = GetExpiredTimer().getData() castTo PowerInfusion
         if obj.m_self_unit.hasAbility(buff_id)
             obj.m_self_unit.remove_buff(buff_id)
-        obj.m_tm.release()
-        obj.m_tm = null
+
+        if obj.m_tm != null
+            obj.m_tm.release()
+            obj.m_tm = null
 
     static function mana_recovery()
         int mana_cost = BlzGetAbilityManaCost(GetSpellAbilityId(), 1)
