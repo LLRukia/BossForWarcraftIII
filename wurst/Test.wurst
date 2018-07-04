@@ -8,7 +8,7 @@ import ExternalDefines
 import Camera
 
 function test()
-    flashEffect(GetEventPlayerChatString(), GetTriggerPlayer().get_unit().getPos().withZ(200))
+    GetTriggerPlayer().get_unit().addEffect(GetEventPlayerChatString(), "origin").destr()
     
 
     
@@ -48,11 +48,11 @@ init
     unit fire_chicken = createUnit(Player(8), 'frck', BORN_RECT.getCenter() + vec2(0, 500), angle(270))
     CreateTrigger()..registerUnitEvent(fire_chicken, EVENT_UNIT_DAMAGED)
         ..addAction(function displaydamage)
+    
     var tr = CreateTrigger()
     for i = 0 to PLAYER_NUM-1
         tr.registerPlayerChatEvent(Player(i), "", true)
     tr..addAction(function test)
-        ..enable()
 
     
 

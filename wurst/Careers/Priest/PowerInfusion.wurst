@@ -6,6 +6,7 @@ import EditorHelper
 import SkillHelper
 import ExternalDefines
 import TimerUtils
+import SoundHelper
 
 public class PowerInfusion extends PriestSkill
     static let self_id = 'pr0g'
@@ -44,7 +45,9 @@ public class PowerInfusion extends PriestSkill
         ..issueTargetOrder("bloodlust", obj.m_self_unit)
         ..setTimedLife(1.)
 
+        SoundHelper.play_scroll(obj.m_self_unit.getPos3Real())
         flashEffect("scrollyell.mdx", obj.m_self_unit.getPos())
+
         obj.m_self_unit..add_buff(buff_id, BuffClearType.stable, BuffType.buffs, obj)
             ..removeAbility(HolyNova.self_id)
             ..addAbility(HolyNova.help_id)

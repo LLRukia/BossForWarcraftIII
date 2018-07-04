@@ -7,6 +7,7 @@ import SkillHelper
 import BossHelper
 import TimerUtils
 import AbilityObjEditing
+import SoundHelper
 
 public class SiphonShadow extends WarlockSkill
     static let self_id = 'wl0r'
@@ -73,6 +74,7 @@ public class SiphonShadow extends WarlockSkill
             obj.m_self_unit.issueImmediateOrder("stop")
             return
 
+        SoundHelper.play_scroll(obj.m_self_unit.getPos3Real())
         flashEffect("scrollpurp.mdx", obj.m_self_unit.getPos())
         
         obj.m_time++
@@ -114,7 +116,8 @@ public class SiphonShadow extends WarlockSkill
             ang = GetRandomReal(-90., -30.).asAngleDegrees()
         else
             ang = GetRandomReal(30., 90.).asAngleDegrees()
-        flashEffect("Abilities\\Spells\\Other\\BlackArrow\\BlackArrowMissile.mdl", obj.m_self_unit.getPos3Real())
+
+        ShadowBolt.launch.playOnPoint(obj.m_self_unit.getPos3Real())
         SkillHelper.auto_trace_missile(ShadowBolt.effect_id, BossHelper.cur_boss, obj.m_self_unit,
             ang + obj.m_self_unit.getFacingAngle(), new ShadowKingCb, obj castTo int)
 
@@ -125,6 +128,8 @@ public class SiphonShadow extends WarlockSkill
         override function cb(int obj)
             var ts = obj castTo SiphonShadow
             flashEffect("wlq.mdx", BossHelper.cur_boss.getPos3Real())
+            ShadowBolt.hit.playOnPoint(BossHelper.cur_boss.getPos3Real())
+
             real f_dmg = GetHeroAgi(ts.m_self_unit, true) * SiphonShadow.inc + SiphonShadow.dmg
             ts.m_self_unit.damageTarget(BossHelper.cur_boss, f_dmg, ATTACK_TYPE_MAGIC)
             StatisticsHelper.add_real(ts.m_self_unit.getOwner(), f_dmg)

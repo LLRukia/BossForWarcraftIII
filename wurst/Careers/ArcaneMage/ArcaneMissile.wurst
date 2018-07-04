@@ -2,6 +2,7 @@ package ArcaneMissile
 
 import ArcaneMage
 import EditorHelper
+import SoundUtils
 import ExternalDefines
 import SkillHelper
 
@@ -10,6 +11,8 @@ public class ArcaneMissile extends ArcaneMageSkill
     static let effect_id = 'am1q'
     static let inc = 5.
     static let dmg = 200.
+    static var launch = new SoundDefinition(Sounds.tinkerMissileLaunch1, false, true)
+    static var hit = new SoundDefinition(Sounds.possessionMissileHit1, false, true)
     construct(unit u)
         super(u)
 
@@ -26,7 +29,8 @@ public class ArcaneMissile extends ArcaneMageSkill
             ang = GetRandomReal(-60., -30.).asAngleDegrees()
         else
             ang = GetRandomReal(30., 60.).asAngleDegrees()
-        
+
+        launch.playOnPoint(uc.getPos3Real())
         SkillHelper.auto_trace_missile_modify_speed(effect_id, ut, uc, ang + uc.getFacingAngle(),
             new ArcaneMissileCb(uc, ut), 0, 55., 11., 55., 0)
     
@@ -39,8 +43,8 @@ public class ArcaneMissileCb implements SkillHelperCb
     override function cb(int _obj)
         real final_dmg = GetHeroAgi(uc, true) * ArcaneMissile.inc + ArcaneMissile.dmg
         uc.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
+        ArcaneMissile.hit.playOnPoint(ut.getPos3Real())
         flashEffect("amq1.mdx", ut.getPos3Real())
-        flashEffect("amq2.mdx", ut.getPos3Real())
         ut.setMana(ut.getMana() - 3.)
         StatisticsHelper.add_real(uc.getOwner(), final_dmg)
         destroy this

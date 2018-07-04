@@ -45,7 +45,7 @@ public class HolyNova extends PriestSkill
     static function cast_pro()
         var obj = GetTriggeringTrigger().getData() castTo HolyNova
         vec2 pos = obj.m_self_unit.getPos()
-        addEffect("Abilities\\Spells\\Undead\\ReplenishHealth\\ReplenishHealthCasterOverhead.mdl", pos)
+        addEffect("Abilities\\Spells\\Undead\\ReplenishHealth\\ReplenishHealthCasterOverhead.mdl", pos.withZ(300.))
             ..setScale(3.5)..destr()
         group g = CreateGroup()
         g.enumUnitsInRange(pos, pro_radius+AREA_DMG_CORRECTION)

@@ -8,6 +8,7 @@ import public initlater ArcaneBlink
 import public initlater ArcaneMissile
 import public initlater ArcaneBarrage
 import public initlater ArcaneEmpowerment
+import public initlater ArcaneFume
 
 import BaseSkills
 

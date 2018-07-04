@@ -49,10 +49,10 @@ public class IceBarrier extends IceMageSkill
     override function clear()
         for i in data_manager
             var dt = data_manager.get(i)
-            if dt != null
-                if not dt.m_u.remove_buff(buff_id)
-                    destroy dt
-                    data_manager.remove(dt.m_u)
+            if not dt.m_u.remove_buff(buff_id)
+                data_manager.remove(dt.m_u)
+                destroy dt
+                    
    
     override function listen()
         m_tr_self..registerUnitEvent(m_self_unit, EVENT_UNIT_SPELL_EFFECT)
@@ -114,8 +114,9 @@ public class IceBarrier extends IceMageSkill
         Data dt = GetTriggeringTrigger().getData() castTo Data
         if dt != null
             if not dt.m_u.remove_buff(buff_id)
-                destroy dt
                 data_manager.remove(dt.m_u)
+                destroy dt
+                
 
     static function protect_act()
         Data dt = GetTriggeringTrigger().getData() castTo Data
@@ -134,8 +135,8 @@ public class IceBarrier extends IceMageSkill
         if dt.m_fShieldHP <= 0
             if dt != null
                 if not dt.m_u.remove_buff(buff_id)
-                    destroy dt
                     data_manager.remove(dt.m_u)
+                    destroy dt
         else
             dt.m_tx.set_cur_value(dt.m_fShieldHP)
     
@@ -143,8 +144,9 @@ public class IceBarrier extends IceMageSkill
         Data dt = GetExpiredTimer().getData() castTo Data
         if dt != null
             if not dt.m_u.remove_buff(buff_id)
-                destroy dt
                 data_manager.remove(dt.m_u)
+                destroy dt
+                
 
 @compiletime
 function create_ice_barrier()

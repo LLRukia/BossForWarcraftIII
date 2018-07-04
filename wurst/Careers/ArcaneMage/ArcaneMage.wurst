@@ -19,7 +19,7 @@ public class ArcaneMage extends PlayerUnit
 		m_ls_skill.add(new ArcaneBarrage(m_self_unit))
 		m_ls_skill.add(new ArcaneEmpowerment(m_self_unit))
 		m_ls_skill.add(new ArcaneMissile(m_self_unit))
-		// m_ls_skill.add(new IceImage(m_self_unit))
+		m_ls_skill.add(new ArcaneFume(m_self_unit))
 		// m_ls_skill.add(new IceShield(m_self_unit))
 
 	override function refresh()
@@ -38,6 +38,7 @@ function create_arcane_mage()
 		ArcaneEmpowerment.self_id.toRawCode() + "," +
 		ArcaneBarrage.self_id.toRawCode() + "," +
 		ArcaneBlink.self_id.toRawCode() + "," +
+		ArcaneFume.self_id.toRawCode() +
 		",amau,AInv,bAnA"
 
 	editor..setNormalAbilities(am_skill_list)

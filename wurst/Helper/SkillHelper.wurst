@@ -108,7 +108,7 @@ public class AutoTrace
         this.init_speed_ang = ang
         this.cb = cb
         this.arg = arg
-        this.uf = createUnit(uc.getOwner(), effect_id, uc.getPos(), init_speed_ang)
+        this.uf = createUnit(uc.getOwner(), effect_id, uc.getPos()+vec2(16,16), init_speed_ang)
         tm_f = getTimer()
         tm_f..setData(this castTo int)
             ..startPeriodic(0.05, function tm_cb)
@@ -120,7 +120,7 @@ public class AutoTrace
         tra_inc = tsi
     ondestroy
         tm_f.release()
-        RemoveUnit(uf)
+        KillUnit(uf)
 
     private static function tm_cb()
         var obj = GetExpiredTimer().getData() castTo AutoTrace
@@ -129,6 +129,7 @@ public class AutoTrace
     private function main()
         if not ut.isAlive()
             ut = uc
+            cur_tspd = 0
             if not ut.isAlive()
                 destroy this
                 
