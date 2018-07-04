@@ -60,6 +60,5 @@ init
 
     
     
-    BossHelper.create_boss(fire_chicken, 0)
-    BossHelper.register_counter()
     BossHelper.cur_boss = fire_chicken
+    BossHelper.register_counter(true)

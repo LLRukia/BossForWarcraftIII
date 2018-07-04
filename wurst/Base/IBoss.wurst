@@ -1,9 +1,31 @@
 package IBoss
 
 import NoWurst
+import public initlater BossHelper
+import Vectors
 
 public abstract class IBoss
-
+    protected player m_onwer = Player(8)
+    protected unit m_self_unit
+    protected int  m_self_id
+    protected vec2 m_born
+    protected int  m_index
+    protected vec2 m_enter
+    protected rect m_rect
     abstract function countered()
 
     abstract function destroy_self()
+
+    abstract function create_self()
+
+    abstract function prepare()
+
+    abstract function start()
+
+    abstract function clear()
+    
+    construct(int id, vec2 born, int index, rect rc)
+        m_self_id = id
+        m_born = born
+        m_index = index
+        m_rect = rc

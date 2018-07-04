@@ -1,0 +1,49 @@
+package BossHelper
+
+import HashMap
+import IBoss
+import ExternalDefines
+import WarlockKing
+import ClosureTimers
+
+public function unit.isBoss() returns boolean
+    return BossHelper.cur_boss == this
+    
+
+class BossInfo
+
+public class BossHelper
+    static private var map_boss = new HashMap<int, IBoss>
+    static private bool can_counter = false
+    static unit cur_boss = null
+    static int cur_boss_index = 0
+
+    static function counter(unit u) returns boolean
+        if u != cur_boss
+            if _DEBUG
+                print("counter a Boss which is not current Boss???")
+            return false
+        if can_counter
+            map_boss.get(cur_boss_index).countered()
+    
+        return can_counter
+
+
+    static function register_counter(bool bcounter)
+        can_counter = bcounter
+
+    static function init_self()
+        map_boss..put(1, new WarlockKing(WarlockKing.self_id, WarlockKing.born_pos, 1, WarlockKing.play_rect))
+
+    static function prepare(int index)
+        CinematicFilterGenericBJ(2, BLEND_MODE_BLEND, "ReplaceableTextures\\CameraMasks\\Black_mask.blp", 100, 100, 100, 100, 0, 0, 0, 0)
+        var obj = map_boss.get(index)
+        cur_boss_index = index
+        obj.prepare()
+        doAfter(2.) ->
+            DisplayCineFilter(false)
+            obj.start()
+            
+
+init
+    BossHelper.init_self()

@@ -1,0 +1,45 @@
+package MsgQueue
+
+import HashMap
+import public IBossSkill
+
+
+//ez priority queue
+public class MsgQueue
+    private var queue = new IterableMap<IBossSkill, int>
+    function send_message(IBossSkill o, int n)
+        if not queue.has(o)
+            print("MsgQueue::not find skill")
+            return
+        queue.put(o, queue.get(o) + n)
+
+
+    function top() returns IBossSkill
+        IBossSkill obj = null
+        int fMax = -1
+        for i in queue
+            var t = queue.get(i)
+            if t > fMax
+                fMax = t
+                obj = i
+        if fMax < 10
+            return null
+        queue.put(obj, 0)
+        return obj
+
+    function add_skill(IBossSkill s)
+        queue.put(s, 0)
+                
+    function run()
+        for i in queue
+            i.detect()
+
+    function pause()
+        for i in queue
+            i.stop()
+
+    function clear()
+        for i in queue
+            i.stop()
+        queue.flush()
+        
