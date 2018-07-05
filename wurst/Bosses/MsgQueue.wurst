@@ -1,7 +1,7 @@
 package MsgQueue
 
 import HashMap
-import public IBossSkill
+import IBossSkill
 
 
 //ez priority queue

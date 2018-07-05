@@ -3,8 +3,6 @@ package WarlockKing
 import Boss
 import ClosureTimers
 import SoundUtils
-import BossSkillHelper
-import MsgQueue
 
 public class WarlockKing extends Boss
     static let self_id = 'bs10'
@@ -12,18 +10,12 @@ public class WarlockKing extends Boss
     static let play_rect = Rect(0,0,0,0)
     static let sd_pre = new SoundDefinition(Sounds.necromancerWhat1, false)
 
-
-    private HatredTargetController atk_ctr = null
-    private MsgQueue m_q = new MsgQueue
-    private int mana_per_sec = 0
-
     construct(int id, vec2 born, int index, rect rc)
         super(id, born, index, rc)
 
     override function clear()
-        destroy atk_ctr
         
-
+    
     override function prepare()
         super.prepare()
 
@@ -35,37 +27,23 @@ public class WarlockKing extends Boss
         printTimed("暴虐术士王：等待你们的只有无尽的黑暗。", 1.5)
         doAfter(1.5) ->
             super.start()
-            onstart()
-            _main()
-            _charging()
             
             
-    function onstart()
-        atk_ctr = new HatredTargetController(m_self_unit)
-        atk_ctr.run()
-        state_calm()
+            
+    override function onstart()
+        super.onstart()
 
 
-    function _main()
+    override function _main()
         IBossSkill obj = m_q.top()
         if obj != null
-            doAfter(obj..cast().get_break()) ->
-                _main()
+            obj.cast()
+            bcasting = true
         else
             doAfter(1.) ->
                 _main()
 
-    function _charging()
-        m_self_unit.setMana((m_self_unit.getMana() + mana_per_sec))
-        doAfter(1.) ->
-            _charging()
+    override function state_charged()
+        
 
-    function state_calm()
-        m_q.clear()
-        //m_q.add_skill(s)
-        m_q.run()
-        mana_per_sec = 16
-
-    function state_charge()
-        m_q.pause()
-        mana_per_sec = 0
+    override function change_state(BossState st)

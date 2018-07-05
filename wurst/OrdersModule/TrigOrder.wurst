@@ -2,7 +2,6 @@ package TrigOrder
 import PlayerHelper
 import PlayerUnitHelper
 import PlayerUnit
-import BossHelper
 import SkillHelper
 import EditorHelper
 
@@ -70,3 +69,4 @@ function create_confuse_buff()
 @compiletime
 function create_confuse_add()
     var ed = EditorHelper.create_cripple_template('fkcf', 2., 'cfse')
+    destroy ed

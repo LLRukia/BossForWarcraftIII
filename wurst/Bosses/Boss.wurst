@@ -1,0 +1,76 @@
+package Boss
+
+import public IBoss
+import PlayerHelper
+import PlayerUnitHelper
+import PlayerUnit
+import Camera
+import ClosureTimers
+
+public class Boss extends IBoss
+    override function countered()
+
+    override function destroy_self()
+
+    override function create_self()
+        m_self_unit = createUnit(m_onwer, m_self_id, m_born, bj_UNIT_FACING.asAngleDegrees())
+        BossHelper.cur_boss = m_self_unit
+        m_self_unit.pause()
+
+    override function prepare()
+        create_self()
+        for i = 0 to 7
+            Player(i)..setCameraBoundsToRect(m_rect)
+                ..panCameraToTimed(m_born, 0)
+            unit player_unit = Player(i).get_unit()
+            var obj = PlayerUnitHelper.get_instance(player_unit) castTo PlayerUnit
+            obj.refresh()
+            player_unit.setPos(m_enter)
+            player_unit.pause()
+
+    override function start()
+        for i = 0 to 7
+            unit player_unit = Player(i).get_unit()
+            player_unit.unpause()
+        m_self_unit.unpause()
+        onstart()
+        _main()
+
+    construct(int id, vec2 born, int index, rect rc)
+        super(id, born, index, rc)
+    
+
+    override function onstart()
+        atk_ctr = new HatredTargetController(m_self_unit)
+        atk_ctr.run()
+        change_state(BossState.calm)
+
+    override protected function _main()
+        skip
+
+    override function clear()
+        destroy atk_ctr
+
+    
+    override function change_state(BossState st)
+        switch st
+            case ignore
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 1)
+            case calm
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 2)
+            case trouble
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 3)
+            case wrath
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 4)
+            case frenzy
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 5)
+            case infinity
+                m_q.pause()
+                m_self_unit.removeAbility(BOSS_MANA_RECOVERY_ID)
+                effect ef = m_self_unit..setInvulnerable(true)..pause().addEffect("BossCharging.mdx", "origin")
+                doAfter(BOSS_CHARGING_TIME[CUR_MODE]) ->
+                    ef.destr()
+                    state_charged()
+
+        
+    function state_charged()

@@ -50,3 +50,8 @@ public class Color_Define
     static let COLOR_LAST_TIME     = "|cffccffcc"
     static let COLOR_CAST_RANGE    = "|cffDAA520"
     static let COLOR_WARNING       = "|cffFF5151"
+
+
+
+public int CUR_MODE = 0
+public let BOSS_CHARGING_TIME = [4., 3.3, 2.1, 2.0, 0.1]

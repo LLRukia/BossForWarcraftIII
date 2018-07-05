@@ -1,10 +1,19 @@
 package IBossSkill
 
+import public initlater IBoss
+
 public abstract class IBossSkill
-    protected unit m_self_unit
-    construct(unit u)
-        m_self_unit = u
+    protected IBoss m_owner
+    construct(IBoss owner)
+        m_owner = owner
+
     abstract function cast()
+
     abstract function detect()
+
     abstract function stop()
+
     abstract function get_break() returns real
+
+    function endcast()
+        m_owner.continue()
