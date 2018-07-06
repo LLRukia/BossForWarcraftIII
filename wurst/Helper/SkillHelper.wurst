@@ -5,9 +5,7 @@ import Buffs
 import TimerUtils
 import EditorHelper
 import BossHelper
-import SoundUtils
-
-let counter_spell_sound = CreateSound(Sounds.manaDrainTarget1, false, false, false, 10, 10, "CombatSoundsEAX")
+import SoundHelper
 
 public let FAKE_CASTER = 'ctfk'
 
@@ -172,7 +170,7 @@ public class SkillHelper
                 ..setFadepoint(2.)
                 ..setLifespan(3.)
                 ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
-            counter_spell_sound.play()
+            SoundHelper.counter_spell_sound.play()
             return true
         return false
 
@@ -229,6 +227,3 @@ function create_rush_explorer()
 function create_ice_spirit_faker_caster()
     var ed = EditorHelper.create_caster_faker_unit(FAKE_CASTER, 1)
     destroy ed
-
-init
-    counter_spell_sound.setPitch(1.2)

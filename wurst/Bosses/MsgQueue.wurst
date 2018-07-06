@@ -1,34 +1,30 @@
 package MsgQueue
 
-import HashMap
+import NoWurst
+
+import LinkedList
 import IBossSkill
 
 
+constant Comparator<IBossSkill> boss_skill_com = (lhs, rhs) -> R2I(rhs.priority - lhs.priority)
+
 //ez priority queue
 public class MsgQueue
-    private var queue = new IterableMap<IBossSkill, int>
-    function send_message(IBossSkill o, int n)
-        if not queue.has(o)
-            print("MsgQueue::not find skill")
-            return
-        queue.put(o, queue.get(o) + n)
+    private var queue = new LinkedList<IBossSkill>
 
+    private function sort()
+        queue.sortWith(boss_skill_com)
 
-    function top() returns IBossSkill
-        IBossSkill obj = null
-        int fMax = -1
+    function get_judge() returns IBossSkill
+        sort()
         for i in queue
-            var t = queue.get(i)
-            if t > fMax
-                fMax = t
-                obj = i
-        if fMax < 10
-            return null
-        queue.put(obj, 0)
-        return obj
+            if i.judge()
+                i.priority = 0
+                return i
+        return null
 
     function add_skill(IBossSkill s)
-        queue.put(s, 0)
+        queue.add(s)
                 
     function run()
         for i in queue
@@ -41,5 +37,5 @@ public class MsgQueue
     function clear()
         for i in queue
             i.stop()
-        queue.flush()
+        queue.clear()
         

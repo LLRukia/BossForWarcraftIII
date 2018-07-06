@@ -3,6 +3,7 @@ package IBossSkill
 import public initlater IBoss
 
 public abstract class IBossSkill
+    real priority = 0.
     protected IBoss m_owner
     construct(IBoss owner)
         m_owner = owner
@@ -15,5 +16,7 @@ public abstract class IBossSkill
 
     abstract function get_break() returns real
 
+    abstract function judge() returns bool
+
     function endcast()
-        m_owner.continue()
+        m_owner.continue(get_break())

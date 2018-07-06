@@ -6,20 +6,40 @@ import PlayerUnitHelper
 import PlayerUnit
 import Camera
 import ClosureTimers
+import public TriggerHelper
 
 public class Boss extends IBoss
-    override function countered()
-
     override function destroy_self()
 
     override function create_self()
         m_self_unit = createUnit(m_onwer, m_self_id, m_born, bj_UNIT_FACING.asAngleDegrees())
+        m_death..registerUnitEvent(m_self_unit, EVENT_UNIT_DEATH)
+            ..addAction(function death_cb)
+
         BossHelper.cur_boss = m_self_unit
         m_self_unit.pause()
 
+    override function ondeath()
+        BossHelper._end()
+
+    static function death_cb()
+        (GetTriggeringTrigger().getData() castTo Boss).ondeath()
+        GetTriggeringTrigger()..disable()..destr()
+
+    override function _end()
+        clear()
+        for i = 0 to PLAYER_NUM - 1
+            players[i]..setCameraBoundsToRect(BORN_RECT)
+                    ..panCameraToTimed(BORN_RECT.getCenter(), 0)
+            unit player_unit = Player(i).get_unit()
+            var obj = PlayerUnitHelper.get_instance(player_unit) castTo PlayerUnit
+            obj.refresh()
+            player_unit.setPos(BORN_RECT.getCenter())
+        
+
     override function prepare()
         create_self()
-        for i = 0 to 7
+        for i = 0 to PLAYER_NUM-1
             Player(i)..setCameraBoundsToRect(m_rect)
                 ..panCameraToTimed(m_born, 0)
             unit player_unit = Player(i).get_unit()
@@ -29,7 +49,7 @@ public class Boss extends IBoss
             player_unit.pause()
 
     override function start()
-        for i = 0 to 7
+        for i = 0 to PLAYER_NUM-1
             unit player_unit = Player(i).get_unit()
             player_unit.unpause()
         m_self_unit.unpause()
@@ -41,36 +61,83 @@ public class Boss extends IBoss
     
 
     override function onstart()
-        atk_ctr = new HatredTargetController(m_self_unit)
-        atk_ctr.run()
+        m_atk_ctrl = new HatredTargetController(m_self_unit)
+        m_atk_ctrl.chaos()
         change_state(BossState.calm)
 
-    override protected function _main()
-        skip
+    override function _main()
+        if m_bcharged
+            m_bcharged = false
+            change_state(BossState.infinity)
+            return
+        IBossSkill obj = m_q.get_judge()
+        if obj != null
+            obj.cast()
+            m_bcasting = true
+        else
+            doAfter(1.) ->
+                _main()
 
     override function clear()
-        destroy atk_ctr
+        destroy m_atk_ctrl
+        m_death..disable()..destr()
 
+    override function get_name() returns string
+        return ""
     
     override function change_state(BossState st)
+        m_cur_state = st
+        BossHelper.change_state(st)
         switch st
             case ignore
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 1)
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r1)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r1)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r1)
             case calm
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 2)
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r2)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r2)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r2)
             case trouble
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 3)
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r3)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r3)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r3)
             case wrath
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 4)
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r4)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r4)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r4)
             case frenzy
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, 5)
+                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r5)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r5)
+                m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r5)
             case infinity
                 m_q.pause()
-                m_self_unit.removeAbility(BOSS_MANA_RECOVERY_ID)
-                effect ef = m_self_unit..setInvulnerable(true)..pause().addEffect("BossCharging.mdx", "origin")
+                effect ef = m_self_unit..setInvulnerable(true)
+                                        ..pause()
+                                        ..setAnimation("stand,channel")
+                                        .addEffect("BossCharging.mdx", "origin")
                 doAfter(BOSS_CHARGING_TIME[CUR_MODE]) ->
                     ef.destr()
                     state_charged()
-
-        
+    
     function state_charged()
+        set_can_spell(false)
+
+    function end_state_charged()
+        m_self_unit..setInvulnerable(false)
+                    ..unpause()
+                    ..setMana(0.)
+        set_can_spell(true)
+        continue(AFTER_CHARGE)
+
+    override function continue(real fbreak)
+        if m_bcasting
+            m_bcasting = false
+            if m_bcharged
+                m_bcharged = false
+                change_state(BossState.infinity)
+                return
+            real fRand = GetRandomReal(1. - CUR_MODE * 0.05, 1.8 - CUR_MODE * 0.1)
+            doAfter(fbreak * fRand) ->
+                _main()
+        else
+            print("boss continue error")

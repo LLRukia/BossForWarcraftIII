@@ -45,7 +45,7 @@ function displaydamage()
 
 
 init
-    unit fire_chicken = createUnit(Player(8), 'frck', BORN_RECT.getCenter() + vec2(0, 500), angle(270))
+    unit fire_chicken = createUnit(Player(PLAYER_NUM), 'frck', BORN_RECT.getCenter() + vec2(0, 500), angle(270))
     CreateTrigger()..registerUnitEvent(fire_chicken, EVENT_UNIT_DAMAGED)
         ..addAction(function displaydamage)
     

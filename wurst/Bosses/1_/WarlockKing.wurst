@@ -9,9 +9,12 @@ public class WarlockKing extends Boss
     static let born_pos = vec2(0, 0)
     static let play_rect = Rect(0,0,0,0)
     static let sd_pre = new SoundDefinition(Sounds.necromancerWhat1, false)
+    static let self_name = "暴虐术士王"
+    static let enter_pos = vec2(0,0)
 
     construct(int id, vec2 born, int index, rect rc)
         super(id, born, index, rc)
+        m_enter = enter_pos
 
     override function clear()
         
@@ -24,26 +27,30 @@ public class WarlockKing extends Boss
         sd_pre.play()
 
         ClearTextMessages()
-        printTimed("暴虐术士王：等待你们的只有无尽的黑暗。", 1.5)
-        doAfter(1.5) ->
+        printTimed("暴虐术士王：等待你们的只有无尽的黑暗。", 4.)
+        doAfter(2.) ->
             super.start()
             
-            
+    override function ondeath()
+        ClearTextMessages()
+        printTimed("暴虐术士王：", 2)
+        doAfter(5.) ->
+            super.ondeath()
             
     override function onstart()
         super.onstart()
 
 
     override function _main()
-        IBossSkill obj = m_q.top()
-        if obj != null
-            obj.cast()
-            bcasting = true
-        else
-            doAfter(1.) ->
-                _main()
+        super._main()
+        
 
     override function state_charged()
+        super.state_charged()
         
 
     override function change_state(BossState st)
+        super.change_state(st)
+
+    override function get_name() returns string
+        return self_name

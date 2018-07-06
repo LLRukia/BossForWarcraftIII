@@ -1,0 +1,35 @@
+package ProcessControl
+
+import ClosureTimers
+import Boards
+import BossHelper
+public PlayerBoard player_board = null
+
+public function game_start()
+    player_board = new PlayerBoard
+    player_board.show(true)
+    player_board.refresh_boss()
+    int count = 91
+    doPeriodically(1) cb ->
+        count--
+        if count < 0
+            BossHelper.prepare()
+            doAfter(1.5) ->
+                player_board.show(false)
+            destroy cb
+        else
+            player_board.refresh_time(count)
+        
+public function game_rest()
+    player_board.show(true)
+    player_board.refresh_boss()
+    int count = 61
+    doPeriodically(1) cb ->
+        count--
+        if count < 0
+            BossHelper.prepare()
+            doAfter(1.5) ->
+                player_board.show(false)
+            destroy cb
+        else
+            player_board.refresh_time(count)
