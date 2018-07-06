@@ -6,4 +6,4 @@ buildMapData:
   name: "Boss"
   fileName: "Boss"
   author: "Rukia"
-  playerCount: 1
+  playerCount: 8

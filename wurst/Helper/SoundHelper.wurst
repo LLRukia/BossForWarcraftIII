@@ -3,6 +3,6 @@ import SoundUtils
 
 public class SoundHelper
     private static var scroll = new SoundDefinition(Sounds.feralSpiritTarget1, false, true)
-
+    private static var scroll = new SoundDefinition(Sounds.metalLightSliceMetal1, false, true)
     static function play_scroll(vec3 target)
         scroll.playOnPoint(target)
