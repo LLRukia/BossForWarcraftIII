@@ -4,6 +4,7 @@ import PlayerUnitHelper
 import TriggerHelper
 
 
+
 public class HatredTargetController
     private trigger detect= CreateTrigger()
     private trigger endcast= CreateTrigger()
@@ -22,11 +23,18 @@ public class HatredTargetController
             ..disable()
             ..setData(this castTo int)
 
-    function run()
+    function chaos()
+        run()
+
+    function focus(unit u)
+        pause()
+        m_u.issueTargetOrder("attack", u)
+
+    private function run()
         detect.enable()
         endcast.disable()
 
-    function pause()
+    private function pause()
         detect.disable()
         endcast.disable()
 
@@ -34,13 +42,13 @@ public class HatredTargetController
         endcast..disable()..destr()
         detect..disable()..destr()
 
-    static function change_hatred_target()
+    private static function change_hatred_target()
         var obj = GetTriggeringTrigger().getData() castTo HatredTargetController
         obj.m_u.issueTargetOrder("attack", GetSpellAbilityUnit())
         obj.endcast.enable()
         obj.detect.disable()
 
-    static function end_hatred()
+    private static function end_hatred()
         var obj = GetTriggeringTrigger().getData() castTo HatredTargetController
         obj.endcast.disable()
         obj.detect.enable()

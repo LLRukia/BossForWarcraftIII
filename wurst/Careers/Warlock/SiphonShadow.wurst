@@ -74,7 +74,7 @@ public class SiphonShadow extends WarlockSkill
             obj.m_self_unit.issueImmediateOrder("stop")
             return
 
-        SoundHelper.play_scroll(obj.m_self_unit.getPos3Real())
+        SoundHelper.scroll(obj.m_self_unit.getPos3Real())
         flashEffect("scrollpurp.mdx", obj.m_self_unit.getPos())
         
         obj.m_time++
@@ -138,13 +138,10 @@ public class SiphonShadow extends WarlockSkill
 
 @compiletime
 function create_revive()
-    var ed = new AbilityDefinitionKeeperoftheGroveTranquility(SiphonShadow.self_id)
+    var ed = new AbilityDefinitionMoonPriestessStarfall(SiphonShadow.self_id)
     ed.setLevels(15)
     for i = 1 to 15
-        ed..setHealInterval(i, 4.)
-            ..setBuildingReduction(i, 0.)
-            ..setLifeHealed(i, 0.)
-            ..setManaCost(i, 0)
+        ed..setManaCost(i, 0)
             ..setCooldown(i, 10)
             ..setBuffs(i, "")
             ..setDurationHero(i, 4)

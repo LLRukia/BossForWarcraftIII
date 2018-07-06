@@ -2,7 +2,6 @@ package IBoss
 
 import NoWurst
 import Vectors
-import Printing
 
 import public initlater BossHelper
 import public BossSkillHelper
@@ -11,8 +10,31 @@ import public MsgQueue
 import public ExternalDefines
 
 
-public let BOSS_MANA_RECOVERY_ID = 'mnps'
+public let BOSS_MANA_RECOVERY_ID     = 'mnps'
+public let BOSS_RESISTANCE_MAGIC_ID  = 'rsmg'
+public let BOSS_RESISTANCE_PIERCE_ID = 'rspr'
 
+public tuple state_level(int r1, int r2, int r3, int r4, int r5)
+
+
+public let RESISTANCE_SET = [ state_level(1, 1, 1, 1, 1),
+                              state_level(1, 1, 1, 1, 1),
+                              state_level(2, 4, 6, 7, 1),
+                              state_level(2, 4, 6, 7, 1),
+                              state_level(3, 5, 7, 8, 1) ]
+
+public let MANA_RECOVERY  = [ state_level(1, 3, 5, 6, 7),
+                              state_level(2, 4, 6, 7, 8),
+                              state_level(3, 5, 7, 8, 9),
+                              state_level(3, 5, 7, 8, 9),
+                              state_level(4, 6, 8, 9, 10) ]
+
+
+public let MANA_RECOVERY_LEVEL  = [12., 16., 19., 24., 27., 31., 39., 46., 51., 55.] 
+public let RESISTANCE_LEVEL     = [1., .9, .8, .75, .65, .6, .4, .2]
+public let AFTER_CHARGE         = 4.
+
+public let BOSS_CHARGING_TIME = [4., 3.3, 2.1, 2.0, 0.1]
 
 public enum BossState
     ignore
@@ -22,20 +44,33 @@ public enum BossState
     frenzy
     infinity
 
+public interface Counter_Cb
+    function cb()
 
 public abstract class IBoss
-    protected player m_onwer = Player(8)
+    protected player m_onwer = Player(PLAYER_NUM)
     unit m_self_unit
     protected int  m_self_id
     protected vec2 m_born
     protected int  m_index
     protected vec2 m_enter
     protected rect m_rect
-    protected MsgQueue m_q = new MsgQueue
-    protected HatredTargetController atk_ctr = null
-    protected bool bcasting = false
+    protected var m_q = new MsgQueue
+    protected HatredTargetController m_atk_ctrl = null
+    protected bool m_bcasting = false
+    protected bool m_bcharged = false
+    protected bool m_bcan_spell = false
+    protected BossState m_cur_state = ignore
+    protected Counter_Cb m_ct_cb
+    protected trigger m_death = CreateTrigger()
+    
+    function waiting_counter(Counter_Cb cb)
+        BossHelper.register_counter(true)
+        m_ct_cb = cb
 
-    abstract function countered()
+    function countered()
+        BossHelper.register_counter(false)
+        m_ct_cb.cb()
 
     abstract protected function destroy_self()
 
@@ -45,6 +80,10 @@ public abstract class IBoss
 
     abstract function start()
 
+    abstract function _end()
+
+    abstract function ondeath()
+
     abstract function clear()
 
     abstract protected function change_state(BossState st)
@@ -53,12 +92,21 @@ public abstract class IBoss
 
     abstract protected function onstart()
 
-    function continue()
-        if bcasting
-            bcasting = false
-            _main()
-        else
-            print("boss continue error")
+    abstract function continue(real fbreak)
+
+    abstract function get_name() returns string
+    function get_atk_ctrl() returns HatredTargetController
+        return m_atk_ctrl
+
+    function set_can_spell(bool b)
+        m_bcan_spell = b
+
+    function get_can_spell() returns bool
+        return m_bcan_spell
+
+    function get_cur_state() returns BossState
+        return m_cur_state
+
     
     construct(int id, vec2 born, int index, rect rc)
         m_self_id = id

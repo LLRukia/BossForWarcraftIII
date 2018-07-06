@@ -56,6 +56,7 @@ public class StatisticsHelper
     static var dmgro = new Statistics("dmgro", true)
     static var hl = new Statistics("hl", false)
     static var hlo = new Statistics("hlo", true)
+    static var death = new Statistics("deatho", true)
     static bool is_working = false
     static real timeo = 0
     static timer tm = null

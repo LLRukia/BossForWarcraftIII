@@ -8,6 +8,8 @@ import initlater Priest
 import initlater ArcaneMage
 import initlater PlayerUnit
 
+public string array playernames
+
 public function player.get_unit() returns unit
     return PlayerHelper.get_player_unit(this)
 
@@ -67,3 +69,7 @@ public class PlayerHelper
         mapPlayerUnit.removeHandle(pl.getId())
         return true
     private construct()
+
+init
+    for i = 0 to PLAYER_NUM - 1
+        playernames[i] = players[i].getName()

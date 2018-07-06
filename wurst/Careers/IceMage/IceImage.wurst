@@ -38,7 +38,7 @@ public class IceImage extends IceMageSkill
             ..registerAnyUnitEvent(EVENT_PLAYER_UNIT_SUMMON)
             ..addAction(function IceImage.tr_summon)
         m_summoning.issueTargetOrderById(852274, m_self_unit)
-        SoundHelper.play_scroll(m_self_unit.getPos3Real())
+        SoundHelper.scroll(m_self_unit.getPos3Real())
         flashEffect("scrollblue.mdx", m_self_unit.getPos())
 
     static function tr_summon()

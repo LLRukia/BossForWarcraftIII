@@ -4,15 +4,17 @@ import HashMap
 import IBoss
 import WarlockKing
 import ClosureTimers
+import initlater Boards
+import initlater ProcessControl
 
 public function unit.isBoss() returns boolean
     return BossHelper.cur_boss == this
     
 
-class BossInfo
+BossBoard boss_board = null
 
 public class BossHelper
-    static private var map_boss = new HashMap<int, IBoss>
+    static var map_boss = new HashMap<int, IBoss>
     static private bool can_counter = false
     static unit cur_boss = null
     static int cur_boss_index = 0
@@ -23,7 +25,7 @@ public class BossHelper
                 print("counter a Boss which is not current Boss???")
             return false
         if can_counter
-            //map_boss.get(cur_boss_index).countered()
+            map_boss.get(cur_boss_index).countered()
     
         return can_counter
 
@@ -32,17 +34,34 @@ public class BossHelper
         can_counter = bcounter
 
     static function init_self()
+        boss_board = new BossBoard
         map_boss..put(1, new WarlockKing(WarlockKing.self_id, WarlockKing.born_pos, 1, WarlockKing.play_rect))
 
-    static function prepare(int index)
-        CinematicFilterGenericBJ(2, BLEND_MODE_BLEND, "ReplaceableTextures\\CameraMasks\\Black_mask.blp", 100, 100, 100, 100, 0, 0, 0, 0)
-        var obj = map_boss.get(index)
-        cur_boss_index = index
-        obj.prepare()
+    static function prepare()
+        cur_boss_index ++
+        CinematicFilterGenericBJ(1.5, BLEND_MODE_BLEND, "ReplaceableTextures\\CameraMasks\\Black_mask.blp", 100, 100, 100, 100, 0, 0, 0, 0)
+        
+        var obj = map_boss.get(cur_boss_index)
+        doAfter(1.5) ->
+            obj.prepare()
+            boss_board.show(true)
         doAfter(2.) ->
             DisplayCineFilter(false)
             obj.start()
             
+    static function change_state(BossState st)
+        boss_board.change_state(st)
+
+    static function _end()
+        CinematicFilterGenericBJ(1.5, BLEND_MODE_BLEND, "ReplaceableTextures\\CameraMasks\\Black_mask.blp", 100, 100, 100, 100, 0, 0, 0, 0)
+
+        var obj = map_boss.get(cur_boss_index)
+        doAfter(1.5) ->
+            obj._end()
+            boss_board.show(false)
+        doAfter(2.) ->
+            DisplayCineFilter(false)
+            game_rest()
 
 init
     BossHelper.init_self()
