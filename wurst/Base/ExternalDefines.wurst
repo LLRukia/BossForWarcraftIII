@@ -36,7 +36,7 @@ public let FIRE_MAGE    = 'H0FM'
 
 public let PICK_UNITS = [ICE_MAGE, FIRE_MAGE, PRIEST, WARLOCK, ARCANE_MAGE
                         ]
-public let PICK_CAREERS = [career.ice_mage, career.priest, career.warlock, career.arcane_mage, career.fire_mage
+public let PICK_CAREERS = [career.ice_mage, career.fire_mage, career.priest, career.warlock, career.arcane_mage
                           ]
 public let CAREERS_NUM = 5
 

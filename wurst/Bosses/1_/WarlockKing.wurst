@@ -26,7 +26,7 @@ public class WarlockKing extends Boss
         m_self_unit.setAnimation("stand,channel")
         sd_pre.play()
 
-        ClearTextMessages()
+        //ClearTextMessages()
         printTimed("暴虐术士王：等待你们的只有无尽的黑暗。", 4.)
         doAfter(2.) ->
             super.start()

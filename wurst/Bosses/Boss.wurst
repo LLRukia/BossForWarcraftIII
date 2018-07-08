@@ -32,9 +32,12 @@ public class Boss extends IBoss
             players[i]..setCameraBoundsToRect(BORN_RECT)
                     ..panCameraToTimed(BORN_RECT.getCenter(), 0)
             unit player_unit = Player(i).get_unit()
-            var obj = PlayerUnitHelper.get_instance(player_unit) castTo PlayerUnit
-            obj.refresh()
-            player_unit.setPos(BORN_RECT.getCenter())
+            if player_unit != null
+                int no = PlayerUnitHelper.get_instance(player_unit)
+                if no != -1
+                    var obj = no castTo PlayerUnit
+                    obj.refresh()
+                    player_unit.setPos(BORN_RECT.getCenter())
         
 
     override function prepare()
@@ -43,15 +46,19 @@ public class Boss extends IBoss
             Player(i)..setCameraBoundsToRect(m_rect)
                 ..panCameraToTimed(m_born, 0)
             unit player_unit = Player(i).get_unit()
-            var obj = PlayerUnitHelper.get_instance(player_unit) castTo PlayerUnit
-            obj.refresh()
-            player_unit.setPos(m_enter)
-            player_unit.pause()
+            if player_unit != null
+                int no = PlayerUnitHelper.get_instance(player_unit)
+                if no != -1
+                    var obj = no castTo PlayerUnit
+                    obj.refresh()
+                    player_unit.setPos(BORN_RECT.getCenter())
+                player_unit.pause()
 
     override function start()
         for i = 0 to PLAYER_NUM-1
             unit player_unit = Player(i).get_unit()
-            player_unit.unpause()
+            if player_unit != null
+                player_unit.unpause()
         m_self_unit.unpause()
         onstart()
         _main()
@@ -63,7 +70,7 @@ public class Boss extends IBoss
     override function onstart()
         m_atk_ctrl = new HatredTargetController(m_self_unit)
         m_atk_ctrl.chaos()
-        change_state(BossState.calm)
+        change_state(BossState.ignore)
 
     override function _main()
         if m_bcharged

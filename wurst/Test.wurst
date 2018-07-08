@@ -26,6 +26,7 @@ function create_fire_chicken()
         ..setHitPointsRegenerationRate(10000.)
         ..setHitPointsRegenerationType("always")
         ..setName("火鸡")
+        ..setHideMinimapDisplay(true)
 
 function displaydamage()
     if GetEventDamage() > -0.000001 and GetEventDamage() < 0.000001
