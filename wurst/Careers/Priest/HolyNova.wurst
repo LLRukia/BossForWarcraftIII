@@ -3,7 +3,7 @@ package HolyNova
 import Priest
 import TriggerHelper
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 
 public class HolyNova extends PriestSkill
     static let self_id = 'pr0w'

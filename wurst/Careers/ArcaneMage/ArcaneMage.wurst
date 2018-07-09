@@ -1,7 +1,6 @@
 package ArcaneMage
 
 import public PlayerUnitHelper
-import ExternalDefines
 import public ArcaneMageSkill
 import EditorHelper
 import PlayerUnit

@@ -4,7 +4,6 @@ import PlayerUnitHelper
 import PlayerUnit
 import BossHelper
 import UnitObjEditing
-import ExternalDefines
 import Camera
 
 function test()

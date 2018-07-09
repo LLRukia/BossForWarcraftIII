@@ -4,7 +4,7 @@ import ArcaneMage
 import SkillHelper
 import TriggerHelper
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 
 public class ArcaneCounterSpell extends ArcaneMageSkill
     static let self_id = 'am0f'

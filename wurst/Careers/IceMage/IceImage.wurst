@@ -2,7 +2,7 @@ package IceImage
 
 import IceMage
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 import TriggerHelper
 import TimerUtils
 import SkillHelper

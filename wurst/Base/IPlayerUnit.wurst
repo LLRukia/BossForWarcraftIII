@@ -2,7 +2,7 @@ package IPlayerUnit
 import NoWurst
 import public Buffs
 import public BaseSkills
-import ExternalDefines
+import public GlobalDefines
 
 public abstract class IPlayerUnit
     protected unit m_self_unit

@@ -3,7 +3,7 @@ package ProcessControl
 import ClosureTimers
 import Boards
 import BossHelper
-import ExternalDefines
+import GlobalDefines
 import initlater PickUnitModule
 
 public PlayerBoard player_board = null

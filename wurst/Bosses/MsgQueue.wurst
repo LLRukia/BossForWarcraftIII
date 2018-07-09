@@ -5,6 +5,7 @@ import NoWurst
 import LinkedList
 import IBossSkill
 
+let PRIORITY_DECA = 0.65
 
 constant Comparator<IBossSkill> boss_skill_com = (lhs, rhs) -> R2I(rhs.priority - lhs.priority)
 
@@ -21,6 +22,8 @@ public class MsgQueue
             if i.judge()
                 i.priority = 0
                 return i
+            else
+                i.priority *= PRIORITY_DECA
         return null
 
     function add_skill(IBossSkill s)
@@ -32,10 +35,10 @@ public class MsgQueue
 
     function pause()
         for i in queue
-            i.stop()
+            i.stop_detect()
 
     function clear()
         for i in queue
-            i.stop()
+            i.stop_detect()
         queue.clear()
         

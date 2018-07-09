@@ -13,6 +13,12 @@ public function unit.isBoss() returns boolean
 
 BossBoard boss_board = null
 
+public enum SkillTextColor
+    normal
+    counter
+
+let skill_color = [colorA(157, 157, 157, 255), colorA(255, 0, 128, 255)]
+
 public class BossHelper
     static var map_boss = new HashMap<int, IBoss>
     static private bool can_counter = false
@@ -62,6 +68,17 @@ public class BossHelper
         doAfter(2.) ->
             DisplayCineFilter(false)
             game_rest()
+
+    static function create_skill_text(vec2 pos, string tx, SkillTextColor cl)
+        real speed = 64 * 0.071 / 128
+        real angle = 90
+
+        real offset = (tx.length() / 2) * 16.7
+        createTTEx(pos.withZ(0) - vec3(130 + offset, 0, 0), tx, 8.8, skill_color[cl castTo int])
+            ..setPermanent(false)
+            ..setFadepoint(2.)
+            ..setLifespan(3.)
+            ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
 
 init
     BossHelper.init_self()

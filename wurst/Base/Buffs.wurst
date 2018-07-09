@@ -6,7 +6,6 @@ import Unit
 import Printing
 import PlayerUnitHelper
 import initlater PlayerUnit
-import ExternalDefines
 
 
 public enum BuffClearType

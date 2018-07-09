@@ -3,7 +3,7 @@ package ArcaneMissile
 import ArcaneMage
 import EditorHelper
 import SoundUtils
-import ExternalDefines
+import GlobalDefines
 import SkillHelper
 
 public class ArcaneMissile extends ArcaneMageSkill

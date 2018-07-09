@@ -1,7 +1,7 @@
 package SiphonShadow
 
 import Warlock
-import ExternalDefines
+import GlobalDefines
 import TriggerHelper
 import SkillHelper
 import BossHelper

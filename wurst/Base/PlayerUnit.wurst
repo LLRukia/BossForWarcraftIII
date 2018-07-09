@@ -1,5 +1,4 @@
 package PlayerUnit
-import ExternalDefines
 import public initlater IPlayerUnit
 import public StatisticsHelper
 import PlayerHelper

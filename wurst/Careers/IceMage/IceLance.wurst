@@ -4,7 +4,7 @@ import TimerUtils
 import MathHelper
 import TriggerHelper
 import HashMap
-import ExternalDefines
+import GlobalDefines
 import EditorHelper
 import StatisticsHelper
 

@@ -2,7 +2,6 @@ package Warlock
 
 import public PlayerUnitHelper
 
-import ExternalDefines
 import public WarlockSkill
 import EditorHelper
 import PlayerUnit

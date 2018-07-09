@@ -4,7 +4,7 @@ import Warlock
 import TriggerHelper
 import TimerUtils
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 
 public class UnholySprint extends WarlockSkill
     static let self_id = 'wl0e'

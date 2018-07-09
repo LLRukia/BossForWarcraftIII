@@ -1,6 +1,5 @@
 package IceShield
 import IceMage
-import ExternalDefines
 import AbilityObjEditing
 import ObjectIds
 import BuffObjEditing

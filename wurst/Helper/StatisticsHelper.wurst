@@ -1,7 +1,7 @@
 package StatisticsHelper
 
 import TriggerHelper
-import ExternalDefines
+import GlobalDefines
 
 class Statistics
     private trigger m_tr = CreateTrigger()

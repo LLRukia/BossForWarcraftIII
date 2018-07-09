@@ -1,6 +1,6 @@
 package ProgressHelper
 
-import ExternalDefines
+import GlobalDefines
 import TimerUtils
 
 public class ProgressBar

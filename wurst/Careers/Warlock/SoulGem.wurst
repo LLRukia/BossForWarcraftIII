@@ -4,7 +4,7 @@ import Warlock
 import TriggerHelper
 import TimerUtils
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 import ReviveHelper
 
 public class SoulGem extends WarlockSkill

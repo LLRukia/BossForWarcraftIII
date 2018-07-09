@@ -2,7 +2,7 @@ package IceSpirit
 
 import EditorHelper
 import IceMage
-import ExternalDefines
+import GlobalDefines
 import BossHelper
 import TriggerHelper
 import HashMap

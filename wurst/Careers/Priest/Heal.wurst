@@ -3,7 +3,7 @@ package Heal
 import Priest
 import TriggerHelper
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 
 public class Heal extends PriestSkill
     static let self_id = 'pr0q'

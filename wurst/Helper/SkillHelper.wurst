@@ -165,7 +165,7 @@ public class SkillHelper
         if BossHelper.counter(utarget)
             real speed = 64 * 0.071 / 128
             real angle = 90
-            createTTEx(ucaster.getPos3with(76) - vec3(245, 0, 0), "★反制成功★", 7, ucaster.getOwner().getColor().toColor().withAlpha(255))
+            createTTEx(ucaster.getPos3Zero() - vec3(245, 0, 0), "★反制成功★", 7, ucaster.getOwner().getColor().toColor().withAlpha(255))
                 ..setPermanent(false)
                 ..setFadepoint(2.)
                 ..setLifespan(3.)

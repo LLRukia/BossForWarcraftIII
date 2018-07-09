@@ -2,7 +2,7 @@ package ArcaneBarrage
 
 import ArcaneMage
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 import SkillHelper
 import LinkedList
 

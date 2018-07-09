@@ -1,7 +1,6 @@
 package ReviveHelper
 
 import HashMap
-import ExternalDefines
 import IPlayerUnit
 import PlayerUnitHelper
 import EditorHelper

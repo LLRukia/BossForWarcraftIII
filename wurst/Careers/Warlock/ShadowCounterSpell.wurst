@@ -4,7 +4,7 @@ import Warlock
 import SkillHelper
 import TriggerHelper
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 
 public class ShadowCounterSpell extends WarlockSkill
     static let self_id = 'wl0f'

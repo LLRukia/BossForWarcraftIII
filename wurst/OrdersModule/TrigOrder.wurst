@@ -5,7 +5,6 @@ import PlayerUnit
 import SkillHelper
 import EditorHelper
 
-import ExternalDefines
 import Camera
 
 function clear2()

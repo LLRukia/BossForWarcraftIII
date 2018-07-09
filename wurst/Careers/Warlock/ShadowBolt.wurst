@@ -2,7 +2,7 @@ package ShadowBolt
 
 import Warlock
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 import SoundUtils
 import TriggerHelper
 import SkillHelper

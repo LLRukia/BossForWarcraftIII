@@ -5,7 +5,7 @@ import public AbilityObjEditing
 import public ObjectIds
 import public Colors
 import public BuffObjEditing
-import ExternalDefines
+import GlobalDefines
 /*
 附加点: 
 hand 手

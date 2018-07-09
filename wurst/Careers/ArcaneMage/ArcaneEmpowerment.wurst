@@ -4,7 +4,7 @@ import ArcaneMage
 import TriggerHelper
 import EditorHelper
 import SkillHelper
-import ExternalDefines
+import GlobalDefines
 import TimerUtils
 import SoundHelper
 

@@ -10,11 +10,22 @@ import public TriggerHelper
 
 public class Boss extends IBoss
     override function destroy_self()
+        m_tr_charge..disable().destr()
+        m_tr_death.destr()
+        destroy m_atk_ctrl
+        RemoveUnit(m_self_unit)
+        m_self_unit = null
+        destroy m_q
 
     override function create_self()
+        m_q = new MsgQueue
+        m_tr_charge = CreateTrigger()
+        m_tr_death = CreateTrigger()
+        m_atk_ctrl = new HatredTargetController(m_self_unit)
         m_self_unit = createUnit(m_onwer, m_self_id, m_born, bj_UNIT_FACING.asAngleDegrees())
-        m_death..registerUnitEvent(m_self_unit, EVENT_UNIT_DEATH)
+        m_tr_death..registerUnitEvent(m_self_unit, EVENT_UNIT_DEATH)
             ..addAction(function death_cb)
+            ..setData(this castTo int)
 
         BossHelper.cur_boss = m_self_unit
         m_self_unit.pause()
@@ -24,10 +35,9 @@ public class Boss extends IBoss
 
     static function death_cb()
         (GetTriggeringTrigger().getData() castTo Boss).ondeath()
-        GetTriggeringTrigger()..disable()..destr()
 
     override function _end()
-        clear()
+        destroy_self()
         for i = 0 to PLAYER_NUM - 1
             players[i]..setCameraBoundsToRect(BORN_RECT)
                     ..panCameraToTimed(BORN_RECT.getCenter(), 0)
@@ -68,26 +78,19 @@ public class Boss extends IBoss
     
 
     override function onstart()
-        m_atk_ctrl = new HatredTargetController(m_self_unit)
         m_atk_ctrl.chaos()
         change_state(BossState.ignore)
 
     override function _main()
-        if m_bcharged
-            m_bcharged = false
-            change_state(BossState.infinity)
+        if m_bcharging
             return
         IBossSkill obj = m_q.get_judge()
         if obj != null
+            m_spelling_obj = obj
             obj.cast()
-            m_bcasting = true
         else
             doAfter(1.) ->
                 _main()
-
-    override function clear()
-        destroy m_atk_ctrl
-        m_death..disable()..destr()
 
     override function get_name() returns string
         return ""
@@ -117,7 +120,11 @@ public class Boss extends IBoss
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r5)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r5)
             case infinity
+                m_spelling_obj.stop_cast()
+                m_spelling_obj = null
                 m_q.pause()
+                m_bcharging = true
+                set_can_spell(false)
                 effect ef = m_self_unit..setInvulnerable(true)
                                         ..pause()
                                         ..setAnimation("stand,channel")
@@ -127,22 +134,20 @@ public class Boss extends IBoss
                     state_charged()
     
     function state_charged()
-        set_can_spell(false)
+        skip
 
     function end_state_charged()
         m_self_unit..setInvulnerable(false)
                     ..unpause()
                     ..setMana(0.)
+        m_q.run()
         set_can_spell(true)
         continue(AFTER_CHARGE)
 
     override function continue(real fbreak)
-        if m_bcasting
-            m_bcasting = false
-            if m_bcharged
-                m_bcharged = false
-                change_state(BossState.infinity)
-                return
+        if m_spelling_obj != null and not m_bcharging
+            m_spelling_obj = null
+            m_bcharging = false
             real fRand = GetRandomReal(1. - CUR_MODE * 0.05, 1.8 - CUR_MODE * 0.1)
             doAfter(fbreak * fRand) ->
                 _main()

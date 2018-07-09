@@ -1,4 +1,4 @@
-package ExternalDefines
+package GlobalDefines
 import NoWurst
 
 public let _DEBUG = true

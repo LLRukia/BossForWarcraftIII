@@ -12,7 +12,9 @@ public abstract class IBossSkill
 
     abstract function detect()
 
-    abstract function stop()
+    abstract function stop_detect()
+
+    abstract function stop_cast()
 
     abstract function get_break() returns real
 

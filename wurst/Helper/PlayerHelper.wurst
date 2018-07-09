@@ -1,6 +1,5 @@
 package PlayerHelper
 import Table
-import ExternalDefines
 import initlater IceMage
 import initlater FireMage
 import initlater Warlock

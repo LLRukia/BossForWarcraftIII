@@ -1,6 +1,5 @@
 package IceMage
 import public PlayerUnitHelper
-import ExternalDefines
 import public IceMageSkill
 import EditorHelper
 import PlayerUnit

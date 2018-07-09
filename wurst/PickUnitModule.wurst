@@ -1,5 +1,5 @@
 package PickUnitModule
-import ExternalDefines
+import GlobalDefines
 import HashMap
 import PlayerHelper
 import Camera

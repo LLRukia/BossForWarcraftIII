@@ -3,7 +3,7 @@ package Revive
 import Priest
 import TriggerHelper
 import EditorHelper
-import ExternalDefines
+import GlobalDefines
 import TimerUtils
 import ReviveHelper
 
