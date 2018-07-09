@@ -24,7 +24,7 @@ public class DreamingSouls extends IBossSkill
         construct(DreamingSouls obj)
             self = obj
         override function cb()
-            self.m_owner.m_self_unit.unpause()
+            self.m_owner.m_self_unit..unpause().setInvulnerable(false)
             destroy self.m_cast
             self.endcast()
     
