@@ -41,7 +41,7 @@ public class BossHelper
 
     static function init_self()
         boss_board = new BossBoard
-        map_boss..put(1, new WarlockKing(WarlockKing.self_id, WarlockKing.born_pos, 1, WarlockKing.play_rect))
+        map_boss..put(1, new WarlockKing(WarlockKing.self_id, WarlockKing.born_pos, 1, WarlockKing.play_rect, WarlockKing.enter_pos))
 
     static function prepare()
         cur_boss_index ++

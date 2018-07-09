@@ -108,8 +108,9 @@ public abstract class IBoss
         return m_cur_state
 
     
-    construct(int id, vec2 born, int index, rect rc)
+    construct(int id, vec2 born, int index, rect rc, vec2 enter)
         m_self_id = id
         m_born = born
         m_index = index
         m_rect = rc
+        m_enter = enter

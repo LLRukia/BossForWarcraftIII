@@ -61,7 +61,7 @@ public class Boss extends IBoss
                 if no != -1
                     var obj = no castTo PlayerUnit
                     obj.refresh()
-                    player_unit.setPos(BORN_RECT.getCenter())
+                    player_unit.setPos(m_enter)
                 player_unit.pause()
 
     override function start()
@@ -71,14 +71,16 @@ public class Boss extends IBoss
                 player_unit.unpause()
         m_self_unit.unpause()
         onstart()
-        _main()
+        doAfter(GetRandomReal(3.5, 4.5))->
+            _main()
 
-    construct(int id, vec2 born, int index, rect rc)
-        super(id, born, index, rc)
+    construct(int id, vec2 born, int index, rect rc, vec2 enter)
+        super(id, born, index, rc, enter)
     
 
     override function onstart()
         m_atk_ctrl.chaos()
+        m_q.run()
         change_state(BossState.ignore)
 
     override function _main()

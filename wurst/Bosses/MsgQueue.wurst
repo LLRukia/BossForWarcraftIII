@@ -1,7 +1,7 @@
 package MsgQueue
 
 import NoWurst
-
+import Printing
 import LinkedList
 import IBossSkill
 
@@ -18,6 +18,8 @@ public class MsgQueue
 
     function get_judge() returns IBossSkill
         sort()
+        for i in queue
+            print(R2S(i.priority))
         for i in queue
             if i.judge()
                 i.priority = 0

@@ -10,7 +10,7 @@ function after_mode_chose()
     ClearTextMessages()
     doAfter(1.)->
         game_start()
-        DisplayCineFilter(false)
+        createUnit(players[0], 'h000', gg_rct_PICK.getCenter(), bj_UNIT_FACING.asAngleDegrees())
         
 
 function easy_mode()
@@ -45,8 +45,6 @@ function impossible_mode()
 
 init
     FogMaskEnableOn()
-
-    CinematicFilterGenericBJ(0., BLEND_MODE_BLEND, "ReplaceableTextures\\CameraMasks\\Black_mask.blp", 100, 100, 100, 100, 0, 0, 0, 0)
     
     var mode = new DialogBox("难度选择")
     mode.addButton("Easy", 49) ->
@@ -76,7 +74,7 @@ init
             ..panCameraToTimed(PICK_RECT.getCenter(),0)
 
 
-    doAfter(0) ->
+    doAfter(0.01) ->
         printTimed(players[0].getColor().toColor().toColorString() + GetPlayerName(players[0]) + Color_Define.COLOR_NORMAL + "正在选择难度...", 15.)
         mode.display(players[0], true)
 

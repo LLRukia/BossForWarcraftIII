@@ -10,15 +10,15 @@ import test2
 
 public class WarlockKing extends Boss
     static let self_id = 'bs10'
-    static let born_pos = vec2(0, 0)
-    static let play_rect = Rect(0,0,0,0)
+    static let born_pos = gg_rct_BOSS1.getCenter() + vec2(0, 350)
+    static let play_rect = gg_rct_BOSS1
     static let sd_pre = new SoundDefinition(Sounds.necromancerWhat1, false)
     static let self_name = "暴虐术士王"
-    static let enter_pos = vec2(0,0)
+    static let enter_pos = gg_rct_BOSS1.getCenter() - vec2(0, 350)
 
-    construct(int id, vec2 born, int index, rect rc)
-        super(id, born, index, rc)
-        m_enter = enter_pos
+    construct(int id, vec2 born, int index, rect rc, vec2 enter)
+        super(id, born, index, rc, enter)
+        
 
     override function create_self()
         super.create_self()
@@ -48,7 +48,7 @@ public class WarlockKing extends Boss
 
         ClearTextMessages()
         printTimed("暴虐术士王：等待你们的只有无尽的黑暗。", 4.)
-        doAfter(5.) ->
+        doAfter(2.) ->
             super.start()
             
     override function ondeath()

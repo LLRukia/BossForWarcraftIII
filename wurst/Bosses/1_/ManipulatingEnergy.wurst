@@ -21,6 +21,7 @@ public class ManipulatingEnergy extends IBossSkill
     private unit m_ut
     construct(IBoss owner)
         super(owner)
+        priority = 50
 
     ondestroy
     
@@ -38,14 +39,13 @@ public class ManipulatingEnergy extends IBossSkill
         m_ut = g.getRandomUnit()
         uc..pause()..setAnimation("stand,channel").setFacing(MathHelper.get_angle(uc.getPos(), m_ut.getPos()))
         real ang = -30.
-        real r = 300
+        real r = 600
         real interval = 0.33 - (CUR_MODE + 1) * 0.04
-        var ls = new LinkedList<effect>
         
         for i = 0 to 5
             ang += 60
             vec2 pos =  MathHelper.coor_polar2abso(r, ang + uc.getFacingAngle().degrees()) + uc.getPos()
-            ls.add(addEffect("Abilities\\Spells\\Undead\\DeathandDecay\\DeathandDecayTarget.mdl", pos))
+            flashEffect("Abilities\\Spells\\Undead\\DeathandDecay\\DeathandDecayTarget.mdl", pos)
             location lc = Location(pos.x, pos.y)
             TerrainDeformationWaveBJ(interval, lc, lc, 256, 96, 0)
             RemoveLocation(lc)
@@ -59,29 +59,28 @@ public class ManipulatingEnergy extends IBossSkill
                     g.removeUnit(m_ut)
                     m_ut = g.getRandomUnit()
                 if g.isEmpty()
-                    for i in ls
-                        i.destr()
-                    ls.clear()
                     destroy cb
                     g.destr()
             
             if m_ut.isAlive()
+                sd.play()
                 uc.setFacing(MathHelper.get_angle(uc.getPos(), m_ut.getPos()))
                 r -= 50
-                for i in ls
-                    vec2 pos = MathHelper.coor_polar2abso(r, ang) + uc.getPos()
-                    i.setPos(pos)
+                for i = 0 to 5
+                    ang += 60
+                    vec2 pos =  MathHelper.coor_polar2abso(r, ang + uc.getFacingAngle().degrees()) + uc.getPos()
+                    flashEffect("Abilities\\Spells\\Undead\\DeathandDecay\\DeathandDecayTarget.mdl", pos)
                     location lc = Location(pos.x, pos.y)
                     TerrainDeformationWaveBJ(interval, lc, lc, 256, 96, 0)
                     RemoveLocation(lc)
 
                 times ++
-                if times >= 5
+                if times >= 11
+                    destroy cb
                     g.destr()
                     cast_()
             
     function cast_()
-        sd.play()
         m_owner.m_self_unit.setAnimation("spell")
         doAfter(0.7) ->
             m_owner.m_self_unit.unpause()
@@ -110,6 +109,7 @@ public class ManipulatingEnergy extends IBossSkill
             if tar != null
                 m_faker.kill()
                 flashEffect("", tar.getPos())
+                destroy cb
                 sdhit.play()
                 group gg = CreateGroup()
                 gg.enumUnitsInRange(tar.getPos(), 70)
