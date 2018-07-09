@@ -49,7 +49,7 @@ public interface Counter_Cb
     function cb()
 
 public abstract class IBoss
-    protected player m_onwer = Player(PLAYER_NUM)
+    player m_onwer = Player(PLAYER_NUM)
     unit m_self_unit
     protected int  m_self_id
     protected vec2 m_born

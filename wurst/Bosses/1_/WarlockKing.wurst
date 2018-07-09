@@ -4,6 +4,9 @@ import Boss
 import ClosureTimers
 import SoundUtils
 import DreamingSouls
+import initlater ManipulatingEnergy
+import test1
+import test2
 
 public class WarlockKing extends Boss
     static let self_id = 'bs10'
@@ -23,9 +26,13 @@ public class WarlockKing extends Boss
             ..addAction(function cb_charged)
             .setData(this castTo int)
         m_q..add_skill(new DreamingSouls(this))
+            ..add_skill(new ManipulatingEnergy(this))
+            ..add_skill(new test1(this))
+            ..add_skill(new test2(this))
         
     override function destroy_self()
         m_tr_charge.disable()
+        m_q.clear()
         super.destroy_self()
         
     static function cb_charged()

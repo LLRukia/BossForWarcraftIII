@@ -2,18 +2,32 @@ package DreamingSouls
 
 import IBoss
 import ClosureTimers
+import PlayerHelper
+import SoundUtils
 
 public class DreamingSouls extends IBossSkill
     static let break_time = 5.5
-
+    static let sd = new SoundDefinition(Sounds.slowTarget1, false, true)
     private bool m_bcd = true
-    private CallbackPeriodic m_detect
+    private CallbackPeriodic m_detect = null
+    private CallbackPeriodic m_cast = null
+    private int m_count = 0
+    private var call_back = new DreamingSouls_Cb(this)
     construct(IBoss owner)
         super(owner)
 
     ondestroy
-        destroy m_detect
+        destroy call_back
 
+    static class DreamingSouls_Cb implements Counter_Cb
+        DreamingSouls self
+        construct(DreamingSouls obj)
+            self = obj
+        override function cb()
+            self.m_owner.m_self_unit.unpause()
+            destroy self.m_cast
+            self.endcast()
+    
     override function cast()
         unit uc = m_owner.m_self_unit
         BossHelper.create_skill_text(uc.getPos(), "- 梦绕魂魄 -", SkillTextColor.counter)
@@ -21,6 +35,22 @@ public class DreamingSouls extends IBossSkill
         doAfter(25) ->
             m_bcd = true
         
+        uc..setInvulnerable(true)..pause()
+        m_owner.waiting_counter(call_back)
+        doPeriodically(0.35) m_cast->
+            
+            uc.setAnimation("spell")
+            sd.play()
+            for i = 0 to PLAYER_NUM - 1
+                unit u = players[i].get_unit()
+                if u.isAlive()
+                    u.addEffect("Abilities\\Spells\\Undead\\DeathPact\\DeathPactTarget.mdl", "chest")
+                    m_owner.m_self_unit.damageTarget(u, 450.)
+            m_count++
+            if m_count >= 4
+                m_owner.m_self_unit.unpause()
+                endcast()
+                destroy m_cast
         
 
     override function detect()
@@ -28,7 +58,9 @@ public class DreamingSouls extends IBossSkill
             priority += 1.3
 
     override function stop_detect()
-        destroy m_detect
+        if m_detect != null
+            destroy m_detect
+            m_detect = null
 
     override function stop_cast()
 
@@ -36,4 +68,4 @@ public class DreamingSouls extends IBossSkill
         return break_time
 
     override function judge() returns bool
-        return m_owner.m_self_unit.getMana() < 700 and m_bcd
+        return m_owner.m_self_unit.getMana() < 650 and m_bcd
