@@ -61,10 +61,12 @@ public abstract class IBoss
     protected IBossSkill m_spelling_obj = null
     protected bool m_bcharging = false
     protected bool m_bcan_spell = false
+    bool m_bpause_mana = false
     protected BossState m_cur_state = ignore
     protected Counter_Cb m_ct_cb
     protected trigger m_tr_death
     protected trigger m_tr_charge
+    protected timer m_tm_mana
     
     function waiting_counter(Counter_Cb cb)
         BossHelper.register_counter(true)

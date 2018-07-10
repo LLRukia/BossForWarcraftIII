@@ -1,9 +1,9 @@
 ---
-projectName: "DefaultName"
+projectName: "Bosscraft"
 dependencies:
 - "https://github.com/wurstscript/wurstStdlib2"
 buildMapData:
-  name: "Boss"
-  fileName: "Boss"
+  name: "Bosscraft"
+  fileName: "Bosscraft"
   author: "Rukia"
   playerCount: 8

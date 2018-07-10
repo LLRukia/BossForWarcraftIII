@@ -170,7 +170,7 @@ public class SkillHelper
                 ..setFadepoint(2.)
                 ..setLifespan(3.)
                 ..setVelocity(speed * CosBJ(angle), speed * SinBJ(angle))
-            SoundHelper.counter_spell_sound.play()
+            SoundHelper.counter_spell()
             return true
         return false
 

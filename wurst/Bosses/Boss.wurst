@@ -7,6 +7,7 @@ import PlayerUnit
 import Camera
 import ClosureTimers
 import public TriggerHelper
+import TimerUtils
 
 public class Boss extends IBoss
     override function destroy_self()
@@ -16,11 +17,14 @@ public class Boss extends IBoss
         RemoveUnit(m_self_unit)
         m_self_unit = null
         destroy m_q
+        m_tm_mana.release()
 
     override function create_self()
         m_q = new MsgQueue
         m_tr_charge = CreateTrigger()
         m_tr_death = CreateTrigger()
+        m_tm_mana = getTimer()
+        m_tm_mana.setData(this castTo int)
         m_atk_ctrl = new HatredTargetController(m_self_unit)
         m_self_unit = createUnit(m_onwer, m_self_id, m_born, bj_UNIT_FACING.asAngleDegrees())
         m_tr_death..registerUnitEvent(m_self_unit, EVENT_UNIT_DEATH)
@@ -35,6 +39,28 @@ public class Boss extends IBoss
 
     static function death_cb()
         (GetTriggeringTrigger().getData() castTo Boss).ondeath()
+
+
+    static function mana_recovery()
+        var obj = GetExpiredTimer().getData() castTo thistype
+        if not obj.m_bpause_mana
+            int level = 0
+            switch obj.m_cur_state
+                case ignore
+                    level = MANA_RECOVERY[CUR_MODE].r1
+                case calm
+                    level = MANA_RECOVERY[CUR_MODE].r2
+                case trouble
+                    level = MANA_RECOVERY[CUR_MODE].r3
+                case wrath
+                    level = MANA_RECOVERY[CUR_MODE].r4
+                case frenzy
+                    level = MANA_RECOVERY[CUR_MODE].r5
+                case infinity
+                    level = 0
+            level --
+            if level != -1
+                obj.m_self_unit.setMana(obj.m_self_unit.getMana() + MANA_RECOVERY_LEVEL[level])
 
     override function _end()
         destroy_self()
@@ -82,6 +108,7 @@ public class Boss extends IBoss
         m_atk_ctrl.chaos()
         m_q.run()
         change_state(BossState.ignore)
+        m_tm_mana.startPeriodic(1, function mana_recovery)
 
     override function _main()
         if m_bcharging
@@ -102,23 +129,18 @@ public class Boss extends IBoss
         BossHelper.change_state(st)
         switch st
             case ignore
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r1)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r1)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r1)
             case calm
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r2)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r2)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r2)
             case trouble
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r3)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r3)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r3)
             case wrath
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r4)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r4)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r4)
             case frenzy
-                m_self_unit.setAbilityLevel(BOSS_MANA_RECOVERY_ID, MANA_RECOVERY[CUR_MODE].r5)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r5)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r5)
             case infinity

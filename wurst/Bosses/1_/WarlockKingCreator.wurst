@@ -37,16 +37,4 @@ function create_Aegr()
         ..setMagicDamageReduction(i+1, 1.)
         ..setDamageTaken(i+1, RESISTANCE_LEVEL[i])
     destroy ed
-
-@compiletime
-function create_boss_mana_recovery()
-    var ed = new AbilityDefinitionArchMageBrillianceAura(BOSS_MANA_RECOVERY_ID)
-    for i = 0 to 7
-        ed..setManaRegenerationIncrease(i+1, MANA_RECOVERY_LEVEL[i])
-        ..setPercentBonus(i+1, false)
-        //..setBuffs(i+1, "")
-        ..setAreaofEffect(i+1, 0)
-    ed..setArtTarget("")
-    ..setHeroAbility(false)
-
     

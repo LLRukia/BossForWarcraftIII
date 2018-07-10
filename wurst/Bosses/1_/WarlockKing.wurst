@@ -22,7 +22,7 @@ public class WarlockKing extends Boss
 
     override function create_self()
         super.create_self()
-        m_tr_charge..registerUnitStateEvent(m_self_unit, UNIT_STATE_MANA, EQUAL, 800)
+        m_tr_charge..registerUnitStateEvent(m_self_unit, UNIT_STATE_MANA, GREATER_THAN, 799.5)
             ..addAction(function cb_charged)
             .setData(this castTo int)
         m_q..add_skill(new DreamingSouls(this))
