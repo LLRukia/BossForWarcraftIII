@@ -144,17 +144,20 @@ public class Boss extends IBoss
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_MAGIC_ID, RESISTANCE_SET[CUR_MODE].r5)
                 m_self_unit.setAbilityLevel(BOSS_RESISTANCE_PIERCE_ID, RESISTANCE_SET[CUR_MODE].r5)
             case infinity
-                m_spelling_obj.stop_cast()
-                m_spelling_obj = null
+                if m_spelling_obj != null
+                    m_spelling_obj.stop_cast()
+                    m_spelling_obj = null
                 m_q.pause()
                 m_bcharging = true
                 set_can_spell(false)
-                effect ef = m_self_unit..setInvulnerable(true)
-                                        ..pause()
-                                        ..setAnimation("stand,channel")
-                                        .addEffect("BossCharging.mdx", "origin")
+                if not m_self_unit.isPaused()
+                    m_self_unit.pause()
+                m_self_unit..setInvulnerable(true)
+                                        ..setAnimation("spell,channel")
+                effect ef = addEffect("BossCharging.mdx", m_self_unit.getPos())
                 doAfter(BOSS_CHARGING_TIME[CUR_MODE]) ->
-                    ef.destr()
+                    print("111")
+                    ef..setPos(vec2(0,0)).destr()
                     state_charged()
     
     function state_charged()
@@ -169,7 +172,7 @@ public class Boss extends IBoss
         continue(AFTER_CHARGE)
 
     override function continue(real fbreak)
-        if m_spelling_obj != null and not m_bcharging
+        if m_spelling_obj != null or m_bcharging
             m_spelling_obj = null
             m_bcharging = false
             real fRand = GetRandomReal(1. - CUR_MODE * 0.05, 1.8 - CUR_MODE * 0.1)

@@ -18,6 +18,7 @@ public function game_start()
             for i = 0 to PLAYER_NUM-1
                 if not LoadBoolean(clk, i, CAREERS_NUM + 1) and players[i].getController() == MAP_CONTROL_USER
                         and players[i].isIngame()
+                    GetRandomInt(0, CAREERS_NUM-1)
                     players[i].pick(GetRandomInt(0, CAREERS_NUM-1))
             BossHelper.prepare()
             doAfter(1.5) ->

@@ -244,7 +244,6 @@ class EditorHelper
         ..setAttack1ProjectileSpeed(600)
         ..setSelectionScale(3.1)
         ..setArtSpecial("")
-        ..setSpeedBase(1)
         ..setTurnRate(3)
         ..setAcquisitionRange(5000.)
         ..setAttack1RangeMotionBuffer(0.)
@@ -284,4 +283,5 @@ class EditorHelper
         ..setTintingColorRed(255)
         ..setTintingColorBlue(255)
         ..setTintingColorGreen(255)
+        ..setSpeedBase(0)
         return ed

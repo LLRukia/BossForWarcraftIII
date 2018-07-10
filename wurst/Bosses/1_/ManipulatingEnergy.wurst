@@ -63,7 +63,8 @@ public class ManipulatingEnergy extends IBossSkill
             
             if m_ut.isAlive()
                 sd.playOnPoint(uc.getPos3Real())
-                uc.setAnimation("spell")
+                if times mod 3 == 0
+                    uc.setAnimation("spell")
                 
                 r -= 50
                 for i = 0 to 5
@@ -97,7 +98,7 @@ public class ManipulatingEnergy extends IBossSkill
             vec2 pos = m_faker.getPos()
             angle ang = MathHelper.get_angle(pos, m_ut.getPos())
             pos = MathHelper.forward(pos, ang, 44)
-            m_faker.setXY(pos)
+            m_faker..setXY(pos).setFacing(ang)
             group g = CreateGroup()
             g.enumUnitsInRange(pos, 70)
             unit tar = null

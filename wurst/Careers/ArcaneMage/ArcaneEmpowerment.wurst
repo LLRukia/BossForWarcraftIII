@@ -24,6 +24,7 @@ public class ArcaneEmpowerment extends ArcaneMageSkill
     override function clear()
         if m_tm != null
             m_tm.release()
+            m_tm = null
         if m_self_unit.hasAbility(buff_id)
             m_self_unit.remove_buff(buff_id)
 

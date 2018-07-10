@@ -32,8 +32,9 @@ public class BossHelper
             return false
         if can_counter
             map_boss.get(cur_boss_index).countered()
+            return true
     
-        return can_counter
+        return false
 
 
     static function register_counter(bool bcounter)
