@@ -16,8 +16,9 @@ BossBoard boss_board = null
 public enum SkillTextColor
     normal
     counter
+    charge
 
-let skill_color = [colorA(157, 157, 157, 255), colorA(255, 0, 128, 255)]
+let skill_color = [colorA(157, 157, 157, 255), colorA(255, 0, 128, 255), colorA(8, 8, 8, 255)]
 
 public class BossHelper
     static var map_boss = new HashMap<int, IBoss>

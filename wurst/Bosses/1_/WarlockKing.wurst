@@ -2,19 +2,29 @@ package WarlockKing
 
 import Boss
 import ClosureTimers
+import TimerUtils
 import SoundUtils
 import DreamingSouls
 import initlater ManipulatingEnergy
 import test1
 import test2
 
+import LinkedList
+import MathHelper
+import SoundHelper
+
 public class WarlockKing extends Boss
     static let self_id = 'bs10'
     static let born_pos = gg_rct_BOSS1.getCenter() + vec2(0, 350)
     static let play_rect = gg_rct_BOSS1
     static let sd_pre = new SoundDefinition(Sounds.necromancerWhat1, false)
+    static let sd_charge_atk = new SoundDefinition(Sounds.necromancerYesAttack3, false)
     static let self_name = "暴虐术士王"
     static let enter_pos = gg_rct_BOSS1.getCenter() - vec2(0, 350)
+
+    private LinkedList<unit> m_ls_sight = new LinkedList<unit>
+    private timer m_tm_charge_dmg
+    private real charge_ang
 
     construct(int id, vec2 born, int index, rect rc, vec2 enter)
         super(id, born, index, rc, enter)
@@ -29,7 +39,10 @@ public class WarlockKing extends Boss
             ..add_skill(new ManipulatingEnergy(this))
             ..add_skill(new test1(this))
             ..add_skill(new test2(this))
-        m_self_unit.setMana(700)
+        m_ls_sight..add(createUnit(players[0], 'h000', gg_rct_BOSS1.getLeftBot(), angle(0)))
+            ..add(createUnit(players[0], 'h000', gg_rct_BOSS1.getRightTop(), angle(0)))
+            ..add(createUnit(players[0], 'h000', gg_rct_BOSS1.getLeftTop(), angle(0)))
+            ..add(createUnit(players[0], 'h000', gg_rct_BOSS1.getRightBot(), angle(0)))
         
     override function destroy_self()
         m_tr_charge.disable()
@@ -47,7 +60,7 @@ public class WarlockKing extends Boss
         m_self_unit.setAnimation("stand,channel")
         sd_pre.play()
 
-        //ClearTextMessages()
+        ClearTextMessages()
         printTimed("暴虐术士王：等待你们的只有无尽的黑暗。", 4.)
         doAfter(2.) ->
             super.start()
@@ -68,7 +81,160 @@ public class WarlockKing extends Boss
 
     override function state_charged()
         super.state_charged()
+        BossHelper.create_skill_text(m_self_unit.getPos(), "黑暗笼罩", SkillTextColor.charge)
+        m_self_unit..setAnimation("victory").setFacing(270..asAngleDegrees())
+
+        for i in m_ls_sight
+            i.setXY(vec2(0, 0))
+
+        charge_ang = 270
+        unit uModify = createUnit(players[0], 'h000', MathHelper.coor_polar2abso(1750, charge_ang), angle(0))
+        var ls_L = new LinkedList<destructable>
+        var ls_R = new LinkedList<destructable>
+        real r = 50
+        while r <= 4000
+            ls_L.add(createDestructable('YTlb', MathHelper.coor_polar2abso(r, charge_ang - 15), r.asAngleDegrees(), 1, 0))
+            ls_R.add(createDestructable('YTlb', MathHelper.coor_polar2abso(r, charge_ang + 15), r.asAngleDegrees(), 1, 0))
+            r += 50
+        m_tm_charge_dmg = getTimer()
+        m_tm_charge_dmg..setData(this castTo int)
+            .startPeriodic(0.5, function charge_dmg)
+
+
+        vec2 center = m_self_unit.getPos()
+        r = 4150.
         
+        doPeriodically(0.05) cb->
+            r -= 250
+            SetFogStateRadius(players[0], FOG_OF_WAR_VISIBLE, center.x, center.y, r, true)
+            if r <= 0
+                destroy cb
+                rotate(uModify, ls_L, ls_R)
+            
+    static function charge_dmg()
+        var obj = GetExpiredTimer().getData() castTo thistype
+        group g = CreateGroup()
+        g.enumUnitsInRange(obj.m_self_unit.getPos(), 5000)
+        real tmp = obj.charge_ang
+        for i in g
+
+            if i.isAlive() and IsUnitAlly(i, players[0])
+                real r = MathHelper.get_angle(i.getPos(), obj.m_self_unit.getPos()).degrees()
+                
+                if not ((r - tmp >= -15 and r - tmp <= 15) or (r - tmp >= 345 or r - tmp <= -345))
+                    obj.m_self_unit.damageTarget(i, 250.)
+
+    function rotate(unit u, LinkedList<destructable> ls_L, LinkedList<destructable> ls_R)
+        doPeriodically(0.1) cb->
+            charge_ang += 3
+            m_self_unit.setFacing(charge_ang.asAngleDegrees())
+            if charge_ang >= 360
+                charge_ang = (charge_ang.toInt() mod 360).toReal()
+
+            u.setXY(MathHelper.coor_polar2abso(1750, charge_ang))
+            for i in ls_L
+                i.remove()
+            ls_L.clear()
+            for i in ls_R
+                i.remove()
+            ls_R.clear()
+            real r = 50
+            while r <= 4000
+                ls_L.add(createDestructable('YTlb', MathHelper.coor_polar2abso(r, charge_ang - 15.), r.asAngleDegrees(), 1, 0))
+                ls_R.add(createDestructable('YTlb', MathHelper.coor_polar2abso(r, charge_ang + 15.), r.asAngleDegrees(), 1, 0))
+                r += 50
+
+            if charge_ang - 270 > -0.00001 and charge_ang - 270 < 0.00001
+                destroy cb
+                m_tm_charge_dmg.release()
+                sd_charge_atk.playOnPoint(m_self_unit.getPos3Zero())
+                m_self_unit.setAnimation("spell")
+                doAfter(0.5) ->
+                    final_rotate(u, ls_L, ls_R)
+
+    function final_rotate(unit u, LinkedList<destructable> ls_L, LinkedList<destructable> ls_R)
+        real rotate_ang = charge_ang - 15
+        u.setXY(MathHelper.coor_polar2abso(1750, charge_ang + 14))
+
+        group g = CreateGroup()
+        doPeriodically(0.05) cb ->
+            rotate_ang += 6
+            for i in ls_L
+                i.remove()
+            ls_L.clear()
+            real r = 50
+            SoundHelper.scroll(MathHelper.coor_polar2abso(r, rotate_ang).withZ(0))
+            while r <= 4000
+                vec2 pos = MathHelper.coor_polar2abso(r, rotate_ang)
+                ls_L.add(createDestructable('YTlb', pos, r.asAngleDegrees(), 1, 0))
+                flashEffect("scrollpurple.mdx", pos)
+                
+                g.clear()
+                g.enumUnitsInRange(pos, 50)
+                for i in g
+                    if i.isAlive() and not IsUnitAlly(i, m_onwer)
+                        m_self_unit.damageTarget(i, 10000)
+                r += 50
+            if rotate_ang >= charge_ang + 14
+                destroy cb
+                final_rotate2(u, ls_L, ls_R)
+                g.destr()
+
+
+    function final_rotate2(unit u, LinkedList<destructable> ls_L, LinkedList<destructable> ls_R)
+        real ra = charge_ang + 15
+        var ls_des = new LinkedList<unit>
+        group g = CreateGroup()
+        int t = 0
+        doPeriodically(0.05) cb ->
+            ra += 18
+            t++
+            if ra >= 360
+                ra = (ra.toInt() mod 360).toReal()
+            if t mod 5 == 0
+                ls_des.add(createUnit(players[0], 'h000', MathHelper.coor_polar2abso(1750, ra-1), angle(0)))
+            for i in ls_L
+                i.remove()
+            ls_L.clear()
+            real r = 50
+            while r <= 4000
+                vec2 pos = MathHelper.coor_polar2abso(r, ra)
+                ls_L.add(createDestructable('YTlb', pos, r.asAngleDegrees(), 1, 0))
+                flashEffect("scrollpurple.mdx", pos)
+                
+                g.clear()
+                g.enumUnitsInRange(pos, 50)
+                for i in g
+                    if i.isAlive() and not IsUnitAlly(i, m_onwer)
+                        m_self_unit.damageTarget(i, 10000)
+                r += 50
+            if t >= 19
+                destroy cb
+                for i in ls_des
+                    i.remove()
+                ls_des.clear()
+                destroy ls_des
+                for i in ls_L
+                    i.remove()
+                ls_L.clear()
+                destroy ls_L
+                for i in ls_R
+                    i.remove()
+                ls_R.clear()
+                destroy ls_R
+                int n = 0
+                for i in m_ls_sight
+                    switch n
+                        case 0
+                            i.setXY(gg_rct_BOSS1.getLeftBot())
+                        case 1
+                            i.setXY(gg_rct_BOSS1.getLeftTop())
+                        case 2
+                            i.setXY(gg_rct_BOSS1.getRightBot())
+                        case 3
+                            i.setXY(gg_rct_BOSS1.getRightTop())
+                    n++
+                end_state_charged()
 
     override function change_state(BossState st)
         super.change_state(st)

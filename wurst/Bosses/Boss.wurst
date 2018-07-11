@@ -125,7 +125,8 @@ public class Boss extends IBoss
         return ""
     
     override function change_state(BossState st)
-        m_cur_state = st
+        if st != BossState.infinity
+            m_cur_state = st
         BossHelper.change_state(st)
         switch st
             case ignore
@@ -156,7 +157,6 @@ public class Boss extends IBoss
                                         ..setAnimation("spell,channel")
                 effect ef = addEffect("BossCharging.mdx", m_self_unit.getPos())
                 doAfter(BOSS_CHARGING_TIME[CUR_MODE]) ->
-                    print("111")
                     ef..setPos(vec2(0,0)).destr()
                     state_charged()
     
@@ -169,6 +169,7 @@ public class Boss extends IBoss
                     ..setMana(0.)
         m_q.run()
         set_can_spell(true)
+        change_state(m_cur_state)
         continue(AFTER_CHARGE)
 
     override function continue(real fbreak)
