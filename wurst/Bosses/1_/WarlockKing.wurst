@@ -222,6 +222,7 @@ public class WarlockKing extends Boss
                     i.remove()
                 ls_R.clear()
                 destroy ls_R
+                u.remove()
                 int n = 0
                 for i in m_ls_sight
                     switch n
