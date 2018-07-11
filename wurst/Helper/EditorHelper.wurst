@@ -239,7 +239,7 @@ class EditorHelper
         ..setCollisionSize(72.)
         ..setUnitSoundSet("")
         ..setNameEditorSuffix("")
-        ..setScalingValue(3.)
+        ..setScalingValue(2.5)
         ..setScaleProjectiles(true)
         ..setAttack1ProjectileSpeed(600)
         ..setSelectionScale(3.1)
@@ -284,4 +284,5 @@ class EditorHelper
         ..setTintingColorBlue(255)
         ..setTintingColorGreen(255)
         ..setSpeedBase(0)
+        ..setPropulsionWindowdegrees(0)
         return ed

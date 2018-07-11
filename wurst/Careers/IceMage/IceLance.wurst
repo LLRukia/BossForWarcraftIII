@@ -92,7 +92,7 @@ public class IceLance extends IceMageSkill
 			g.enumUnitsInRange(cur_loc, IceLance.dmg_radius)
 			for uTarget in g
 				if not dmg_once.has(uTarget) and not IsUnitAlly(uTarget, GetOwningPlayer(instance.m_self_unit))
-					and uTarget.isAlive()
+					and uTarget.isAlive() and uTarget.isInvulnerable()
 					real final_dmg = GetHeroAgi(instance.m_self_unit, true) * IceLance.inc + IceLance.dmg
 					instance.m_self_unit.damageTarget(uTarget, final_dmg, ATTACK_TYPE_MAGIC)
 					StatisticsHelper.add_real(instance.m_self_unit.getOwner(), final_dmg)

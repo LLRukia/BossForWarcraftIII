@@ -26,6 +26,7 @@ public class DreamingSouls extends IBossSkill
         override function cb()
             self.m_owner.m_self_unit..unpause().setInvulnerable(false)
             destroy self.m_cast
+            self.m_owner.m_bpause_mana = false
             self.endcast()
     
     override function cast()
@@ -38,6 +39,7 @@ public class DreamingSouls extends IBossSkill
         
         uc..setInvulnerable(true)..pause()
         m_owner.waiting_counter(call_back)
+        m_count = 0
         m_cast = doPeriodically(0.75 - CUR_MODE*0.02) cb->
             uc.setAnimation("spell")
             sd.playOnPoint(uc.getPos3Real())
@@ -50,6 +52,7 @@ public class DreamingSouls extends IBossSkill
             if m_count >= 4
                 m_owner.m_self_unit..unpause().setInvulnerable(false)
                 BossHelper.register_counter(false)
+                m_owner.m_bpause_mana = false
                 endcast()
                 destroy cb
         

@@ -127,6 +127,9 @@ public class SiphonShadow extends WarlockSkill
     static class ShadowKingCb implements SkillHelperCb
         override function cb(int obj)
             var ts = obj castTo SiphonShadow
+            if not BossHelper.cur_boss.isInvulnerable()
+                destroy this
+                return 
             flashEffect("wlq.mdx", BossHelper.cur_boss.getPos3Real())
             ShadowBolt.hit.playOnPoint(BossHelper.cur_boss.getPos3Real())
 

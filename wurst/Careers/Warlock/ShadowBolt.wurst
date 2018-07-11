@@ -129,7 +129,7 @@ public class ShadowBolt extends WarlockSkill
         bool bhit = false
         g.enumUnitsInRange(obj.m_cur_pos, ShadowBolt.radius)
         for i in g
-            if i.isBoss()
+            if i.isBoss() and not i.isInvulnerable()
                 obj.hit(i)
                 bhit = true
                 break

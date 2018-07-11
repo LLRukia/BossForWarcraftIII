@@ -38,6 +38,9 @@ public class FrostBolt extends IceMageSkill
 			this.uc = uc
 			this.ut = ut
 		override function cb(int _obj)
+			if not ut.isInvulnerable()
+				destroy this
+				return
 			real final_dmg = GetHeroAgi(uc, true) * FrostBolt.inc + FrostBolt.dmg
 			uc.damageTarget(ut, final_dmg, ATTACK_TYPE_MAGIC)
 			ut.setMana(ut.getMana() - 4.)

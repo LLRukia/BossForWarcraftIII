@@ -9,6 +9,7 @@ public class test2 extends IBossSkill
     static let break_time = 5.5
     static let sd = new SoundDefinition(Sounds.slowTarget1, false, true)
     private CallbackPeriodic m_detect
+    private CallbackSingle m_continue
     construct(IBoss owner)
         super(owner)
         priority = 15.
@@ -20,7 +21,7 @@ public class test2 extends IBossSkill
         BossHelper.create_skill_text(uc.getPos(), "- 测试嘻嘻 -", SkillTextColor.normal)
 
         uc..pause().setAnimation("attack")
-        doAfter(5) ->
+        m_continue = doAfter(5) ->
             uc.unpause()
             endcast()
         
@@ -35,7 +36,7 @@ public class test2 extends IBossSkill
             m_detect = null
 
     override function stop_cast()
-
+        destroy m_continue
     override function get_break() returns real
         return break_time
 

@@ -10,7 +10,8 @@ function after_mode_chose()
     ClearTextMessages()
     doAfter(1.)->
         game_start()
-        SetFogStateRect(players[0], FOG_OF_WAR_VISIBLE, gg_rct_PICK, true)
+        CreateFogModifierRect(players[0], FOG_OF_WAR_VISIBLE, gg_rct_PICK, true, false).start()
+
         //createUnit(players[0], 'h000', gg_rct_PICK.getCenter(), bj_UNIT_FACING.asAngleDegrees())
         
 
